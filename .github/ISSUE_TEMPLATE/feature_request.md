@@ -1,20 +1,16 @@
----
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+US : [...]
 
----
+## 1. DESCRIPTION
+_(Bien préciser ici, ou dans une autres US, si certains événements ne sont visibles qu'avec certains droits.)_
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 2. MAQUETTES
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## 3. CRITERES DE VALIDATION
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+___
+## 4. PREREQUIS (ET DEPENDANCES)
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## 5. INFOS TECHNIQUES UTILES
+
+## (6. LISTE TACHES TECHNIQUES [si petites US, sinon diviser avec d'autres issues] )
+
