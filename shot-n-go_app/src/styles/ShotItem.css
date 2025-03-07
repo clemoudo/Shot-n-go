@@ -1,10 +1,10 @@
-.lmj-plant-item-cover {
+.shot-item-cover {
 	height: 220px;
 	width: 220px;
 	border-radius: 20px;
 }
 
-.lmj-plant-item {
+.shot-item {
 	margin: 10px;
 	display: flex;
 	align-items: flex-start;

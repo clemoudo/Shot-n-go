@@ -1,5 +1,5 @@
 import { shotList } from '../datas/shotList'
-import PlantItem from './PlantItem'
+import PlantItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
 function ShoppingList() {
@@ -16,7 +16,7 @@ function ShoppingList() {
 					<li key={cat}>{cat}</li>
 				))}
 			</ul>
-			<ul className='lmj-plant-list'>
+			<ul className='shot-list'>
 				{shotList.map(({ id, cover, name, alcoholLevel, sweetness }) => (
 					<PlantItem
 						id={id}

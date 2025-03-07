@@ -1,5 +1,5 @@
 import Banner from './Banner'
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.svg'
 // import Cart from './Cart'
 import Footer from './Footer'
 import ShoppingList from './ShoppingList'
@@ -8,8 +8,8 @@ function App() {
 	return (
 		<div>
 			<Banner>
-				<img src={logo} alt='La maison jungle' className='lmj-logo' />
-				<h1 className='lmj-title'>La maison jungle</h1>
+				<img src={logo} alt="Shot'N'Go" className='logo' />
+				<h1 className='title'>Shot'N'Go</h1>
 			</Banner>
 
 			{/* <Cart /> */}

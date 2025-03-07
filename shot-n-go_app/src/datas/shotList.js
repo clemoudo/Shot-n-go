@@ -1,8 +1,7 @@
 import tequilaSunriseImage from '../assets/tequilaSunriseImage.jpg'	
 import b52Image from '../assets/b52Image.jpg'	
 import kamikazeImage from '../assets/kamikazeImage.jpg'	
-import jagerbImage from '../assets/jagerbImage.jpg'	
-import blueLagoonImage from '../assets/blueLagoonImage.webp'	
+import jagerImage from '../assets/jagerImage.jpg'	
 import babyGuinnessImage from '../assets/babyGuinnessImage.webp'	
 
 export const shotList = [
@@ -37,15 +36,7 @@ export const shotList = [
 		id: '4kk',
 		alcoholLevel: 3,
 		sweetness: 1,
-		cover: jagerbImage
-	},
-	{
-		name: 'Blue Lagoon Shot',
-		category: 'fruité',
-		id: '5pl',
-		alcoholLevel: 2,
-		sweetness: 3,
-		cover: blueLagoonImage
+		cover: jagerImage
 	},
 	{
 		name: 'Baby Guinness',
