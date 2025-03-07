@@ -1,11 +1,11 @@
-import { plantList } from '../datas/plantList'
+import { shotList } from '../datas/shotList'
 import PlantItem from './PlantItem'
 import '../styles/ShoppingList.css'
 
 function ShoppingList() {
-	const categories = plantList.reduce(
-		(acc, plant) =>
-			acc.includes(plant.category) ? acc : acc.concat(plant.category),
+	const categories = shotList.reduce(
+		(acc, shot) =>
+			acc.includes(shot.category) ? acc : acc.concat(shot.category),
 		[]
 	)
 
@@ -17,13 +17,13 @@ function ShoppingList() {
 				))}
 			</ul>
 			<ul className='lmj-plant-list'>
-				{plantList.map(({ id, cover, name, water, light }) => (
+				{shotList.map(({ id, cover, name, alcoholLevel, sweetness }) => (
 					<PlantItem
 						id={id}
 						cover={cover}
 						name={name}
-						water={water}
-						light={light}
+						alcoholLevel={alcoholLevel}
+						sweetness={sweetness}
 					/>
 				))}
 			</ul>
