@@ -1,8 +1,8 @@
-import tequilaSunriseImage from '../assets/tequilaSunriseImage.jpg'	
-import b52Image from '../assets/b52Image.jpg'	
-import kamikazeImage from '../assets/kamikazeImage.jpg'	
-import jagerImage from '../assets/jagerImage.jpg'	
-import babyGuinnessImage from '../assets/babyGuinnessImage.webp'	
+import tequilaSunriseImage from '../assets/shots/tequilaSunriseImage.jpg'
+import b52Image from '../assets/shots/b52Image.jpg'
+import kamikazeImage from '../assets/shots/kamikazeImage.jpg'
+import jagerImage from '../assets/shots/jagerImage.jpg'
+import babyGuinnessImage from '../assets/shots/babyGuinnessImage.webp'
 
 export const shotList = [
 	{
