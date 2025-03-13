@@ -1,6 +1,5 @@
 .footer {
 	padding: 32px;
-	border-top: solid 3px black;
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: column;
