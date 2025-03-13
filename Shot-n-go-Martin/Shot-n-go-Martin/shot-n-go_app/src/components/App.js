@@ -7,11 +7,13 @@ import Home from './Home'
 import Menu from './Menu'
 import { Route, Routes } from "react-router-dom"
 import AlertButton from './button'
+import StaticExample from './LimitAge'
 
 function App() {
 	return (
 		
 		<div>
+			<StaticExample></StaticExample>
 			<AlertButton/>
 			<Banner>
 				<img src={logo} alt="Shot'N'Go" className='logo' />
