@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import '../styles/AgeConfirmationModal.css'; 
+import '../styles/LimiteAge.css'; 
 
 function AgeConfirmationModal() {
   const [show, setShow] = useState(true);

@@ -8,7 +8,7 @@ import Menu from './Menu'
 import { Route, Routes } from "react-router-dom"
 import AlertButton from './button'
 import StaticExample from './LimitAge'
-import LimitAge from '../styles/age.jsx';
+
 
 function App() {
 	return (
