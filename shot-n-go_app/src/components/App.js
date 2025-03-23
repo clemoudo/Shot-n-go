@@ -1,6 +1,5 @@
 // import Banner from './Banner'
 // import logo from '../assets/logo.svg'
-// import Cart from './Cart'
 import Footer from './Footer'
 import Navbar from './Navbar'
 import Home from './Home'

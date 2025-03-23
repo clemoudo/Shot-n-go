@@ -1,7 +1,13 @@
 import ShoppingList from './ShoppingList'
+import Cart from './Cart'
 
 function Menu() {
-   return <ShoppingList />
+   return (
+      <>
+         <Cart />
+         <ShoppingList />
+      </>
+   );
 }
 
 export default Menu
