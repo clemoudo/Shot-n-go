@@ -5,6 +5,7 @@ import Navbar from './Navbar'
 import Home from './Home'
 import Menu from './Menu'
 import Games from './Games'
+import QueueSystem from './QueueSystem';
 import { Route, Routes } from "react-router-dom"
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/menu" element={ <Menu /> } />
 					<Route path="/games" element={ <Games /> } />
+					<Route path="/queue" element={<QueueSystem />} />
 				</Routes>
 			</div>
 			<Footer />

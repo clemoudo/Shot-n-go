@@ -4,7 +4,7 @@ import '../styles/Cart.css'
 function Cart() {
 	const examplePrice = 8
 	const [cart, updateCart] = useState(0)
-	const [isOpen, setIsOpen] = useState(true)
+	const [isOpen, setIsOpen] = useState(false)
 
 	return isOpen ? (
 		<>
