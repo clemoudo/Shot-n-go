@@ -4,4 +4,9 @@
 	display: flex;
 	flex-wrap: wrap;
 	max-width: 800px;
+	text-align: left;
+}
+
+.categories {
+	text-align: left;
 }
