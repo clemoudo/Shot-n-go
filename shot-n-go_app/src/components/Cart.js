@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import '../styles/Cart.css'
-function remove_item(name,price,cart_table,update_table){
-	const currentshotsaved = cart_table.find((shot) => shot.name === name)
-		if (currentshotsaved.amount > 1) {
+
+function remove_item(name, price, cart_table, update_table){
+	const currentShotSaved = cart_table.find((shot) => shot.name === name)
+		if (currentShotSaved.amount > 1) {
          const cartFilteredCurrentShot = cart_table.filter((shot) => shot.name !== name)
          update_table([
 				...cartFilteredCurrentShot,
-				{ name, price, amount: currentshotsaved.amount - 1 }
+				{ name, price, amount: currentShotSaved.amount - 1 }
 			])
-		}else if(currentshotsaved.amount === 1){
+		} else if (currentShotSaved.amount === 1){
 			const cartFilteredCurrentShot = cart_table.filter((shot) => shot.name !== name)
 			update_table([
 				...cartFilteredCurrentShot
@@ -17,11 +18,10 @@ function remove_item(name,price,cart_table,update_table){
 
 }
 
-function Cart({cart_table,update_table}) {
+function Cart({cart_table, update_table}) {
 	const [isOpen, setIsOpen] = useState(false)
 	const total = cart_table.reduce(
-		(acc, shotType) => acc + shotType.amount * shotType.price,
-		0
+		(acc, shotType) => acc + shotType.amount * shotType.price, 0
 	)
 
 	return isOpen ? (
@@ -46,7 +46,7 @@ function Cart({cart_table,update_table}) {
 						{cart_table.map(({ name, price, amount }, index) => (
 							<div key={`${name}-${index}`}>
 								
-								{name} | {price}€ | {amount} | <button onClick={()=> remove_item(name,price,cart_table,update_table)}>-</button> 
+								{name} | {price}€ | {amount} | <button onClick={()=> remove_item(name, price, cart_table, update_table)}>-</button> 
 							</div>
 							
 						))}
