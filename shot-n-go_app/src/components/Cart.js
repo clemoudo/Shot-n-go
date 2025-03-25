@@ -1,10 +1,28 @@
 import { useState } from 'react'
 import '../styles/Cart.css'
+function remove_item(name,price,cart_table,update_table){
+	const currentshotsaved = cart_table.find((shot) => shot.name === name)
+		if (currentshotsaved.amount > 1) {
+         const cartFilteredCurrentShot = cart_table.filter((shot) => shot.name !== name)
+         update_table([
+				...cartFilteredCurrentShot,
+				{ name, price, amount: currentshotsaved.amount - 1 }
+			])
+		}else if(currentshotsaved.amount === 1){
+			const cartFilteredCurrentShot = cart_table.filter((shot) => shot.name !== name)
+			update_table([
+				...cartFilteredCurrentShot
+			])
+		}
 
-function Cart() {
-	const examplePrice = 8
-	const [cart, updateCart] = useState(0)
-	const [isOpen, setIsOpen] = useState(true)
+}
+
+function Cart({cart_table,update_table}) {
+	const [isOpen, setIsOpen] = useState(false)
+	const total = cart_table.reduce(
+		(acc, shotType) => acc + shotType.amount * shotType.price,
+		0
+	)
 
 	return isOpen ? (
 		<>
@@ -17,10 +35,27 @@ function Cart() {
 				Fermer
 			</button>
 			<h2>Panier</h2>
-			<div>Exemple : {examplePrice}€</div>
-			<button onClick={() => updateCart(cart + 1)}>Ajouter</button>
-			<h3>Total : {examplePrice * cart}€</h3>
-			<button onClick={() => updateCart(0)}>Vider le panier</button>
+			{/* <div>Exemple : {examplePrice}€</div>
+			<button onClick={() => updateCart(cart + 1)}>Ajouter</button> */}
+			<h3>Total : {total.toFixed(2)}€</h3>
+			{cart_table.length > 0 ? (
+				<div>
+					<h2>Panier</h2>
+					<p>name | price | amount </p>
+					<ul>
+						{cart_table.map(({ name, price, amount }, index) => (
+							<div key={`${name}-${index}`}>
+								
+								{name} | {price}€ | {amount} | <button onClick={()=> remove_item(name,price,cart_table,update_table)}>-</button> 
+							</div>
+							
+						))}
+					</ul>
+					<button onClick={() => update_table([])}>Vider le panier</button>
+				</div>
+			) : (
+				<div>Votre panier est vide</div>
+			)}
 		</div>
 		</>
 	) : (

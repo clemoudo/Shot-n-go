@@ -12,7 +12,8 @@ export const shotList = [
 		isBestSale: true,
 		alcoholLevel: 3,
 		sweetness: 2,
-		cover: tequilaSunriseImage
+		cover: tequilaSunriseImage,
+		price: 2.00
 	},
 	{
 		name: 'B52',
@@ -20,7 +21,8 @@ export const shotList = [
 		id: '2ab',
 		alcoholLevel: 3,
 		sweetness: 2,
-		cover: b52Image
+		cover: b52Image,
+		price: 2.00
 	},
 	{
 		name: 'Kamikaze',
@@ -28,7 +30,8 @@ export const shotList = [
 		id: '3sd',
 		alcoholLevel: 3,
 		sweetness: 1,
-		cover: kamikazeImage
+		cover: kamikazeImage,
+		price: 2.00
 	},
 	{
 		name: 'Jäger',
@@ -36,7 +39,8 @@ export const shotList = [
 		id: '4kk',
 		alcoholLevel: 3,
 		sweetness: 1,
-		cover: jagerImage
+		cover: jagerImage,
+		price: 2.00
 	},
 	{
 		name: 'Baby Guinness',
@@ -45,6 +49,7 @@ export const shotList = [
 		isBestSale: true,
 		alcoholLevel: 2,
 		sweetness: 3,
-		cover: babyGuinnessImage
+		cover: babyGuinnessImage,
+		price: 2.00
 	}
 ];
