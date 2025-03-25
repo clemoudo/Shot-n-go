@@ -41,16 +41,26 @@ function Cart({cart_table, update_table}) {
 			{cart_table.length > 0 ? (
 				<div>
 					<h2>Panier</h2>
-					<p>name | price | amount </p>
-					<ul>
-						{cart_table.map(({ name, price, amount }, index) => (
-							<div key={`${name}-${index}`}>
-								
-								{name} | {price}€ | {amount} | <button onClick={()=> remove_item(name, price, cart_table, update_table)}>-</button> 
-							</div>
-							
-						))}
-					</ul>
+					<table className="cart-table">
+						<thead>
+							<tr>
+								<th>Nom</th><th>Prix unitaire €</th><th>Quantité</th><th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{cart_table.map((shotElem) => (
+								<tr key={`${shotElem.id}`}>
+									<td class="product">
+										<img src={shotElem.cover} alt={shotElem.name} />
+										<span class="product-name">{shotElem.name}</span>
+									</td>
+									<td>{shotElem.price.toFixed(2)}€</td>
+									<td>{shotElem.amount}</td>
+									<td><button onClick={()=> remove_item(shotElem.name, shotElem.price, cart_table, update_table)}> --- </button></td> 
+								</tr>
+							))}
+						</tbody>
+					</table>
 					<button onClick={() => update_table([])}>Vider le panier</button>
 				</div>
 			) : (

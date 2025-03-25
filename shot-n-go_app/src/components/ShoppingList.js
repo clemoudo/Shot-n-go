@@ -2,7 +2,7 @@ import { shotList } from '../datas/shotList'
 import ShotItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
-function ShoppingList({cart,updateCart,cart_table,update_table}) {
+function ShoppingList({cart_table, update_table}) {
 	const categories = shotList.reduce(
 		(acc, shot) =>
 			acc.includes(shot.category) ? acc : acc.concat(shot.category),
@@ -17,16 +17,9 @@ function ShoppingList({cart,updateCart,cart_table,update_table}) {
 				))}
 			</ul>
 			<ul className='shot-list'>
-				{shotList.map(({ id, cover, name, alcoholLevel, sweetness,price }) => (
+				{shotList.map((shotElem) => (
 					<ShotItem
-						id={id}
-						cover={cover}
-						name={name}
-						alcoholLevel={alcoholLevel}
-						sweetness={sweetness}
-						price = {price.toFixed(2)}
-						cart = {cart}
-						updateCart= {updateCart}
+						shotElem={shotElem}
 						cart_table={cart_table}
 						update_table={update_table}
 					/>

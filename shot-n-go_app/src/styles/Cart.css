@@ -10,7 +10,7 @@
 	transition: right 0.3s ease-in-out;
 	z-index: 901; /* Au-dessus de l'overlay */
 	padding-top: 80px;
- }
+}
  
 /* Overlay (fond gris pour désactiver les clics) */
 .overlay {
@@ -59,4 +59,11 @@
 .cart-add-button {
 	margin-left: 32px;
 	cursor: pointer;
+}
+
+.cart-table, .cart-table th {
+	text-align: center;
+	width: 600px;
+	margin: 20px auto 20px auto;
+	border: 1px black solid;
 }
