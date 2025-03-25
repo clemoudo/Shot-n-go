@@ -18,12 +18,9 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 				Fermer
 			</button>
 			<h2>Panier</h2>
-			{/* <div>Exemple : {examplePrice}€</div>
-			<button onClick={() => updateCart(cart + 1)}>Ajouter</button> */}
 			<h3>Total : {total.toFixed(2)}€</h3>
 			{cart_table.length > 0 ? (
 				<div>
-					<h2>Panier</h2>
 					<table className="cart-table">
 						<thead>
 							<tr>
@@ -31,7 +28,13 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 							</tr>
 						</thead>
 						<tbody>
-							{cart_table.map((shotElem) => (
+							{cart_table
+							.sort(function(shotA, shotB){
+								if (shotA.name > shotB.name)return 1;
+								if (shotA.name < shotB.name)return -1;
+								return 0;
+							})
+							.map((shotElem) => (
 								<tr key={`${shotElem.id}`}>
 									<td className="product">
 										<div className="product-info">
@@ -41,9 +44,9 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 										</div>
 									</td>
 									<td className="quantity">
-										<button>-</button>
+										<button onClick={() => removeItem(shotElem)}>-</button>
 										<span>{shotElem.amount}</span>
-										<button>+</button>
+										<button onClick={() => addToCart(shotElem)}>+</button>
 									</td>
 									<td className="price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
 									<td><button onClick={()=> removeItem(shotElem)}> --- </button></td> 
