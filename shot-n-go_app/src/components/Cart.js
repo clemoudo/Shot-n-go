@@ -1,24 +1,7 @@
 import { useState } from 'react'
 import '../styles/Cart.css'
 
-function remove_item(name, price, cart_table, update_table){
-	const currentShotSaved = cart_table.find((shot) => shot.name === name)
-		if (currentShotSaved.amount > 1) {
-         const cartFilteredCurrentShot = cart_table.filter((shot) => shot.name !== name)
-         update_table([
-				...cartFilteredCurrentShot,
-				{ name, price, amount: currentShotSaved.amount - 1 }
-			])
-		} else if (currentShotSaved.amount === 1){
-			const cartFilteredCurrentShot = cart_table.filter((shot) => shot.name !== name)
-			update_table([
-				...cartFilteredCurrentShot
-			])
-		}
-
-}
-
-function Cart({cart_table, update_table}) {
+function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 	const [isOpen, setIsOpen] = useState(false)
 	const total = cart_table.reduce(
 		(acc, shotType) => acc + shotType.amount * shotType.price, 0
@@ -44,24 +27,31 @@ function Cart({cart_table, update_table}) {
 					<table className="cart-table">
 						<thead>
 							<tr>
-								<th>Nom</th><th>Prix unitaire €</th><th>Quantité</th><th></th>
+								<th>Nom</th><th>Quantité</th><th>Prix total €</th><th></th>
 							</tr>
 						</thead>
 						<tbody>
 							{cart_table.map((shotElem) => (
 								<tr key={`${shotElem.id}`}>
-									<td class="product">
-										<img src={shotElem.cover} alt={shotElem.name} />
-										<span class="product-name">{shotElem.name}</span>
+									<td className="product">
+										<div className="product-info">
+											<img src={shotElem.cover} alt={shotElem.name} />
+											<span className="product-name">{shotElem.name}</span>
+											<span class="product-unitPrice">{shotElem.price.toFixed(2)}€</span>
+										</div>
 									</td>
-									<td>{shotElem.price.toFixed(2)}€</td>
-									<td>{shotElem.amount}</td>
-									<td><button onClick={()=> remove_item(shotElem.name, shotElem.price, cart_table, update_table)}> --- </button></td> 
+									<td className="quantity">
+										<button>-</button>
+										<span>{shotElem.amount}</span>
+										<button>+</button>
+									</td>
+									<td className="price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
+									<td><button onClick={()=> removeItem(shotElem)}> --- </button></td> 
 								</tr>
 							))}
 						</tbody>
 					</table>
-					<button onClick={() => update_table([])}>Vider le panier</button>
+					<button onClick={() => setCartTable([])}>Vider le panier</button>
 				</div>
 			) : (
 				<div>Votre panier est vide</div>
