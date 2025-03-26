@@ -10,6 +10,7 @@ function Navbar() {
       <ul>
         <CustomLink to="/menu">Menu</CustomLink>
         <CustomLink to="/games">Mini-jeux</CustomLink>
+        <CustomLink to="/queue">File d'attente</CustomLink>
       </ul>
     </nav>
   )
