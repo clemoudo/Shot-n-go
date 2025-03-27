@@ -1,18 +1,15 @@
 import TasteScale from './TasteScale'
 import '../styles/ShotItem.css'
 
-function handleClick(shotName) {
-   alert(`Vous voulez acheter 1 ${shotName} ? Très bon choix 🌱✨`)
-}
-
-function ShotItem({ id, cover, name, alcoholLevel, sweetness }) {
+function ShotItem({shotElem, addToCart, removeItem}) {
 	return (
-		<li className='shot-item' key={id} onClick={() => handleClick(name)}>
-         <img className='shot-item-cover' src={cover} alt={`${name} cover`} />
-         {name}
+		<li className='shot-item' key={shotElem.id} onClick={() => addToCart(shotElem)}>
+         <img className='shot-item-cover' src={shotElem.cover} alt={`${shotElem.name} cover`} />
+         <p>{shotElem.name}</p>
          <div>
-            <TasteScale tasteType='alcoholLevel' scaleValue={alcoholLevel} />
-            <TasteScale tasteType='sweetness' scaleValue={sweetness} />
+            <TasteScale tasteType='alcoholLevel' scaleValue={shotElem.alcoholLevel} />
+            <TasteScale tasteType='sweetness' scaleValue={shotElem.sweetness} />
+            <p className='pricecase'>prix:{shotElem.price}€</p>
          </div>
       </li>
 	)
