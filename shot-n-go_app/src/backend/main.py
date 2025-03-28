@@ -36,6 +36,7 @@ class Shot(BaseModel):
     category: str = Field(...)
     sweetness: int = Field(...)
     alcoholLevel: int = Field(...)
+    price:float = Field(...)
 
 @app.post("/add_shot/")
 def add_shot(shot: Shot):

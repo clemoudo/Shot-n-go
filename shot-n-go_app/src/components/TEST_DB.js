@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 function TEST_DB() {
   const [name, setName] = useState("");
+  const [price,setPrice] = useState(0)
   const [alcoholLevel, setAlcoolLevel] = useState(0);
   const [category, setCategory] = useState("");
   const [sweetness, setSweetness] = useState(0);
@@ -10,7 +11,7 @@ function TEST_DB() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const shot = { name, alcoholLevel, category, sweetness };
+    const shot = { name, alcoholLevel, category, price, sweetness };
 
     try {
       const response = await fetch("http://54.36.181.67:8000/add_shot/", {
@@ -71,7 +72,8 @@ function TEST_DB() {
         <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Sweetness" value={sweetness} onChange={(e) => setSweetness(e.target.value)} />
         <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Alcool Level" value={alcoholLevel} onChange={(e) => setAlcoolLevel(e.target.value)} />
         <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="text" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
-        <button type="submit" className="w-full bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-900">Ajouter</button>
+        <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="prix" value={price} onChange={(e) => setPrice(e.target.value)} />
+        <button type="submit" className="w-full bg-gray-800 text-black p-3 rounded-lg hover:bg-gray-900">Ajouter</button>
       </form>
 
       <h2 className="text-3xl font-semibold text-gray-800 mt-10 mb-6">Liste des Shots</h2>
@@ -83,9 +85,9 @@ function TEST_DB() {
             <div key={index} className="bg-white p-5 rounded-xl shadow-md flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-medium text-gray-700">{shot.name}</h3>
-                <p className="text-sm text-gray-500">{shot.category} - {shot.alcoholLevel}% - Sweetness: {shot.sweetness}</p>
+                <p className="text-sm text-gray-500">{shot.category} - {shot.alcoholLevel}% - Sweetness: {shot.sweetness} - prix: {shot.price}</p>
               </div>
-              <button onClick={() => deleteUser(shot.name)} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700">Supprimer</button>
+              <button onClick={() => deleteUser(shot.name)} className="bg-red-500 text-black px-4 py-2 rounded-lg hover:bg-red-700">Supprimer</button>
             </div>
           ))}
         </div>
