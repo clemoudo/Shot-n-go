@@ -9,7 +9,7 @@ function ShotItem({shotElem, addToCart, removeItem}) {
          <div>
             <TasteScale tasteType='alcoholLevel' scaleValue={shotElem.alcoholLevel} />
             <TasteScale tasteType='sweetness' scaleValue={shotElem.sweetness} />
-            <p className='pricecase'>prix:{shotElem.prix}€</p>
+            <p className='pricecase'>prix:{shotElem.price.toFixed(2)}€</p>
          </div>
       </li>
 	)

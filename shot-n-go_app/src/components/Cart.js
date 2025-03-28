@@ -40,7 +40,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 										<div className="product-info">
 											<img src={shotElem.cover} alt={shotElem.name} />
 											<span className="product-name">{shotElem.name}</span>
-											<span class="product-unitPrice">{shotElem.price.toFixed(2)}€</span>
+											<span class="product-unitPrice">{shotElem.price}€</span>
 										</div>
 									</td>
 									<td className="quantity">
@@ -69,7 +69,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 				className='cart-button'
 				onClick={() => setIsOpen(true)}
 			>
-				Ouvrir le Panier
+			{cart_table.length > 0 ? ("ouvrir le panier("+cart_table.length+")"):('ouvrir le panier')}
 			</button>
 		</div>
 		</>
