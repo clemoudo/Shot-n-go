@@ -3,10 +3,9 @@ import { useState, useEffect } from "react";
 function TEST_DB() {
   const [name, setName] = useState("");
   const [alcoholLevel, setAlcoolLevel] = useState(0);
-  const [id, setId] = useState("");
   const [category, setCategory] = useState("");
   const [sweetness,setSweetness] = useState(0)
-  const [users, setUsers] = useState([]); // État pour les utilisateurs
+  const [shots, setShots] = useState([]); // État pour les utilisateurs
   const [loading, setLoading] = useState(true); // État de chargement
 
   // Fonction pour gérer la soumission du formulaire
@@ -18,7 +17,6 @@ function TEST_DB() {
       name: name,
       alcoholLevel : alcoholLevel,
       category : category,
-      id: id,
       sweetness : sweetness
     };
 
@@ -47,14 +45,15 @@ function TEST_DB() {
       alert("Erreur de connexion au serveur.");
     }
   };
-  const deleteUser = async (userEmail) => {
+
+  const deleteUser = async (shot_name) => {
     try {
-      const response = await fetch(`http://54.36.181.67:8000/delete_user/${userEmail}`, {
+      const response = await fetch(`http://54.36.181.67:8000/delete_shot/${shot_name}`, {
         method: "DELETE",
       });
   
       if (response.ok) {
-        console.log(`Utilisateur avec email ${userEmail} supprimé`);
+        console.log(`Shot ${shot_name} supprimé`);
         alert("Utilisateur supprimé !");
         fetchUsers(); // Rafraîchir la liste après suppression
       } else {
@@ -69,10 +68,10 @@ function TEST_DB() {
   // Fonction pour récupérer les utilisateurs depuis l'API
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://54.36.181.67:8000/get_users/");
+      const response = await fetch("http://54.36.181.67:8000/get_shots/");
       if (response.ok) {
         const data = await response.json();
-        setUsers(data.users); // Met à jour les utilisateurs dans l'état
+        setShots(data.shots); // Met à jour les utilisateurs dans l'état
         setLoading(false); // Arrête le chargement
       } else {
         console.error("Erreur lors de la récupération des utilisateurs.");
@@ -125,24 +124,18 @@ function TEST_DB() {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         />
-        <input
-          type="txt"
-          placeholder="id"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
-        />
         <button type="submit">Ajouter</button>
       </form>
 
       <h2>Liste des utilisateurs</h2>
-      {users.length === 0 ? (
+      {shots.length === 0 ? (
         <p>Aucun utilisateur trouvé.</p>
       ) : (
         <ul>
-          {users.map((user, index) => (
+          {shots.map((shot, index) => (
             <li key={index}>
-              <strong>{user.name}</strong> ({user.email}) - {user.role} - {user.age} ans
-              <button onClick={() => deleteUser(user.email)}>Supprimer</button>
+              <strong>{shot.name}</strong> ({shot.alcoholLevel}) - {shot.category} - {shot.sweetness} 
+              <button onClick={() => deleteUser(shot.name)}>Supprimer</button>
             </li>
           ))}
         </ul>
