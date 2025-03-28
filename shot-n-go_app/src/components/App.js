@@ -7,6 +7,7 @@ import Menu from './Menu'
 import Games from './Games'
 import Queue from './Queue'
 import TEST_DB from './TEST_DB'
+import Login from './Login'
 import { Route, Routes } from "react-router-dom"
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
 					<Route path="/games" element={ <Games /> } />
 					<Route path="/queue" element={<Queue />} />
 					<Route path='/TEST_DB' element={<TEST_DB />}/>
+					<Route path='/Login' element={<Login />}/>
 				</Routes>
 			</div>
 			<Footer />
