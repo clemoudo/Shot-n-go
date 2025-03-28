@@ -4,141 +4,91 @@ function TEST_DB() {
   const [name, setName] = useState("");
   const [alcoholLevel, setAlcoolLevel] = useState(0);
   const [category, setCategory] = useState("");
-  const [sweetness,setSweetness] = useState(0)
-  const [shots, setShots] = useState([]); // État pour les utilisateurs
-  const [loading, setLoading] = useState(true); // État de chargement
+  const [sweetness, setSweetness] = useState(0);
+  const [shots, setShots] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fonction pour gérer la soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Crée un objet user à envoyer à l'API
-    const shot = {
-      name: name,
-      alcoholLevel : alcoholLevel,
-      category : category,
-      sweetness : sweetness
-    };
+    const shot = { name, alcoholLevel, category, sweetness };
 
     try {
-      // Envoie la requête POST au back-end FastAPI
       const response = await fetch("http://54.36.181.67:8000/add_shot/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Déclare que les données envoyées sont en JSON
-        },
-        body: JSON.stringify(shot), // Transforme l'objet JavaScript en JSON
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(shot),
       });
 
-      // Vérifie si la requête a réussi
       if (response.ok) {
-        const data = await response.json();
-        console.log("Utilisateur ajouté avec ID:", data.user_id);
-        alert("Utilisateur ajouté !");
-        fetchUsers(); // Rafraîchir la liste des utilisateurs après l'ajout
+        alert("Shot ajouté !");
+        fetchUsers();
       } else {
-        console.error("Erreur lors de l'ajout de l'utilisateur.");
-        alert("Erreur lors de l'ajout de l'utilisateur.");
+        alert("Erreur lors de l'ajout du shot.");
       }
     } catch (error) {
-      console.error("Erreur:", error);
       alert("Erreur de connexion au serveur.");
     }
   };
 
   const deleteUser = async (shot_name) => {
     try {
-      const response = await fetch(`http://54.36.181.67:8000/delete_shot/${shot_name}`, {
-        method: "DELETE",
-      });
-  
+      const response = await fetch(`http://54.36.181.67:8000/delete_shot/${shot_name}`, { method: "DELETE" });
       if (response.ok) {
-        console.log(`Shot ${shot_name} supprimé`);
-        alert("Utilisateur supprimé !");
-        fetchUsers(); // Rafraîchir la liste après suppression
+        alert("Shot supprimé !");
+        fetchUsers();
       } else {
-        console.error("Erreur lors de la suppression.");
-        alert("Utilisateur introuvable.");
+        alert("Shot introuvable.");
       }
     } catch (error) {
-      console.error("Erreur:", error);
       alert("Erreur de connexion au serveur.");
     }
   };
-  // Fonction pour récupérer les utilisateurs depuis l'API
+
   const fetchUsers = async () => {
     try {
       const response = await fetch("http://54.36.181.67:8000/get_shots/");
       if (response.ok) {
         const data = await response.json();
-        setShots(data.shots); // Met à jour les utilisateurs dans l'état
-        setLoading(false); // Arrête le chargement
-      } else {
-        console.error("Erreur lors de la récupération des utilisateurs.");
+        setShots(data.shots);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Erreur de connexion:", error);
     }
   };
 
-  // Utilisation de useEffect pour charger les utilisateurs au démarrage
   useEffect(() => {
-    fetchUsers(); // Appeler fetchUsers immédiatement après le premier rendu
-
-    // Mettre en place un intervalle pour récupérer les utilisateurs toutes les 5 secondes
-    const intervalId = setInterval(fetchUsers, 10000); // Rafraîchir toutes les 5 secondes
-
-    // Nettoyage de l'intervalle lors du démontage du composant
+    fetchUsers();
+    const intervalId = setInterval(fetchUsers, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
-  if (loading) {
-    return <div>Chargement des utilisateurs...</div>;
-  }
-
   return (
-    <div>
-      <h2>Ajouter un utilisateur</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Nom"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Sweetness"
-          value={sweetness}
-          onChange={(e) => setSweetness(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Alcool Level"
-          value={alcoholLevel}
-          onChange={(e) => setAlcoolLevel(e.target.value)}
-        />
-        <input
-          type="txt"
-          placeholder="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
-        <button type="submit">Ajouter</button>
+    <div className="p-8 max-w-3xl mx-auto bg-gray-50 min-h-screen flex flex-col items-center">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-6">Ajouter un Shot</h2>
+      <form onSubmit={handleSubmit} className="w-full bg-white p-6 rounded-xl shadow-lg space-y-4">
+        <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="text" placeholder="Nom" value={name} onChange={(e) => setName(e.target.value)} />
+        <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Sweetness" value={sweetness} onChange={(e) => setSweetness(e.target.value)} />
+        <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Alcool Level" value={alcoholLevel} onChange={(e) => setAlcoolLevel(e.target.value)} />
+        <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="text" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <button type="submit" className="w-full bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-900">Ajouter</button>
       </form>
 
-      <h2>Liste des utilisateurs</h2>
-      {shots.length === 0 ? (
-        <p>Aucun utilisateur trouvé.</p>
+      <h2 className="text-3xl font-semibold text-gray-800 mt-10 mb-6">Liste des Shots</h2>
+      {loading ? (
+        <p className="text-gray-500">Chargement...</p>
       ) : (
-        <ul>
+        <div className="w-full grid grid-cols-1 gap-4">
           {shots.map((shot, index) => (
-            <li key={index}>
-              <strong>{shot.name}</strong> ({shot.alcoholLevel}) - {shot.category} - {shot.sweetness} 
-              <button onClick={() => deleteUser(shot.name)}>Supprimer</button>
-            </li>
+            <div key={index} className="bg-white p-5 rounded-xl shadow-md flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700">{shot.name}</h3>
+                <p className="text-sm text-gray-500">{shot.category} - {shot.alcoholLevel}% - Sweetness: {shot.sweetness}</p>
+              </div>
+              <button onClick={() => deleteUser(shot.name)} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700">Supprimer</button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
