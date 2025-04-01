@@ -2,6 +2,8 @@ import ShoppingList from './ShoppingList'
 import Cart from './Cart'
 import { useState } from 'react';
 
+
+
 function Menu() {
    const [cart_table, setCartTable] = useState([]);
 
