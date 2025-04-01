@@ -6,6 +6,10 @@ import '../styles/ShoppingList.css'
 function ShoppingList({addToCart, removeItem}) {
 	const [shots, setShots] = useState([]);
 	const [loading,setLoading] = useState(true)
+	
+	
+	
+	
 	const fetchShots = async () => {
 		try {
 		  const response = await fetch("http://54.36.181.67:8000/get_shots/");

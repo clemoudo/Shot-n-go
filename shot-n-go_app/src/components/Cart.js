@@ -69,7 +69,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 				className='cart-button'
 				onClick={() => setIsOpen(true)}
 			>
-			{cart_table.length > 0 ? ("ouvrir le panier("+cart_table.length+")"):('ouvrir le panier')}
+			{cart_table.length > 0 ? ("ouvrir le panier(" + cart_table.length + ")"):('ouvrir le panier')}
 			</button>
 		</div>
 		</>
