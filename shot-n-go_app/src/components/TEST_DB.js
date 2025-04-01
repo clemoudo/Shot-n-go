@@ -25,6 +25,7 @@
       formData.append("category", category);
       formData.append("price", price);
       formData.append("sweetness", sweetness);
+      formData.append("stock",100)
   
       try {
         // Envoi du fichier et des autres données dans une seule requête POST
@@ -101,15 +102,15 @@
               <div key={index} className="bg-white p-5 rounded-xl shadow-md flex justify-between items-center">
                 <div>
                   <h3 className="text-lg font-medium text-gray-700">{shot.name}</h3>
-                  <p className="text-sm text-gray-500">{shot.category} - {shot.alcoholLevel}% - Sweetness: {shot.sweetness} - prix: {shot.price}</p>
+                  <p className="text-sm text-gray-500">categorie : {shot.category} - niveau d'alcool: {shot.alcoholLevel}/3 - Sweetness: {shot.sweetness}/3 - prix: {(shot.price).toFixed(2)}€</p>
                   {shot.cover && (
-            <img 
-              src={`data:image/jpeg;base64,${shot.cover}`} 
-              alt="Cover" 
-              style={{ width: 100, height: 100 }}
-            />
-          )}  
-                </div>
+                    <img 
+                      src={`data:image/jpeg;base64,${shot.cover}`} 
+                      alt="Cover" 
+                      style={{ width: 100, height: 100 }}
+                    />
+                  )}  
+              </div>
                 <button onClick={() => deleteShot(shot.name)} className="bg-red-500 text-black px-4 py-2 rounded-lg hover:bg-red-700">Supprimer</button>
               </div>
             ))}

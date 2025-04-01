@@ -45,7 +45,7 @@ function ShotItem({ shotElem, addToCart, removeItem }) {
             <div>
                 <TasteScale tasteType="alcoholLevel" scaleValue={shotElem.alcoholLevel} />
                 <TasteScale tasteType="sweetness" scaleValue={shotElem.sweetness} />
-                <p className="pricecase">prix: {shotElem.price.toFixed(2)}€</p>
+                {(shotElem.stock <= 10)?(<p className="pricecase">!!OUT OF STOCK!!</p>):(<p className="pricecase">prix: {shotElem.price.toFixed(2)}€</p>)}
             </div>
         </li>
     );
