@@ -7,6 +7,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 		(acc, shotType) => acc + shotType.amount * shotType.price, 0
 	)
 
+	
 	return isOpen ? (
 		<>
 		<div class="overlay active"></div>
@@ -38,7 +39,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 								<tr key={`${shotElem.id}`}>
 									<td className="product">
 										<div className="product-info">
-											<img src={shotElem.cover} alt={shotElem.name} />
+											<img src={`data:image/jpeg;base64,${shotElem.cover}`} alt={shotElem.name} />
 											<span className="product-name">{shotElem.name}</span>
 											<span class="product-unitPrice">{shotElem.price}€</span>
 										</div>
