@@ -42,6 +42,7 @@ class Shot(BaseModel):
     alcoholLevel: int
     price: float
     cover: str
+    stock: int
 
 
 
@@ -53,6 +54,7 @@ async def add_shot(
     price: float = Form(...),
     sweetness: int = Form(...),
     file: UploadFile = File(...),  # Le fichier d'image
+    stock: int = Form(...),
 ):
     shots_ref = collection_shots.order_by("id", direction=firestore.Query.DESCENDING).limit(1).stream()
     last_id = "s000"
@@ -74,7 +76,8 @@ async def add_shot(
         "price": price,
         "sweetness": sweetness,
         "cover": image_base64,
-        "id": new_id
+        "id": new_id,
+        "stock":stock
     }
 
     collection_shots.document(new_id).set(shot_data)

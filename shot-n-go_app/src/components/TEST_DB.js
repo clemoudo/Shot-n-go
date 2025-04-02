@@ -85,9 +85,9 @@
         <h2 className="text-3xl font-semibold text-gray-800 mb-6">Ajouter un Shot</h2>
         <form onSubmit={handleSubmit} className="w-full bg-white p-6 rounded-xl shadow-lg space-y-4">
           <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="text" placeholder="Nom" value={name} onChange={(e) => setName(e.target.value)} />
-          <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Sweetness" value={sweetness} onChange={(e) => setSweetness(e.target.value)} />
-          <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Alcool Level" value={alcoholLevel} onChange={(e) => setAlcoolLevel(e.target.value)} />
-          <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="text" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+          <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Sweetness" value={sweetness} max={3} min={1} onChange={(e) => setSweetness(e.target.value)} />
+          <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="Alcool Level" value={alcoholLevel} max={3} min={1} onChange={(e) => setAlcoolLevel(e.target.value)} />
+          <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="text" placeholder="Category" value={category}  onChange={(e) => setCategory(e.target.value)} />
           <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="number" placeholder="prix" value={price} onChange={(e) => setPrice(e.target.value)} />
           <input className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" type="file" onChange={(e) => setCover(e.target.files[0])} />
           <button type="submit" className="w-full bg-gray-800 text-black p-3 rounded-lg hover:bg-gray-900">Ajouter</button>

@@ -8,16 +8,17 @@ function Menu() {
    const [cart_table, setCartTable] = useState([]);
 
    // Fonction pour ajouter un article
-   const addToCart = (shotElem) => {
+   const addToCart = (shotElem,addedAmount) => {
       setCartTable((prevCart) => {
          const currentShot = prevCart.find((shot) => shot.id === shotElem.id);
-
-         if (currentShot) {
-               return prevCart.map((shot) =>
-                  shot.id === shotElem.id ? { ...shot, amount: shot.amount + 1 } : shot
-               );
-         } else {
-               return [...prevCart, { ...shotElem, amount: 1 }];
+         if (addedAmount > 0){
+            if (currentShot) {
+                  return prevCart.map((shot) =>
+                     shot.id === shotElem.id ? { ...shot, amount: shot.amount + addedAmount } : shot
+                  );
+            } else {
+                  return [...prevCart, { ...shotElem, amount: addedAmount }];
+            }
          }
       });
    };
