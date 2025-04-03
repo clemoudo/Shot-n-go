@@ -29,7 +29,7 @@
   
       try {
         // Envoi du fichier et des autres données dans une seule requête POST
-        const response = await fetch("http://54.36.181.67:8000/add_shot/", {
+        const response = await fetch("https://54.36.181.67:8000/add_shot/", {
           method: "POST",
           body: formData  // formData contenant l'image et les autres données
         })
@@ -49,7 +49,7 @@
     };
     const deleteShot = async (shot_name) => {
       try {
-        const response = await fetch(`http://54.36.181.67:8000/delete_shot/${shot_name}`, { method: "DELETE" });
+        const response = await fetch(`https://54.36.181.67:8000/delete_shot/${shot_name}`, { method: "DELETE" });
         if (response.ok) {
           alert("Shot supprimé !");
           fetchShots();
@@ -63,7 +63,7 @@
 
     const fetchShots = async () => {
       try {
-        const response = await fetch("http://54.36.181.67:8000/get_shots/");
+        const response = await fetch("https://54.36.181.67:8000/get_shots/");
         if (response.ok) {
           const data = await response.json();
           setShots(data.shots);
