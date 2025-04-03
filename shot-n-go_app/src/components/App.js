@@ -9,7 +9,7 @@
 	import TEST_DB from './TEST_DB'
 	import Login from './Login'
 	import { Route, Routes } from "react-router-dom"
-	import Leaderboard from './leaderboard';
+	import Leaderboard from './Leaderboard';
 
 	function App() {
 		return (
