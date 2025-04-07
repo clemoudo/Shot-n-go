@@ -1,13 +1,26 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import AgeVerification from "./AgeVerification.js";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showAgeVerification, setShowAgeVerification] = useState(false);
+  const [isAgeVerified, setIsAgeVerified] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", email, "Password:", password);
+    setShowAgeVerification(true);
+  };
+
+  const handleAgeConfirm = (confirmed) => {
+    setShowAgeVerification(false);
+    if (confirmed) {
+      setIsAgeVerified(true);
+      console.log("Email:", email, "Password:", password);
+    } else {
+      alert("You must be at least 18 years old to continue.");
+    }
   };
 
   return (
@@ -52,8 +65,10 @@ function Login() {
           New user? <Link to="/register" className="text-blue-500">Register Here</Link>
         </p>
       </div>
+
+      {showAgeVerification && <AgeVerification onConfirm={handleAgeConfirm} />}
     </div>
   );
 }
 
-export default Login
+export default Login;
