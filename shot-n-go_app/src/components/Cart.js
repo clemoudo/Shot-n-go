@@ -6,7 +6,10 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 	const total = cart_table.reduce(
 		(acc, shotType) => acc + shotType.amount * shotType.price, 0
 	)
-
+	let nbr_short_cart = 0
+	cart_table.forEach(element => {
+		nbr_short_cart += element.amount
+	});
 	
 	return isOpen ? (
 		<>
@@ -70,7 +73,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 				className='cart-button'
 				onClick={() => setIsOpen(true)}
 			>
-			{cart_table.length > 0 ? ("ouvrir le panier(" + cart_table.length + ")"):('ouvrir le panier')}
+			{nbr_short_cart > 0 ? ("ouvrir le panier(" + nbr_short_cart + ")"):('ouvrir le panier')}
 			</button>
 		</div>
 		</>
