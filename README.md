@@ -34,6 +34,11 @@ Le fichier login.jsx est le composant qui gère l'interface de connexion de l'ut
 L'objectif de ce composant est donc de permettre à l'utilisateur de se connecter en toute sécurité avec Firebase et de récupérer un token d'authentification à utiliser pour accéder à des ressources protégées, comme une API.
 
 
+MODIFS : 
+
+useHistory ==> useNavigate (useHistory est obselète) permet de rediriger l'utilisateur après connexion réussie.
+
+
 ## context/AuthContext.js
 
 ### Contexte global d'authentification pour partager l'état de l'utilisateur dans toute l'application
