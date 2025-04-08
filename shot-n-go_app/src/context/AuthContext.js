@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { auth } from "../services/firebase";
+import { auth } from "../firebase/Firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const AuthContext = createContext();
@@ -10,10 +10,12 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user); // Met à jour l'état selon l'authentification
+      setCurrentUser(user);
+      setLoading(false);
     });
     return unsubscribe;
   }, []);
@@ -22,8 +24,18 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   };
 
+  // Fonction pour récupérer le token Firebase de l'utilisateur
+  const getToken = async () => {
+    if (!auth.currentUser) throw new Error("Utilisateur non connecté");
+    return await auth.currentUser.getIdToken();
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <AuthContext.Provider value={{ currentUser, logout }}>
+    <AuthContext.Provider value={{ currentUser, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );
