@@ -48,3 +48,7 @@ Le fichier authContext.js gère l'état de l'authentification de manière centra
 
 L'objectif principal d'authContext.js est de permettre à tous les composants de l'application de connaître l'état d'authentification actuel de l'utilisateur sans avoir à passer cet état manuellement entre les composants, rendant l'application plus modulaire et flexible.
 
+
+## Utilisation de useEffect dans login.jsx
+
+Permet de faire en sorte que lorsqu'un utilisateur est déjà connecté, qu'il soit directement envoyé sur une autre page que la page de "login"
