@@ -2,7 +2,7 @@
 
 Après connexion sur le VPS. 
 
-Passer sur le venv en tapant : ```source .venv/bin/activate```
+Passer sur le venv en tapant (en étant dans ~) : ```source .venv/bin/activate```
 
 Ensuite ```cd projet_dev3/```
 
