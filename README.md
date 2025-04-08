@@ -52,3 +52,8 @@ L'objectif principal d'authContext.js est de permettre à tous les composants de
 ## Utilisation de useEffect dans login.jsx
 
 Permet de faire en sorte que lorsqu'un utilisateur est déjà connecté, qu'il soit directement envoyé sur une autre page que la page de "login"
+
+
+## components/PrivateRoute.js
+
+Le fichier PrivateRoute.js a pour rôle de protéger certaines routes de l'application en s'assurant que l'utilisateur est authentifié avant de pouvoir accéder à des pages spécifiques. Si l'utilisateur n'est pas connecté, il est redirigé vers une page de connexion, comme celle définie dans Login.jsx. C'est une manière de contrôler l'accès à des ressources ou des pages qui ne devraient être accessibles que par les utilisateurs authentifiés.
