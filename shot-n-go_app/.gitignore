@@ -26,3 +26,7 @@ yarn-error.log*
 docker-compose.yml
 Dockerfile
 .dockerignore
+
+#auth
+
+firebase/

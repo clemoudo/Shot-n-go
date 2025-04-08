@@ -1,13 +1,45 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../services/firebase";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email, "Password:", password);
+    setError("");
+
+    try {
+      // Firebase login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Récupère le token
+      const token = await user.getIdToken();
+
+      // Envoie du token à ton API FastAPI
+      const response = await fetch("https://ton-vps.com/api/protected", {
+        method: "GET", // ou "POST" selon ton endpoint
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur côté API");
+      }
+
+      const data = await response.json();
+      console.log("Réponse API FastAPI :", data);
+
+      // Tu peux maintenant rediriger, ou stocker l’état utilisateur
+    } catch (err) {
+      console.error("Erreur de connexion :", err);
+      setError("Échec de la connexion. Vérifie tes identifiants.");
+    }
   };
 
   return (
@@ -40,6 +72,8 @@ function Login() {
             />
           </div>
 
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
@@ -49,11 +83,14 @@ function Login() {
         </form>
 
         <p className="text-center mt-4">
-          New user? <Link to="/register" className="text-blue-500">Register Here</Link>
+          New user?{" "}
+          <Link to="/register" className="text-blue-500">
+            Register Here
+          </Link>
         </p>
       </div>
     </div>
   );
 }
 
-export default Login
+export default Login;
