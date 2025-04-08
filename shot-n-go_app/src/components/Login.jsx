@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/firebase";
 
@@ -7,24 +7,24 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const history = useHistory(); // Utilisation de useHistory pour la redirection
+  const navigate = useNavigate();
 
   // Vérifie si l'utilisateur est déjà connecté
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Si l'utilisateur est connecté, redirige vers la page d'accueil ou autre page protégée
-        history.push("/dashboard"); // Remplace "/dashboard" par la page de ton choix
+        // Si l'utilisateur est connecté, redirige vers la page protégée
+        navigate("/leaderboard"); // Page protégée après la connexion
       }
     });
 
     // Nettoyage de l'abonnement lorsque le composant est démonté
     return () => unsubscribe();
-  }, [history]);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Réinitialiser l'erreur
 
     try {
       // Connexion Firebase
@@ -34,7 +34,7 @@ function Login() {
       // Récupère le token
       const token = await user.getIdToken();
 
-      // Envoie du token à ton API FastAPI
+      // Envoie du token à ton API FastAPI (si nécessaire)
       const response = await fetch("https://ton-vps.com/api/protected", {
         method: "GET", // ou "POST" selon ton endpoint
         headers: {
@@ -50,7 +50,7 @@ function Login() {
       console.log("Réponse API FastAPI :", data);
 
       // Redirige vers une page après la connexion réussie
-      history.push("/dashboard"); // Remplace "/dashboard" par la page de destination souhaitée
+      navigate("/leaderboard");  // Remplace "/leaderboard" par la page de destination souhaitée
 
     } catch (err) {
       console.error("Erreur de connexion :", err);

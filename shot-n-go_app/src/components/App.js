@@ -6,15 +6,15 @@ import Games from './Games';
 import Queue from './Queue';
 import TEST_DB from './TEST_DB';
 import Login from './Login';
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Leaderboard from './Leaderboard';
 
 // Importer le AuthProvider
-import { AuthProvider } from './contexts/AuthContext';
-// Importer PrivateRoute
-import PrivateRoute from './components/PrivateRoute'; // Assurez-vous que PrivateRoute.js est dans ce dossier
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function App() {
+  const { currentUser } = useAuth(); // Utilisation du contexte pour vérifier si l'utilisateur est connecté
+
   return (
     // Envelopper l'application avec le AuthProvider
     <AuthProvider>
@@ -27,12 +27,14 @@ function App() {
             <Route path="/games" element={<Games />} />
             <Route path="/queue" element={<Queue />} />
             <Route path='/TEST_DB' element={<TEST_DB />} />
+            
+            {/* Page login (toujours accessible) */}
             <Route path='/login' element={<Login />} />
             
-            {/* Route protégée : Si l'utilisateur est connecté, la route est accessible */}
-            <PrivateRoute path="/leaderboard" element={<Leaderboard />} />
-
-            {/* Si tu as d'autres pages protégées, tu peux les ajouter ici, de la même manière */}
+            {/* Si l'utilisateur n'est pas connecté, il sera redirigé vers /login */}
+            <Route path="/leaderboard" element={currentUser ? <Leaderboard /> : <Navigate to="/login" />} />
+            
+            {/* Ajoute d'autres pages protégées de la même manière */}
           </Routes>
         </div>
         <Footer />

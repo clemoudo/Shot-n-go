@@ -1,34 +1,30 @@
-// src/context/AuthContext.js
+import { createContext, useContext, useState, useEffect } from "react";
+import { auth } from "../services/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
-import React, { createContext, useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../services/firebase'; // ton fichier firebase.js
+const AuthContext = createContext();
 
-// Créer le contexte
-export const AuthContext = createContext();
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
-// Fournisseur du contexte
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // Suivi de l'état de l'utilisateur
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user); // met à jour l'état de l'utilisateur
-      setLoading(false); // arrêt de la phase de chargement
+      setCurrentUser(user); // Met à jour l'état selon l'authentification
     });
-
-    return () => unsubscribe(); // nettoyer l'abonnement quand le composant est démonté
+    return unsubscribe;
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>; // Afficher un indicateur de chargement
-  }
+  const logout = async () => {
+    await signOut(auth);
+  };
 
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ currentUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
