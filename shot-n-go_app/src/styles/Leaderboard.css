@@ -1,0 +1,85 @@
+.leaderboard {
+    width: 60%;
+    margin: 40px auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+thead {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+thead th {
+    padding: 18px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #f8f9fa;
+    font-size: 18px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+tbody tr {
+    transition: all 0.3s ease-in-out;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+tbody tr:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+td {
+    padding: 18px;
+    font-size: 18px;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Animation pour une entrée fluide */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.leaderboard, tbody tr {
+    animation: fadeIn 0.8s ease-in-out;
+}
+

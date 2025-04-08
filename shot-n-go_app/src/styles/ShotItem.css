@@ -8,7 +8,36 @@
 	margin: 10px;
 	display: flex;
 	align-items: flex-start;
-	justify-content: center;
+	justify-content: center top;
 	flex-direction: column;
 	text-transform: capitalize;
 }
+
+.priceButton{
+	width: 100%;
+}
+
+.pricecase{
+	margin-bottom: 0;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse; /* Pour éviter les espaces entre les bordures */
+  }
+  
+  td.quantity {
+	text-align: center; /* Centre le contenu */
+  }
+  
+  button {
+	padding: 5px 10px;
+	margin: 0 5px;
+	cursor: pointer;
+  }
+  
+  span {
+	display: inline-block;
+	min-width: 20px;
+	text-align: center;
+  }
