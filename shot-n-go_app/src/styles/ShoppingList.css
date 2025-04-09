@@ -10,3 +10,59 @@
 .categories {
 	text-align: left;
 }
+
+.sort_by {
+	text-align: left;
+	padding: 16px;
+	width: 15%;
+}
+
+/* Dropdown Button */
+.dropbtn {
+	background-color: #04AA6D;
+	color: white;
+	padding: 16px;
+	font-size: 16px;
+	width: 100%;
+	border: none;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  
+/* S'assurer que le bouton est bien à gauche */
+.dropdown {
+	position: relative;
+	display: block; /* ou inline-block si tu veux qu’il ne prenne pas toute la ligne */
+}
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 100%; /* just en dessous du bouton */
+	background-color: #f1f1f1;
+	width: 100%;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 999; /* bien au-dessus */
+}	
+  
+  /* Links inside the dropdown */
+  .dropdown-content button {
+	color: black;
+	width: 100%;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content button:hover {background-color: #ddd;}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {
+	display: block;
+}
+  
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+  .dropdown:hover .dropbtn {background-color: #3e8e41;}

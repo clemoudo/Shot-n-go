@@ -24,7 +24,7 @@
 						<Route path="/" element={<Home />} />
 						<Route path="/menu" element={ <Menu /> } />
 						<Route path="/games" element={ <Games /> } />
-						<Route path="/queue" element={<Queue />} />
+						<Route path="/Queue" element={<Queue />} />
 						<Route path='/TEST_DB' element={<TEST_DB />}/>
 						<Route path='/Login' element={<Login />}/>
 						<Route path="/leaderboard" element={<Leaderboard />} />

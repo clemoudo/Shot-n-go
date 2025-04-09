@@ -25,7 +25,7 @@ origins = [
     "http://172.19.0.1:3000",
     "https://mon-front.vercel.app",
     "https://mon-site.netlify.app",
-    "https://mon-domaine.com"
+    "https://shot-n-go.m1-1.ephec-ti.be/"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +46,7 @@ class Shot(BaseModel):
 
 
 
-@app.post("/add_shot/")
+@app.post("/shot/send/")
 async def add_shot(
     name: str = Form(...),
     alcoholLevel: int = Form(...),
@@ -85,7 +85,7 @@ async def add_shot(
     return {"message": "Shot ajouté", "shot_id": new_id}
 
 # Autres routes comme précédemment...
-@app.get("/get_shots/")
+@app.get("/shot/receive/")
 def get_shots():
     shots = [doc.to_dict() for doc in collection_shots.stream()]
     return {"shots": shots}
@@ -95,7 +95,7 @@ def get_shots():
 def read_root():
     return {"message": "Hello FastAPI & Firestore!"}
 
-@app.delete("/delete_shot/{shot_name}")
+@app.delete("/shot/supr/{shot_name}")
 def delete_shot(shot_name: str):
     """Supprime un utilisateur par email."""
     shot_to_delete = collection_shots.where("name", "==",shot_name).stream()
@@ -110,3 +110,27 @@ def delete_shot(shot_name: str):
         return {"message": f"shot {shot_name} supprimé"}
     else:
         return {"error": "Utilisateur non trouvé"}, 404
+
+
+
+@app.get("/machine/gt_all")
+def get_all_machines():
+    machine_collection = db.collection("machines")
+    docs = machine_collection.stream()
+    machines = [(doc.to_dict()).nom for doc in docs]
+    return {"machines":machines}
+
+@app.get("/queue")
+def get_queue():
+    user_collection = db.collection("User")
+    docs = user_collection.stream()
+
+    queue = []
+    for doc in docs:
+        data = doc.to_dict()
+        full_name = f"{data.get('Prénom', '')} {data.get('Nom', '')}".strip()
+        queue.append({
+            "id": doc.id,
+            "name": full_name
+        })
+    return{"User": queue}
