@@ -12,7 +12,7 @@ function Navbar() {
         <CustomLink to="/games">Mini-jeux</CustomLink>
         <CustomLink to="/leaderboard">Leaderboard</CustomLink>
         <CustomLink to="/queue">File d'attente</CustomLink>
-        <CustomLink to="/TEST_DB">TEST</CustomLink>
+        <CustomLink to="/Admin_pannel">Admin_pannel</CustomLink>
         <CustomLink to="/Login">Authentification</CustomLink>
       </ul>
     </nav>

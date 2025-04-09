@@ -7,7 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import base64
 from io import BytesIO
-
+from typing import List
 # Initialiser Firebase Admin avec Firestore uniquement
 cred = credentials.Certificate("KEY/shot-n-go-babc8-firebase-adminsdk-fbsvc-e4ec42301a.json")
 firebase_admin.initialize_app(cred)
@@ -18,7 +18,7 @@ app = FastAPI()
 # Connexion à Firestore
 db = firestore.Client.from_service_account_json("KEY/shot-n-go-babc8-firebase-adminsdk-fbsvc-e4ec42301a.json")
 collection_shots = db.collection("Shots")  # Collection pour les shots
-
+machines_collection = db.collection("machines")
 # Liste des origines autorisées (CORS)
 origins = [
     "http://localhost:3000",
@@ -45,7 +45,14 @@ class Shot(BaseModel):
     stock: int
 
 
+class AlcoolItem(BaseModel):
+    alcool: Shot
+    stock: bool
 
+class MachineSchema(BaseModel):
+    nom : str
+    alcools : List[AlcoolItem]
+    queue : List[str]
 @app.post("/shot/send/")
 async def add_shot(
     name: str = Form(...),
@@ -113,12 +120,73 @@ def delete_shot(shot_name: str):
 
 
 
-@app.get("/machine/gt_all")
+@app.get("/machine/gt_all", response_model=List[MachineSchema])
 def get_all_machines():
-    machine_collection = db.collection("machines")
-    docs = machine_collection.stream()
-    machines = [(doc.to_dict()).nom for doc in docs]
-    return {"machines":machines}
+    docs = machines_collection.stream()
+    machines = []
+
+    for doc in docs:
+        data = doc.to_dict()
+        nom = data.get("nom", "")
+        queue = data.get("queue", [])
+        alcools_raw = data.get("alcools", [])
+
+        alcools = []
+        for item in alcools_raw:
+            alcool_ref = item.get("alcool")
+            stock = item.get("stock", False)
+
+            if isinstance(alcool_ref, firestore.DocumentReference):
+                alcool_doc = alcool_ref.get()
+                if alcool_doc.exists:
+                    alcool_data = alcool_doc.to_dict()
+                    alcools.append({
+                        "alcool": alcool_data,
+                        "stock": stock
+                    })
+
+        machines.append({
+            "nom": nom,
+            "alcools": alcools,
+            "queue": queue
+        })
+
+    return machines
+
+@app.post("/machine/send")
+def add_machines(
+    name: str = Form(...),
+    alcools: list = Form(...)
+):
+    machine_ref = machines_collection.order_by("id", direction=firestore.Query.DESCENDING).limit(1).stream()
+    last_id = "m000"
+    for doc_machine in machine_ref:
+        fetched_id = doc_machine.to_dict().get("id", "m000")
+        if fetched_id.startswith("m") and fetched_id[1:].isdigit():
+            last_id = fetched_id
+    
+    last_num = int(last_id[1:])
+    new_id = f"m{last_num + 1:03d}"
+
+    alcool_refs = []
+    for shot_id in alcools:
+        alcool_refs.append({
+            "alcool": db.document(f"Shots/{shot_id}"),
+            "stock": True  # tu peux changer dynamiquement si besoin
+        })
+    
+
+    machine_data = {
+        "id": new_id,
+        "nom": name,
+        "alcools": alcool_refs,
+        "queue": []
+    }
+
+    machines_collection.document(new_id).set(machine_data)
+
+    return {"message": "Machine ajoutée", "machine_id": new_id}
+
 
 @app.get("/queue")
 def get_queue():

@@ -1,14 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-function TEST_DB() {
+function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [alcoholLevel, setAlcoolLevel] = useState(0);
   const [category, setCategory] = useState("");
   const [sweetness, setSweetness] = useState(0);
   const [cover, setCover] = useState(null);  // Accepter un fichier pour l'image
-  const [shots, setShots] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +24,7 @@ function TEST_DB() {
     formData.append("category", category);
     formData.append("price", price);
     formData.append("sweetness", sweetness);
-    formData.append("stock",100)
+    formData.append("stock",100)  
 
     try {
       // Envoi du fichier et des autres données dans une seule requête POST
@@ -61,24 +60,6 @@ function TEST_DB() {
     }
   };
 
-  const fetchShots = async () => {
-    try {
-      const response = await fetch("http://54.36.181.67:8000/shot/receive/");
-      if (response.ok) {
-        const data = await response.json();
-        setShots(data.shots);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Erreur de connexion:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchShots();
-    const intervalId = setInterval(fetchShots, 10000);
-    return () => clearInterval(intervalId);
-  }, []);
 
   return (
     <div className="p-8 max-w-3xl mx-auto bg-gray-50 min-h-screen flex flex-col items-center">
@@ -120,4 +101,4 @@ function TEST_DB() {
   );
 }
 
-export default TEST_DB;
+export default Admin_pannel_shot;
