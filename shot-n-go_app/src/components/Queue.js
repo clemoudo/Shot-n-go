@@ -9,7 +9,7 @@ function Queue() {
   // 🔄 Charger la file depuis FastAPI
   const fetchQueue = async () => {
     try {
-      const response = await fetch("http://54.36.181.67:8000/queue");
+      const response = await fetch("/api/queue");
       const data = await response.json();
       if (data.length > 0) {
         data[0].status = "En cours...";
@@ -42,7 +42,7 @@ function Queue() {
     }
 
     try {
-      const response = await fetch("http://54.36.181.67:8000/queue", {
+      const response = await fetch("/api/queue", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: trimmedUser }),
@@ -64,7 +64,7 @@ function Queue() {
   // ✅ Servir le prochain
   const serveNext = async () => {
     try {
-      const response = await fetch("http://54.36.181.67:8000/queue", {
+      const response = await fetch("/api/queue", {
         method: "DELETE",
       });
       if (response.ok) {

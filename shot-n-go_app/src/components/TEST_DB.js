@@ -29,7 +29,7 @@ function TEST_DB() {
 
     try {
       // Envoi du fichier et des autres données dans une seule requête POST
-      const response = await fetch("https://54.36.181.67:8000/shot/send/", {
+      const response = await fetch("/api/shot/send/", {
         method: "POST",
         body: formData  // formData contenant l'image et les autres données
       })
@@ -49,7 +49,7 @@ function TEST_DB() {
   };
   const deleteShot = async (shot_name) => {
     try {
-      const response = await fetch(`http://54.36.181.67:8000/shot/supr/{shot_name}`, { method: "DELETE" });
+      const response = await fetch(`/api/shot/supr/{shot_name}`, { method: "DELETE" });
       if (response.ok) {
         alert("Shot supprimé !");
         fetchShots();
@@ -63,7 +63,7 @@ function TEST_DB() {
 
   const fetchShots = async () => {
     try {
-      const response = await fetch("http://54.36.181.67:8000/shot/receive/");
+      const response = await fetch("/api/shot/receive/");
       if (response.ok) {
         const data = await response.json();
         setShots(data.shots);
