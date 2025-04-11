@@ -14,7 +14,7 @@ function Queue() {
       if (data.length > 0) {
         data[0].status = "En cours...";
       }
-      console.log("d" ,data)
+      // console.log("d" ,data)
       
       setQueue(data.User);
     } catch (error) {
