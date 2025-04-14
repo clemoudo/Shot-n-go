@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import '../styles/Cart.css'
 
-function Cart({cart_table, setCartTable, addToCart, removeItem}) {
+function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clearCart}) {
 	const [isOpen, setIsOpen] = useState(false)
 	const total = cart_table.reduce(
 		(acc, shotType) => acc + shotType.amount * shotType.price, 0
@@ -13,7 +13,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 	
 	return isOpen ? (
 		<>
-		<div class="overlay active"></div>
+		<div class="overlay active" onClick={() => setIsOpen(false)}></div>
 		<div className='cart open'>
 			<button
 				className='cart-button'
@@ -53,12 +53,12 @@ function Cart({cart_table, setCartTable, addToCart, removeItem}) {
 										<button onClick={() => addToCart(shotElem,1)}>+</button>
 									</td>
 									<td className="price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
-									<td><button onClick={()=> removeItem(shotElem)}> --- </button></td> 
+									<td><button onClick={()=> deleteItem(shotElem)}> --- </button></td> 
 								</tr>
 							))}
 						</tbody>
 					</table>
-					<button onClick={() => setCartTable([])}>Vider le panier</button>
+					<button onClick={clearCart}>Vider le panier</button>
 				</div>
 			) : (
 				<div>Votre panier est vide</div>

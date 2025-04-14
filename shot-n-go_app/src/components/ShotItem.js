@@ -8,6 +8,16 @@ function ShotItem({ shotElem, addToCart }) {
     const [error, setError] = useState(null);
     const [addAmount, setAddAmount] = useState(0)
 
+    const lessOneAddAmout = () => {
+        if (addAmount > 0){
+            setAddAmount(addAmount - 1);
+        }
+    };
+
+    const plusOneAddAmout = () => {
+        setAddAmount(addAmount + 1);
+    };
+
     useEffect(() => {
         // Vérifie si 'shotElem.cover' existe et qu'il s'agit d'une chaîne base64
         if (shotElem.cover) {
@@ -47,9 +57,9 @@ function ShotItem({ shotElem, addToCart }) {
                 <TasteScale tasteType="alcoholLevel" scaleValue={shotElem.alcoholLevel} />
                 <TasteScale tasteType="sweetness" scaleValue={shotElem.sweetness} />
                 {(shotElem.stock <= 10)?(<p className="pricecase">!!OUT OF STOCK!!</p>):(<div className='priceButton'><p className="pricecase">prix: {shotElem.price.toFixed(2)}€</p><table><td className="quantity">
-										<button onClick={() => setAddAmount(addAmount - 1)}>-</button>
+										<button onClick={lessOneAddAmout}>-</button>
 										<button onClick={() => {addToCart(shotElem,addAmount); setAddAmount(0)}}>{addAmount}</button>
-										<button onClick={() => setAddAmount(addAmount + 1)}>+</button>
+										<button onClick={plusOneAddAmout}>+</button>
 									</td></table></div>)}
 
             </div>
