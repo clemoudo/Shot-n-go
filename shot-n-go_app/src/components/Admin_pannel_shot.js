@@ -28,7 +28,7 @@ function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
 
     try {
       // Envoi du fichier et des autres données dans une seule requête POST
-      const response = await fetch("https://54.36.181.67:8000/shot/send/", {
+      const response = await fetch("/api/shot/send/", {
         method: "POST",
         body: formData  // formData contenant l'image et les autres données
       })
@@ -48,7 +48,7 @@ function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
   };
   const deleteShot = async (shot_name) => {
     try {
-      const response = await fetch(`http://54.36.181.67:8000/shot/supr/{shot_name}`, { method: "DELETE" });
+      const response = await fetch(`/api/shot/supr/{shot_name}`, { method: "DELETE" });
       if (response.ok) {
         alert("Shot supprimé !");
         fetchShots();
@@ -60,6 +60,24 @@ function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
     }
   };
 
+  const fetchShots = async () => {
+    try {
+      const response = await fetch("/api/shot/receive/");
+      if (response.ok) {
+        const data = await response.json();
+        setShots(data.shots);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Erreur de connexion:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchShots();
+    const intervalId = setInterval(fetchShots, 10000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="p-8 max-w-3xl mx-auto bg-gray-50 min-h-screen flex flex-col items-center">
