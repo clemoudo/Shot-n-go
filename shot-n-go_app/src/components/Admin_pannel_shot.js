@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
+function Admin_pannel_shot({shots, setShots, loading, setLoading, fetchShots}) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [alcoholLevel, setAlcoolLevel] = useState(0);
@@ -57,19 +57,6 @@ function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
       }
     } catch (error) {
       alert("Erreur de connexion au serveur.");
-    }
-  };
-
-  const fetchShots = async () => {
-    try {
-      const response = await fetch("/api/shot/receive/");
-      if (response.ok) {
-        const data = await response.json();
-        setShots(data.shots);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Erreur de connexion:", error);
     }
   };
 
