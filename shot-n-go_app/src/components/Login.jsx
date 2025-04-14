@@ -73,7 +73,7 @@ function Login() {
       const token = await user.getIdToken();
 
       // Envoie du token à ton API FastAPI (si nécessaire)
-      const response = await fetch("https://ton-vps.com/api/protected", {
+      const response = await fetch("/api/protected", {
         method: "GET", // ou "POST" selon ton endpoint
         headers: {
           Authorization: `Bearer ${token}`,
