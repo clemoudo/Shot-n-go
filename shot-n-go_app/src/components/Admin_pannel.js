@@ -10,7 +10,7 @@ function Admin_pannel() {
 
     const fetchShots = async () => {
         try {
-          const response = await fetch("http://54.36.181.67:8000/shot/receive/");
+          const response = await fetch("/api/shot/receive/");
           if (response.ok) {
             const data = await response.json();
             setShots(data.shots);

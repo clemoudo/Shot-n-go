@@ -11,7 +11,7 @@ function ShoppingList({addToCart, removeItem}) {
 	
 	const fetchmachines = async () => {
 		try {
-		  const response = await fetch("https://shot-n-go.m1-1.ephec-ti.be/api/machine/gt_all/");
+		  const response = await fetch("/api/machine/gt_all/");
 		  if (response.ok) {
 			const data = await response.json();
 			setMachine(data)
@@ -27,7 +27,7 @@ function ShoppingList({addToCart, removeItem}) {
 	
 	const fetchShots = async () => {
 		try {
-		  const response = await fetch("https://shot-n-go.m1-1.ephec-ti.be/api/shot/receive/");
+		  const response = await fetch("/api/shot/receive/");
 		  if (response.ok) {
 			const data = await response.json();
 			setShots(data.shots)
