@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
   const [name, setName] = useState("");
@@ -60,18 +60,6 @@ function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
     }
   };
 
-  const fetchShots = async () => {
-    try {
-      const response = await fetch("/api/shot/receive/");
-      if (response.ok) {
-        const data = await response.json();
-        setShots(data.shots);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Erreur de connexion:", error);
-    }
-  };
 
   useEffect(() => {
     fetchShots();

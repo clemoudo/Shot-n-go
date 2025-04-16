@@ -27,7 +27,7 @@ function Admin_pannel_machines({shots, setShots, loading, setLoading, fetchShots
 
             if (response.ok) {
                 const data = await response.json();
-                alert("Shot ajouté !");
+                alert("Machine ajouté !");
                 fetchShots(); // Actualiser la liste des shots
                 console.log(`ajout du shot ${data}`);
             } else {
@@ -100,28 +100,7 @@ function Admin_pannel_machines({shots, setShots, loading, setLoading, fetchShots
                 </button>
             </form>
 
-            <h2 className="text-3xl font-semibold text-gray-800 mt-10 mb-6">Liste des Shots</h2>
-            {loading ? (
-                <p className="text-gray-500">Chargement...</p>
-            ) : (
-                <div className="w-full grid grid-cols-1 gap-4">
-                    {shots.map((shot, index) => (
-                        <div key={index} className="bg-white p-5 rounded-xl shadow-md flex justify-between items-center">
-                            <div>
-                                <h3 className="text-lg font-medium text-gray-700">{shot.name}</h3>
-                                <p className="text-sm text-gray-500">categorie : {shot.category} - niveau d'alcool: {shot.alcoholLevel}/3 - Sweetness: {shot.sweetness}/3 - prix: {(shot.price).toFixed(2)}€</p>
-                                {shot.cover && (
-                                    <img
-                                        src={`data:image/jpeg;base64,${shot.cover}`}
-                                        alt="Cover"
-                                        style={{ width: 100, height: 100 }}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+            <h2 className="text-3xl font-semibold text-gray-800 mt-10 mb-6">Liste des Machines</h2>
         </div>
     );
 }

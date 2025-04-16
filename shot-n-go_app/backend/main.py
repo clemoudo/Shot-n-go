@@ -53,6 +53,8 @@ class MachineSchema(BaseModel):
     nom : str
     alcools : List[AlcoolItem]
     queue : List[str]
+
+
 @app.post("/shot/send/")
 async def add_shot(
     name: str = Form(...),
