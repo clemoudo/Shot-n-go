@@ -1,6 +1,6 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
-function Admin_pannel_shot({shots,setShots,loading,setLoading,fetchShots}) {
+function Admin_pannel_shot({shots, setShots, loading, setLoading, fetchShots}) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [alcoholLevel, setAlcoolLevel] = useState(0);

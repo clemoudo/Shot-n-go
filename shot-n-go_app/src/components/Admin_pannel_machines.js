@@ -20,7 +20,7 @@ function Admin_pannel_machines({shots, setShots, loading, setLoading, fetchShots
         formData.append('shot2', shot2);
         formData.append('shot3', shot3);
         try {
-            const response = await fetch("http://54.36.181.67:8000/machine/send/", {
+            const response = await fetch("/api/machine/send/", {
                 method: "POST",
                 body: formData
             });
