@@ -3,28 +3,25 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import firestore
 from pydantic import BaseModel
-import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, initialize_app
 import base64
 from io import BytesIO
 from typing import List
-# Initialiser Firebase Admin avec Firestore uniquement
-cred = credentials.Certificate("KEY/shot-n-go-babc8-firebase-adminsdk-fbsvc-e4ec42301a.json")
-firebase_admin.initialize_app(cred)
+
+# Initialisation Firebase Admin
+cred = credentials.Certificate("KEY/firebase-key.json")
+initialize_app(cred)
 
 # Initialiser FastAPI
 app = FastAPI()
 
 # Connexion à Firestore
-db = firestore.Client.from_service_account_json("KEY/shot-n-go-babc8-firebase-adminsdk-fbsvc-e4ec42301a.json")
+db = firestore.client()
 collection_shots = db.collection("Shots")  # Collection pour les shots
-machines_collection = db.collection("machines")
-# Liste des origines autorisées (CORS)
+
+# Configuration CORS
 origins = [
     "http://localhost:3000",
-    "http://172.19.0.1:3000",
-    "https://mon-front.vercel.app",
-    "https://mon-site.netlify.app",
     "https://shot-n-go.m1-1.ephec-ti.be/"
 ]
 app.add_middleware(
@@ -44,7 +41,6 @@ class Shot(BaseModel):
     cover: str
     stock: int
 
-
 class AlcoolItem(BaseModel):
     alcool: Shot
     stock: bool
@@ -54,8 +50,7 @@ class MachineSchema(BaseModel):
     alcools : List[AlcoolItem]
     queue : List[str]
 
-
-@app.post("/shot/send/")
+@app.post("/api/shot/send/")
 async def add_shot(
     name: str = Form(...),
     alcoholLevel: int = Form(...),
@@ -94,17 +89,16 @@ async def add_shot(
     return {"message": "Shot ajouté", "shot_id": new_id}
 
 # Autres routes comme précédemment...
-@app.get("/shot/receive/")
+@app.get("/api/shot/receive/")
 def get_shots():
     shots = [doc.to_dict() for doc in collection_shots.stream()]
     return {"shots": shots}
 
-
-@app.get("/")
+@app.get("/api/")
 def read_root():
     return {"message": "Hello FastAPI & Firestore!"}
 
-@app.delete("/shot/supr/{shot_name}")
+@app.delete("/api/shot/supr/{shot_name}")
 def delete_shot(shot_name: str):
     """Supprime un utilisateur par email."""
     shot_to_delete = collection_shots.where("name", "==",shot_name).stream()
@@ -119,8 +113,6 @@ def delete_shot(shot_name: str):
         return {"message": f"shot {shot_name} supprimé"}
     else:
         return {"error": "Utilisateur non trouvé"}, 404
-
-
 
 @app.get("/machine/gt_all", response_model=List[MachineSchema])
 def get_all_machines():
@@ -166,7 +158,7 @@ def add_machines(
         fetched_id = doc_machine.to_dict().get("id", "m000")
         if fetched_id.startswith("m") and fetched_id[1:].isdigit():
             last_id = fetched_id
-    
+
     last_num = int(last_id[1:])
     new_id = f"m{last_num + 1:03d}"
 
@@ -176,7 +168,6 @@ def add_machines(
             "alcool": db.document(f"Shots/{shot_id}"),
             "stock": True  # tu peux changer dynamiquement si besoin
         })
-    
 
     machine_data = {
         "id": new_id,
@@ -189,8 +180,7 @@ def add_machines(
 
     return {"message": "Machine ajoutée", "machine_id": new_id}
 
-
-@app.get("/queue")
+@app.get("/api/queue")
 def get_queue():
     user_collection = db.collection("User")
     docs = user_collection.stream()
