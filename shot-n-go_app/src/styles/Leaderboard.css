@@ -1,85 +1,95 @@
 .leaderboard {
-    width: 60%;
+    width: 80%;
     margin: 40px auto;
     padding: 30px;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background-color: #1e1e1e;
     border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     text-align: center;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
-    overflow: hidden;
-    position: relative;
 }
 
 h2 {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: bold;
     margin-bottom: 25px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.search-input {
+    width: 60%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 40px;
+}
+
+.podium-position {
+    width: 120px;
+    margin: 0 10px;
+    padding: 20px 10px;
+    border-radius: 10px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+}
+
+.position-1 {
+    height: 180px;
+    background: linear-gradient(135deg, #ffd700, #ffcc00);
+}
+
+.position-2 {
+    height: 150px;
+    background: linear-gradient(135deg, #c0c0c0, #d9d9d9);
+}
+
+.position-3 {
+    height: 120px;
+    background: linear-gradient(135deg, #cd7f32, #d28a5f);
+}
+
+.player-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.player-score {
+    font-size: 16px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 thead {
-    background: rgba(255, 255, 255, 0.2);
+    background-color: #333333;
 }
 
 thead th {
-    padding: 18px;
+    padding: 15px;
     text-transform: uppercase;
     font-weight: bold;
     letter-spacing: 1px;
-    color: #f8f9fa;
-    font-size: 18px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-tbody tr {
-    transition: all 0.3s ease-in-out;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-tbody tr:nth-child(odd) {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-tbody tr:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-td {
-    padding: 18px;
-    font-size: 18px;
     color: #ffffff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    font-size: 16px
 }
-
-/* Animation pour une entrée fluide */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.leaderboard, tbody tr {
-    animation: fadeIn 0.8s ease-in-out;
-}
-
+ 

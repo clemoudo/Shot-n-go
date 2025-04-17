@@ -1,77 +1,88 @@
 import React, { useState, useEffect } from "react";
-import "../styles/Queue.css"; // Assure-toi d'avoir ce fichier CSS
-
-const DEFAULT_QUEUE = [
-  { id: 1, name: "Utilisateur A", status: "En cours..." },
-  { id: 2, name: "Utilisateur B" },
-  { id: 3, name: "Utilisateur C" },
-  { id: 4, name: "Utilisateur D" },
-  { id: 5, name: "Utilisateur E" }
-];
+import "../styles/Queue.css";
 
 function Queue() {
-  const [queue, setQueue] = useState(() => {
-    const savedQueue = localStorage.getItem("queue");
-    return savedQueue ? JSON.parse(savedQueue) : DEFAULT_QUEUE;
-  });
-
+  const [queue, setQueue] = useState([]);
   const [newUser, setNewUser] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Sauvegarde la file dans localStorage
-  useEffect(() => {
-    if (queue.length === 0) {
-      localStorage.removeItem("queue");
-    } else {
-      localStorage.setItem("queue", JSON.stringify(queue));
-    }
-  }, [queue]);
-
-  // Fonction pour passer au suivant
-  const serveNext = () => {
-    if (queue.length > 1) {
-      const newQueue = queue.slice(1);
-      newQueue[0] = { ...newQueue[0], status: "En cours..." };
-      setQueue(newQueue);
-    } else {
-      setTimeout(() => setQueue([]), 10000);
+  // 🔄 Charger la file depuis FastAPI
+  const fetchQueue = async () => {
+    try {
+      const response = await fetch("/api/queue");
+      const data = await response.json();
+      if (data.length > 0) {
+        data[0].status = "En cours...";
+      }
+      // console.log("d" ,data)
+      
+      setQueue(data.User);
+    } catch (error) {
+      console.error("Erreur lors du chargement de la file :", error);
     }
   };
 
-  // Automatisation avec setTimeout
   useEffect(() => {
-    if (queue.length === 1) {
-      setTimeout(() => setQueue([]), 10000);
-    } else if (queue.length > 1) {
-      const timer = setTimeout(serveNext, 10000);
-      return () => clearTimeout(timer);
-    }
-  }, [queue]);
+    fetchQueue();
+    const interval = setInterval(fetchQueue, 10000); // rafraîchir toutes les 5s
+    return () => clearInterval(interval);
+  }, []);
 
-  // Fonction pour ajouter un utilisateur
-  const addUser = () => {
+  // ✅ Ajouter un utilisateur
+  const addUser = async () => {
     const trimmedUser = newUser.trim();
     if (!trimmedUser) {
       setErrorMessage("Le nom ne peut pas être vide !");
       return;
     }
+
     if (queue.some(user => user.name.toLowerCase() === trimmedUser.toLowerCase())) {
       setErrorMessage("Cet utilisateur est déjà dans la file !");
       return;
     }
 
-    setQueue([...queue, { id: queue.length + 1, name: trimmedUser }]);
-    setNewUser("");
-    setErrorMessage("");
+    try {
+      const response = await fetch("/api/queue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedUser }),
+      });
+
+      if (response.ok) {
+        setNewUser("");
+        setErrorMessage("");
+        fetchQueue();
+      } else {
+        setErrorMessage("Erreur lors de l'ajout !");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout :", error);
+      setErrorMessage("Erreur de connexion !");
+    }
   };
 
+  // ✅ Servir le prochain
+  const serveNext = async () => {
+    try {
+      const response = await fetch("/api/queue", {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        fetchQueue();
+      } else {
+        console.error("Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error("Erreur réseau :", error);
+    }
+  };
   return (
     <div className="queue-container">
       <h1>File d'attente</h1>
       <div className="queue-list">
-        {queue.length > 0 ? (
+        {(queue.length > 0) ? ( 
           queue.map((user, index) => (
-            <div key={user.id} className={`queue-item ${index === 0 ? "active" : ""}`}>
+            <div key={user.id || index} className={`queue-item ${index === 0 ? "active" : ""}`}>
               {index + 1}. {user.name} {user.status ? `(${user.status})` : ""}
             </div>
           ))
