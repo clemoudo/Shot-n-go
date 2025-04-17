@@ -1,0 +1,5 @@
+fastapi[standard]
+uvicorn
+google-cloud-firestore
+firebase-admin
+pydantic
