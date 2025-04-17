@@ -7,9 +7,12 @@ from firebase_admin import credentials, firestore, initialize_app
 import base64
 from io import BytesIO
 from typing import List
+import os
 
 # Initialisation Firebase Admin
-cred = credentials.Certificate("KEY/firebase-key.json")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+cred_path = os.path.join(BASE_DIR, 'KEY', 'firebase-key.json')
+cred = credentials.Certificate(cred_path)
 initialize_app(cred)
 
 # Initialiser FastAPI
@@ -114,7 +117,7 @@ def delete_shot(shot_name: str):
     else:
         return {"error": "Utilisateur non trouvé"}, 404
 
-@app.get("/machine/gt_all", response_model=List[MachineSchema])
+@app.get("/api/machine/gt_all", response_model=List[MachineSchema])
 def get_all_machines():
     docs = machines_collection.stream()
     machines = []
@@ -147,7 +150,7 @@ def get_all_machines():
 
     return machines
 
-@app.post("/machine/send")
+@app.post("/api/machine/send")
 def add_machines(
     name: str = Form(...),
     alcools: list = Form(...)
