@@ -48,7 +48,7 @@ function Admin_pannel_shot({shots, setShots, loading, setLoading, fetchShots}) {
   };
   const deleteShot = async (shot_name) => {
     try {
-      const response = await fetch(`/api/shot/supr/{shot_name}`, { method: "DELETE" });
+      const response = await fetch(`api/shot/supr/${shot_name}`, { method: "DELETE" });
       if (response.ok) {
         alert("Shot supprimé !");
         fetchShots();
@@ -65,7 +65,7 @@ function Admin_pannel_shot({shots, setShots, loading, setLoading, fetchShots}) {
     fetchShots();
     const intervalId = setInterval(fetchShots, 10000);
     return () => clearInterval(intervalId);
-  }, []);
+  });
 
   return (
     <div className="p-8 max-w-3xl mx-auto bg-gray-50 min-h-screen flex flex-col items-center">
