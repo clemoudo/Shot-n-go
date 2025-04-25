@@ -1,0 +1,23 @@
+services:
+  proxy:
+    image: clemoudo/shot-n-go:proxy-0.1
+    networks:
+      - proxy_net
+      - net
+
+  api:
+    image: clemoudo/shot-n-go:api-0.2
+    volumes:
+      - ./api/KEY/firebase-key.json:/code/app/KEY/firebase-key.json
+    networks:
+      - net
+
+  web:
+    image: clemoudo/shot-n-go:react-0.1
+    networks:
+      - net
+
+networks:
+  proxy_net:
+    external: true
+  net:

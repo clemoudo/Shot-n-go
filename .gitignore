@@ -1,0 +1,7 @@
+# Clés et credentials
+*.key
+*.pem
+*.env
+
+# Ignore firebase credentials
+**/firebase-key.json
