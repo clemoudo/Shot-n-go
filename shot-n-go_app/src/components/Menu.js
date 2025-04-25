@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 
 
-function Menu() {
+function Menu({shots, setShots}) {
    const [cart_table, setCartTable] = useState([]);
 
    // Fonction pour ajouter un article
@@ -74,7 +74,7 @@ function Menu() {
    return (
       <>
          <Cart cart_table={cart_table} setCartTable={setCartTable} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} clearCart={clearCart} />
-         <ShoppingList cart_table={cart_table} addToCart={addToCart} removeItem={removeItem} />
+         <ShoppingList cart_table={cart_table} addToCart={addToCart} removeItem={removeItem} shots={shots} setShots={setShots} />
       </>
    );
 }

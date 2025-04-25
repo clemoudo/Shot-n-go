@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AgeVerification from "./AgeVerification.js";
 
@@ -7,6 +7,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [showAgeVerification, setShowAgeVerification] = useState(false);
   const [isAgeVerified, setIsAgeVerified] = useState(false);
+
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

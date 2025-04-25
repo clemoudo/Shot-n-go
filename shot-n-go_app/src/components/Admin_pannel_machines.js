@@ -9,6 +9,9 @@ function Admin_pannel_machines({ shots }) {
     const [shot2, setShot2] = useState(shots[1].id);
     const [shot3, setShot3] = useState(shots[2].id);
 
+
+    
+
     const fetchMachine = async () => {
         try {
             const response = await fetch("/api/machine/gt_all/");
@@ -22,7 +25,7 @@ function Admin_pannel_machines({ shots }) {
     };
     useEffect(() => {
         fetchMachine();
-        const intervalId = setInterval(fetchMachine, 10000);
+        const intervalId = setInterval(fetchMachine, 60000);
         return () => clearInterval(intervalId);
     }, []);
 

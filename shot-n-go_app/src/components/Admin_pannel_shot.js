@@ -36,7 +36,7 @@ function Admin_pannel_shot({shots, setShots, loading, setLoading, fetchShots}) {
       if (response.ok) {
         const data = await response.json();
         alert("Shot ajouté !");
-        fetchShots();  // Actualiser la liste des shots
+        //fetchShots();  // Actualiser la liste des shots
         console.log(`ajout du shot ${data}`);
       } else {
         alert("Erreur lors de l'ajout du shot.");
@@ -61,11 +61,6 @@ function Admin_pannel_shot({shots, setShots, loading, setLoading, fetchShots}) {
   };
 
 
-  useEffect(() => {
-    fetchShots();
-    const intervalId = setInterval(fetchShots, 10000);
-    return () => clearInterval(intervalId);
-  });
 
   return (
     <div className="p-8 max-w-3xl mx-auto bg-gray-50 min-h-screen flex flex-col items-center">
