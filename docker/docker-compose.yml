@@ -1,5 +1,6 @@
 services:
   proxy:
+    build: ./proxy
     image: clemoudo/shot-n-go:proxy-latest
     networks:
       - proxy_net
@@ -17,6 +18,7 @@ services:
       start_period: 5s
 
   api:
+    build: ./api
     image: clemoudo/shot-n-go:api-latest
     volumes:
       - ./api/KEY/firebase-key.json:/code/KEY/firebase-key.json
@@ -25,6 +27,9 @@ services:
       - redis_net
     depends_on:
       - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api"]
@@ -34,6 +39,7 @@ services:
       start_period: 10s
 
   react:
+    build: ./react
     image: clemoudo/shot-n-go:react-latest
     networks:
       - react_net
