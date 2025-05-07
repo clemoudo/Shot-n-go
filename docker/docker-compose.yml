@@ -19,7 +19,7 @@ services:
   api:
     image: clemoudo/shot-n-go:api-latest
     volumes:
-      - ./api/KEY/firebase-key.json:/code/app/KEY/firebase-key.json
+      - ./api/KEY/firebase-key.json:/code/KEY/firebase-key.json
     networks:
       - api_net
       - redis_net
