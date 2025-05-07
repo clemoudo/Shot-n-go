@@ -1,23 +1,25 @@
 services:
   proxy:
-    image: clemoudo/shot-n-go:proxy-0.1
+    image: clemoudo/shot-n-go:proxy-latest
     networks:
       - proxy_net
-      - net
+      - react_net
+      - api_net
 
   api:
-    image: clemoudo/shot-n-go:api-0.2
+    image: clemoudo/shot-n-go:api-latest
     volumes:
       - ./api/KEY/firebase-key.json:/code/app/KEY/firebase-key.json
     networks:
-      - net
+      - api_net
 
-  web:
-    image: clemoudo/shot-n-go:react-0.1
+  react:
+    image: clemoudo/shot-n-go:react-latest
     networks:
-      - net
+      - react_net
 
 networks:
   proxy_net:
     external: true
-  net:
+  react_net:
+  api_net:
