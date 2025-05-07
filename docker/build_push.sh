@@ -2,6 +2,10 @@
 
 set -e
 
+# Résout le chemin absolu du dossier où se trouve ce script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 repo="clemoudo/shot-n-go"
 
 # Fonction pour trouver la dernière version utilisée pour une image
@@ -25,8 +29,9 @@ echo "📦 Building version: $version"
 
 # Build, tag et push pour chaque image
 for image in api react proxy; do
-  echo "🔧 Building image: $image"
-  docker build -t $repo:$image-$version $image
+  build_path="$SCRIPT_DIR/$image"
+  echo "🔧 Building image: $image from $build_path"
+  docker build -t $repo:$image-$version "$build_path"
   docker tag $repo:$image-$version $repo:$image-latest
 
   echo "📤 Pushing image: $image"
