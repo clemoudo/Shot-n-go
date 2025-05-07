@@ -3,8 +3,7 @@ import { useEffect,useState } from 'react';
 import ShotItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
-function ShoppingList({addToCart, removeItem}) {
-	const [shots, setShots] = useState([]);
+function ShoppingList({addToCart, removeItem, shots, setShots}) {
 	const [loading,setLoading] = useState(true)
 	const [listMachine,setMachine] = useState([])
 	const [filter,setFilter] = useState("all")
@@ -25,25 +24,10 @@ function ShoppingList({addToCart, removeItem}) {
 	  };
 	
 	
-	const fetchShots = async () => {
-		try {
-		  const response = await fetch("/api/shot/receive/");
-		  if (response.ok) {
-			const data = await response.json();
-			setShots(data.shots)
-			setLoading(false)
-		  } else {
-			console.error("Erreur lors de la récupération des utilisateurs.");
-		  }
-		} catch (error) {
-		  console.error("Erreur de connexion:", error);
-		}
-	  };
 	 useEffect(() => {
-		fetchShots(); // Appeler fetchUsers immédiatement après le premier rendu
 		fetchmachines();
 		// Mettre en place un intervalle pour récupérer les utilisateurs toutes les 5 secondes
-		const intervalId = setInterval(fetchShots, 10000); // Rafraîchir toutes les 5 secondes
+		const intervalId = setInterval(fetchmachines, 60000); // Rafraîchir toutes les 5 secondes
 	
 		// Nettoyage de l'intervalle lors du démontage du composant
 		return () => clearInterval(intervalId);
