@@ -4,6 +4,8 @@ import base64
 from typing import List
 from app.models import Shot, MachineSchema
 from google.cloud import firestore
+from app.redis_client import redis
+import json
 
 router = APIRouter()
 collection_shots = db.collection("Shots")
@@ -46,8 +48,19 @@ async def add_shot(
     return {"message": "Shot ajouté", "shot_id": new_id}
 
 @router.get("/api/shot/receive/")
-def get_shots():
-    return {"shots": [doc.to_dict() for doc in collection_shots.stream()]}
+async def get_shots():
+    # Vérifie si les shots sont en cache
+    cached_shots = await redis.get("shots_cache")
+    if cached_shots:
+        return {"shots": json.loads(cached_shots)}
+
+    # Sinon, on les récupère depuis Firestore
+    shots = [doc.to_dict() for doc in collection_shots.stream()]
+
+    # Met en cache les shots pendant 60 secondes (modifiable)
+    await redis.set("shots_cache", json.dumps(shots), ex=60)
+
+    return {"shots": shots}
 
 @router.delete("/api/shot/supr/{shot_name}")
 def delete_shot(shot_name: str):
@@ -62,7 +75,12 @@ def delete_shot(shot_name: str):
     return {"error": "Shot non trouvé"}, 404
 
 @router.get("/api/machine/gt_all", response_model=List[MachineSchema])
-def get_all_machines():
+async def get_all_machines():
+    # Vérifie si les machines sont déjà en cache
+    cached_machines = await redis.get("machines_cache")
+    if cached_machines:
+        return json.loads(cached_machines)
+
     docs = machines_collection.stream()
     machines = []
 
@@ -90,6 +108,9 @@ def get_all_machines():
             "alcools": alcools,
             "queue": queue
         })
+
+    # Mise en cache pour 60 secondes
+    await redis.set("machines_cache", json.dumps(machines), ex=60)
 
     return machines
 
