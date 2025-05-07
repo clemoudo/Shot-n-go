@@ -24,5 +24,4 @@ yarn-error.log*
 
 # docker
 docker-compose.yml
-Dockerfile
 .dockerignore
