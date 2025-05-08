@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import '../styles/Login.css'
 
@@ -37,6 +37,16 @@ export default function Login() {
       }
    };
 
+   const handleGoogleLogin = async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+         await signInWithPopup(auth, provider);
+         navigate("/");
+      } catch (err) {
+         setError(err.message);
+      }
+   };   
+
    return (
       <div className="container">
          <h2>{isRegistering ? "Créer un compte" : "Se connecter"}</h2>
@@ -60,6 +70,9 @@ export default function Login() {
             />
             <button type="submit" className="button">
                {isRegistering ? "S'inscrire" : "Se connecter"}
+            </button>
+            <button onClick={handleGoogleLogin} className="button" style={{backgroundColor: "#DB4437" }}>
+               Se connecter avec Google
             </button>
          </form>
          <p onClick={() => setIsRegistering(!isRegistering)} className="toggle">
