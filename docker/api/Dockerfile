@@ -1,4 +1,6 @@
-FROM python:alpine
+FROM python:3.9-alpine
+
+RUN apk update && apk add --no-cache curl && apk add --no-cache py3-setuptools
 
 WORKDIR /code
 

@@ -32,7 +32,7 @@ services:
       - REDIS_PORT=6379
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/"]
       interval: 30s
       timeout: 10s
       retries: 3
