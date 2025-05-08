@@ -1,25 +1,70 @@
 services:
   proxy:
+    build: ./proxy
     image: clemoudo/shot-n-go:proxy-latest
     networks:
       - proxy_net
       - react_net
       - api_net
+    depends_on:
+      - api
+      - react
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   api:
+    build: ./api
     image: clemoudo/shot-n-go:api-latest
     volumes:
-      - ./api/KEY/firebase-key.json:/code/app/KEY/firebase-key.json
+      - ./api/KEY/firebase-key.json:/code/KEY/firebase-key.json
     networks:
       - api_net
+      - redis_net
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   react:
+    build: ./react
     image: clemoudo/shot-n-go:react-latest
     networks:
       - react_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:alpine
+    networks:
+      - redis_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
 networks:
   proxy_net:
     external: true
   react_net:
   api_net:
+  redis_net:
