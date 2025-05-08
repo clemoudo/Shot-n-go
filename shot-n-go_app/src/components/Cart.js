@@ -13,7 +13,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 	
 	return isOpen ? (
 		<>
-		<div class="overlay active" onClick={() => setIsOpen(false)}></div>
+		<div className="overlay active" onClick={() => setIsOpen(false)}></div>
 		<div className='cart open'>
 			<button
 				className='cart-button'
@@ -44,7 +44,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 										<div className="product-info">
 											<img src={`data:image/jpeg;base64,${shotElem.cover}`} alt={shotElem.name} />
 											<span className="product-name">{shotElem.name}</span>
-											<span class="product-unitPrice">{shotElem.price}€</span>
+											<span className="product-unitPrice">{shotElem.price}€</span>
 										</div>
 									</td>
 									<td className="quantity">
@@ -67,7 +67,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 		</>
 	) : (
 		<>
-		<div class="overlay"></div>
+		<div className="overlay"></div>
 		<div className='cart'>
 			<button
 				className='cart-button'

@@ -35,9 +35,7 @@ function ShotItem({ shotElem, addToCart }) {
                 <p>Chargement de l'image...</p>
             </li>
         );
-    }
-
-    if (error) {
+    } else if (error) {
         return (
             <li className="shot-item" key={shotElem.id}>
                 <p>{error}</p>

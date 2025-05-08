@@ -1,14 +1,13 @@
-//import { shotList } from '../datas/shotList'
-import { useEffect,useState } from 'react';
+import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
-function ShoppingList({addToCart, removeItem, shots, setShots}) {
+function ShoppingList({addToCart, removeItem, shots, fetchShots}) {
 	const [loading,setLoading] = useState(true)
 	const [listMachine,setMachine] = useState([])
 	const [filter,setFilter] = useState("all")
 	
-	const fetchmachines = async () => {
+	const fetchMachines = async () => {
 		try {
 		  const response = await fetch("/api/machine/gt_all/");
 		  if (response.ok) {
@@ -21,17 +20,13 @@ function ShoppingList({addToCart, removeItem, shots, setShots}) {
 		} catch (error) {
 		  console.error("Erreur de connexion:", error);
 		}
-	  };
-	
-	
-	 useEffect(() => {
-		fetchmachines();
-		// Mettre en place un intervalle pour récupérer les utilisateurs toutes les 5 secondes
-		const intervalId = setInterval(fetchmachines, 60000); // Rafraîchir toutes les 5 secondes
-	
-		// Nettoyage de l'intervalle lors du démontage du composant
-		return () => clearInterval(intervalId);
-	  }, []);
+	};
+
+	useEffect(() => {
+      fetchShots();
+		fetchMachines();
+		setLoading(false);
+   }, []);
 	
 	if (loading) {
 		return <div>Chargement des shots...</div>;
