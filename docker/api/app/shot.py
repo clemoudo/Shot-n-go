@@ -6,6 +6,7 @@ from app.models import Shot, MachineSchema
 from google.cloud import firestore
 from app.redis_client import redis
 import json
+import logging
 
 router = APIRouter()
 collection_shots = db.collection("Shots")
@@ -49,9 +50,11 @@ async def add_shot(
 
 @router.get("/api/shot/receive/")
 async def get_shots():
-    # Vérifie si les shots sont en cache
+    cache_key = "shots_cache"
     cached_shots = await redis.get("shots_cache")
+
     if cached_shots:
+        logging.info("Données récupérées depuis Redis.")
         return {"shots": json.loads(cached_shots)}
 
     # Sinon, on les récupère depuis Firestore
