@@ -4,4 +4,3 @@ google-cloud-firestore
 firebase-admin
 pydantic
 redis
-aioredis
