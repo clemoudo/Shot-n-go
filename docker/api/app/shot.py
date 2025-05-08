@@ -6,6 +6,10 @@ from app.models import Shot, MachineSchema
 from google.cloud import firestore
 from app.redis_client import redis
 import json
+import logging
+import time
+
+logger = logging.getLogger("shot_api")
 
 router = APIRouter()
 collection_shots = db.collection("Shots")
@@ -49,16 +53,21 @@ async def add_shot(
 
 @router.get("/api/shot/receive/")
 async def get_shots():
-    # Vérifie si les shots sont en cache
-    cached_shots = await redis.get("shots_cache")
-    if cached_shots:
-        return {"shots": json.loads(cached_shots)}
+    cache_key = "shots_cache"
+    start = time.time()
 
-    # Sinon, on les récupère depuis Firestore
+    cached_data = await redis.get(cache_key)
+    if cached_data:
+        duration = time.time() - start
+        logger.info(f"[CACHE HIT] Clé: {cache_key} | Durée: {duration:.3f}s")
+        return {"shots": json.loads(cached_data)}
+
+    logger.info(f"[CACHE MISS] Clé: {cache_key} - Requête Firestore en cours...")
     shots = [doc.to_dict() for doc in collection_shots.stream()]
 
-    # Met en cache les shots pendant 60 secondes (modifiable)
-    await redis.set("shots_cache", json.dumps(shots), ex=60)
+    await redis.set(cache_key, json.dumps(shots), ex=60 * 5)
+    duration = time.time() - start
+    logger.info(f"[CACHE SET] Clé: {cache_key} | {len(shots)} éléments | Durée: {duration:.3f}s")
 
     return {"shots": shots}
 
