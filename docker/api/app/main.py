@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.shot import router as shot_router
 import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+
 app = FastAPI()
 
 origins = [
