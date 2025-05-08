@@ -1,7 +1,7 @@
 import '../styles/Navbar.css'
 import { Link, useMatch, useResolvedPath } from "react-router-dom"
 
-function Navbar() {
+function Navbar({ user }) {
   return (
     <nav className="nav">
       <Link to="/" className="site-title">
@@ -12,7 +12,7 @@ function Navbar() {
         <CustomLink to="/games">Mini-jeux</CustomLink>
         <CustomLink to="/leaderboard">Leaderboard</CustomLink>
         <CustomLink to="/queue">File d'attente</CustomLink>
-        <CustomLink to="/Admin_pannel">Admin_pannel</CustomLink>
+        {user === "S0YtLrLSU4ctLskgo81x2w7H1Ru1" && <CustomLink to="/Admin_pannel">Admin_pannel</CustomLink>}
         <CustomLink to="/Login">Authentification</CustomLink>
       </ul>
     </nav>

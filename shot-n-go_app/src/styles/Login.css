@@ -1,0 +1,43 @@
+.container {
+   max-width: "400px";
+   margin: "50px auto";
+   padding: "20px";
+   border: "1px solid #ccc";
+   border-radius: "8px";
+   text-align: "center";
+   background-color: "#fff";
+}
+
+.form {
+   display: "flex";
+   flex-direction: "column";
+   gap: "10px";
+}
+
+.input {
+   padding: "10px";
+   font-size: "16px";
+   border-radius: "4px";
+   border: "1px solid #ccc";
+}
+
+.button {
+   padding: "10px";
+   font-size: "16px";
+   background-color: "#333";
+   color: "white";
+   border: "none";
+   cursor: "pointer";
+   border-radius: "4px";
+}
+
+.toggle {
+   margin-top: "10px";
+   cursor: "pointer";
+   color: "#007bff";
+}
+
+.error {
+   color: "red";
+   font-size: "14px";
+}
