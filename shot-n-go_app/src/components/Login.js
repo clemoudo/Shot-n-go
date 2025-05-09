@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
+import { 
+   signInWithEmailAndPassword, 
+   createUserWithEmailAndPassword, 
+   onAuthStateChanged, 
+   GoogleAuthProvider, 
+   signInWithPopup, 
+   updateProfile,
+   sendPasswordResetEmail
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import '../styles/Login.css';
 
@@ -56,6 +64,20 @@ export default function Login() {
       }
    };
 
+   const handlePasswordReset = async () => {
+      if (!email) {
+         setError("Veuillez entrer votre email pour réinitialiser le mot de passe.");
+         return;
+      }
+   
+      try {
+         await sendPasswordResetEmail(auth, email);
+         setError("Email de réinitialisation envoyé !");
+      } catch (err) {
+         setError(err.message);
+      }
+   };   
+
    return (
       <div className="login-container">
          <h2>{isRegistering ? "Créer un compte" : "Se connecter"}</h2>
@@ -87,12 +109,20 @@ export default function Login() {
                   className="input"
                />
             )}
+            
             <button type="submit" className="button">
                {isRegistering ? "S'inscrire" : "Se connecter"}
             </button>
+
             <button onClick={handleGoogleLogin} className="button" style={{backgroundColor: "#DB4437" }}>
                Se connecter avec Google
             </button>
+
+            {!isRegistering && (
+               <button type="button" onClick={handlePasswordReset} className="reset-password-link">
+                  Mot de passe oublié ?
+               </button>
+            )}
          </form>
          <p onClick={() => setIsRegistering(!isRegistering)} className="toggle">
             {isRegistering ? "Déjà un compte ? Se connecter" : "Pas encore inscrit ? Créer un compte"}

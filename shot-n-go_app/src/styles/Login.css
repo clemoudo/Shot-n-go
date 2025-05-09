@@ -103,3 +103,15 @@ h2 {
       width: 90%;
    }
 }
+
+.reset-password-link {
+   background: none;
+   border: none;
+   color: #007bff;
+   text-decoration: underline;
+   cursor: pointer;
+   margin-top: 10px;
+}
+.reset-password-link:hover {
+   color: #0056b3;
+}
