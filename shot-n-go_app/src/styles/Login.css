@@ -4,8 +4,8 @@
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   min-height: 100vh;
-   padding: 2rem;
+   /* min-height: 100vh; */
+   /* padding: 2rem; */
 }
 
 /* Titre du formulaire */
@@ -18,8 +18,9 @@ h2 {
 /* Erreur */
 .error {
    color: #db4437;
-   margin-bottom: 1rem;
    font-size: 0.9rem;
+   margin: 0;
+   padding: 0;
 }
 
 /* Formulaire */
@@ -110,8 +111,10 @@ h2 {
    color: #007bff;
    text-decoration: underline;
    cursor: pointer;
+   padding: 0;
    margin-top: 10px;
 }
+
 .reset-password-link:hover {
    color: #0056b3;
 }

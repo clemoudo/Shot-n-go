@@ -50,7 +50,12 @@ export default function Login() {
          }
          navigate("/");  // Rediriger vers la page d'accueil après la connexion ou l'inscription
       } catch (err) {
-         setError(err.message);  // Gérer les erreurs (par exemple, email incorrect ou mot de passe erroné)
+         let errorMessage;
+         switch (err.message){
+            case "Firebase: Error (auth/invalid-credential).": errorMessage = "Email ou mot de passe incorrecte."; break;
+            default: errorMessage = err.message;
+         }
+         setError(errorMessage);
       }
    };
 
@@ -80,8 +85,10 @@ export default function Login() {
 
    return (
       <div className="login-container">
+         <h1>Bienvenu sur Shot'N'Go !</h1>
+         <p>Veuillez vous connecter pour accéder au site.</p>
+         <br/>
          <h2>{isRegistering ? "Créer un compte" : "Se connecter"}</h2>
-         {error && <p className="error">{error}</p>}
          <form onSubmit={handleSubmit} className="form">
             <input
                type="email"
@@ -99,6 +106,7 @@ export default function Login() {
                required
                className="input"
             />
+            {error && <p className="error">{error}</p>}
             {isRegistering && (
                <input
                   type="text"
@@ -109,7 +117,7 @@ export default function Login() {
                   className="input"
                />
             )}
-            
+
             <button type="submit" className="button">
                {isRegistering ? "S'inscrire" : "Se connecter"}
             </button>

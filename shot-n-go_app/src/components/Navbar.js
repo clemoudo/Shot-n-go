@@ -7,8 +7,8 @@ import user_email from "../assets/user_email.png"
 // Liste des UID des administrateurs
 // TODO faire une requête api pour avoir les admins
 const adminUids = [
-  "S0YtLrLSU4ctLskgo81x2w7H1Ru1",
-  "WM2X34sJgLVOhANpr1l1v8TaFqe2"
+  "S0YtLrLSU4ctLskgo81x2w7H1Ru1", // shotngo.project@gmail.com
+  "WM2X34sJgLVOhANpr1l1v8TaFqe2"  // clement.vier@gmail.com
 ];
 
 function Navbar({ user }) {
