@@ -6,11 +6,11 @@
    background-color: #333;
    color: white;
    display: flex;
-   /* justify-content: space-between; */
-   align-items: stretch;
+   justify-content: space-between;
    gap: 2rem;
    padding: 0 1rem;
    z-index: 1000;
+   align-items: center;
 }
 
 .site-title {
@@ -40,4 +40,87 @@
 
 .nav li:hover {
    background-color: #777;
+}
+
+/* Style pour le menu utilisateur */
+.user-menu {
+   position: relative;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   padding: 0.25rem 0.5rem;
+   transition: background-color 0.3s ease-in-out;
+   border-radius: 5px;
+}
+
+.user-menu:hover {
+   background-color: #444;
+}
+
+.user-avatar {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   object-fit: cover;
+}
+
+.username {
+   font-weight: bold;
+   color: #fff;
+   font-size: 1rem;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   overflow: hidden;
+}
+
+.dropdown-menu {
+   position: absolute;
+   top: 45px;
+   right: 0;
+   background-color: #fff;
+   color: #333;
+   border: 1px solid #ccc;
+   padding: 10px;
+   border-radius: 5px;
+   width: 200px;
+   display: none;
+   z-index: 1;
+   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); /* Ajout de l'ombre portée */
+   opacity: 0;
+   transform: translateY(-10px); /* Position initiale hors de l'écran */
+   transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.user-menu:hover .dropdown-menu {
+   display: block;
+   opacity: 1;  /* Rendre visible le menu */
+   transform: translateY(0);  /* Animation fluide pour descendre */
+}
+
+.logout-btn {
+   background-color: #DB4437;
+   color: white;
+   border: none;
+   padding: 8px;
+   border-radius: 4px;
+   cursor: pointer;
+   width: 100%;
+   font-weight: bold;
+   text-transform: uppercase;
+   transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+   background-color: #c1351d;
+}
+
+/* Effet d'hover du bouton de déconnexion */
+.logout-btn:active {
+   transform: scale(0.98);
+}
+
+.logout-btn:focus {
+   outline: none;
+   box-shadow: 0 0 0 3px rgba(219, 68, 55, 0.4); /* Shadow effet au focus */
 }

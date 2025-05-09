@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import '../styles/Admin_pannel_machines.css';
 
-function Admin_pannel_machines({ shots }) {
+function AdminPannelMachines({ shots }) {
     const [Machines, setMachines] = useState([]);
     const [name, setName] = useState("");
     const [shotSel, setShotSel] = useState([shots[0].id, shots[1].id, shots[2].id]);
@@ -187,4 +187,4 @@ function Admin_pannel_machines({ shots }) {
     );
 }
 
-export default Admin_pannel_machines;
+export default AdminPannelMachines;

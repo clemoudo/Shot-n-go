@@ -1,8 +1,8 @@
-import { useState,useEffect } from "react";
-import Admin_pannel_shot from "./Admin_pannel_shot";
-import Admin_pannel_machines from "./Admin_pannel_machines";
+import { useState } from "react";
+import AdminPannelShot from "./AdminPannelShot";
+import AdminPannelMachines from "./AdminPannelMachines";
 
-function Admin_pannel({shots, setShots,loading, setLoading,fetchShots}) {
+function AdminPannel({shots, setShots,loading, setLoading,fetchShots}) {
   const [page, setPage] = useState(true);
   
 
@@ -62,7 +62,7 @@ function Admin_pannel({shots, setShots,loading, setLoading,fetchShots}) {
       </div>
 
       {page ? (
-        <Admin_pannel_shot
+        <AdminPannelShot
           shots={shots}
           setShots={setShots}
           fetchShots={fetchShots}
@@ -70,7 +70,7 @@ function Admin_pannel({shots, setShots,loading, setLoading,fetchShots}) {
           setLoading={setLoading}
         />
       ) : (
-        <Admin_pannel_machines
+        <AdminPannelMachines
           shots={shots}
           setShots={setShots}
           fetchShots={fetchShots}
@@ -82,4 +82,4 @@ function Admin_pannel({shots, setShots,loading, setLoading,fetchShots}) {
   );
 }
 
-export default Admin_pannel;
+export default AdminPannel;

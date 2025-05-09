@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import '../styles/Login.css'
+import '../styles/Login.css';
 
 export default function Login() {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
+   const [pseudo, setPseudo] = useState("");  // Nouvel état pour le pseudo
    const [isRegistering, setIsRegistering] = useState(false);
    const [error, setError] = useState("");
    const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Login() {
    useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
          if (user) {
-            navigate("/");
+            navigate("/");  // Rediriger vers la page d'accueil si l'utilisateur est connecté
          }
       });
       return () => unsubscribe();
@@ -27,13 +28,21 @@ export default function Login() {
 
       try {
          if (isRegistering) {
-            await createUserWithEmailAndPassword(auth, email, password);
+            // Création d'un utilisateur
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Mise à jour du pseudo de l'utilisateur après l'inscription
+            await updateProfile(user, {
+               displayName: pseudo,  // Associer le pseudo à l'utilisateur
+            });
          } else {
+            // Connexion de l'utilisateur
             await signInWithEmailAndPassword(auth, email, password);
          }
-         navigate("/");
+         navigate("/");  // Rediriger vers la page d'accueil après la connexion ou l'inscription
       } catch (err) {
-         setError(err.message);
+         setError(err.message);  // Gérer les erreurs (par exemple, email incorrect ou mot de passe erroné)
       }
    };
 
@@ -41,14 +50,14 @@ export default function Login() {
       const provider = new GoogleAuthProvider();
       try {
          await signInWithPopup(auth, provider);
-         navigate("/");
+         navigate("/");  // Rediriger vers la page d'accueil après la connexion avec Google
       } catch (err) {
          setError(err.message);
       }
-   };   
+   };
 
    return (
-      <div className="container">
+      <div className="login-container">
          <h2>{isRegistering ? "Créer un compte" : "Se connecter"}</h2>
          {error && <p className="error">{error}</p>}
          <form onSubmit={handleSubmit} className="form">
@@ -68,6 +77,16 @@ export default function Login() {
                required
                className="input"
             />
+            {isRegistering && (
+               <input
+                  type="text"
+                  placeholder="Pseudo"
+                  value={pseudo}
+                  onChange={(e) => setPseudo(e.target.value)}
+                  required
+                  className="input"
+               />
+            )}
             <button type="submit" className="button">
                {isRegistering ? "S'inscrire" : "Se connecter"}
             </button>
