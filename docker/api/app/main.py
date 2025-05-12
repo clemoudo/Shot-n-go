@@ -38,8 +38,15 @@ app.include_router(shot_router)
 def read_root():
    return {"message": "Hello FastAPI & Firestore!"}
 
-@app.post("/upload")
-async def upload_image(file: UploadFile = File(...), _ = Depends(verify_firebase_token)):
+# --- Gestion des images ---
+@app.post("/images/upload")
+async def upload_image(
+   file: UploadFile = File(...),
+   user_data: dict = Depends(verify_firebase_token)
+):
+   if user_data["role"] != "admin":
+      raise HTTPException(status_code=403, detail="Access denied: admin only")
+   
    file_path = os.path.join(IMAGES_DIR, file.filename)
    with open(file_path, "wb") as buffer:
       shutil.copyfileobj(file.file, buffer)
@@ -57,9 +64,16 @@ def get_image(filename: str):
    return FileResponse(file_path)
 
 @app.delete("/images/{filename}")
-def delete_image(filename: str, _ = Depends(verify_firebase_token)):
+def delete_image(
+   filename: str,
+   user_data: dict = Depends(verify_firebase_token)
+):
+   if user_data["role"] != "admin":
+      raise HTTPException(status_code=403, detail="Access denied: admin only")
+
    file_path = os.path.join(IMAGES_DIR, filename)
    if not os.path.exists(file_path):
       raise HTTPException(status_code=404, detail="Image not found")
+
    os.remove(file_path)
    return {"message": "Image deleted"}

@@ -9,7 +9,7 @@ import Home from './Home';
 import Menu from './Menu';
 import Games from './Games';
 import Queue from './Queue';
-import AdminPannel from './AdminPannel';
+import Admin from './Admin';
 import Login from './Login';
 import Leaderboard from './Leaderboard';
 
@@ -70,9 +70,10 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/menu" element={<Menu shots={shots} fetchShots={fetchShots} />} />
 					<Route path="/games" element={<Games />} />
-					<Route path="/Queue" element={<Queue />} />
-					<Route path="/Admin_pannel" element={<AdminPannel shots={shots} setShots={setShots} loading={loading} setLoading={setLoading} fetchShots={fetchShots} />} />
-					<Route path="/Login" element={<Login />} />
+					<Route path="/queue" element={<Queue />} />
+					{/* <Route path="/admin" element={<Admin shots={shots} setShots={setShots} loading={loading} setLoading={setLoading} fetchShots={fetchShots} />} /> */}
+					<Route path="/admin" element={<Admin />} />
+					<Route path="/login" element={<Login />} />
 					<Route path="/leaderboard" element={<Leaderboard />} />
 				</Routes>
 			</div>

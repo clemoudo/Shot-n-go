@@ -5,3 +5,7 @@
 
 # Ignore firebase credentials
 **/firebase-key.json
+KEY/
+
+# Fichier pour la définition de rôle (clement)
+setRole.js

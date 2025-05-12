@@ -37,7 +37,7 @@ function Navbar({ user }) {
 
         {/* Afficher le lien Admin uniquement si l'utilisateur est l'admin */}
         {adminUids.includes(user?.uid) && (
-          <CustomLink to="/Admin_pannel">Admin Panel</CustomLink>
+          <CustomLink to="/admin">Admin Panel</CustomLink>
         )}
 
         </ul>
@@ -60,7 +60,7 @@ function Navbar({ user }) {
       )}
 
       {/* Afficher le lien Login si l'utilisateur n'est pas connecté */}
-      {!user && <CustomLink to="/Login">Authentification</CustomLink>}
+      {!user && <CustomLink to="/login">Authentification</CustomLink>}
     </nav>
   );
 }

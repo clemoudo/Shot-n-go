@@ -3,5 +3,4 @@ uvicorn
 google-cloud-firestore
 firebase-admin
 pydantic
-redis
-aioredis
+redis>=4.5.0

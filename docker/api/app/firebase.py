@@ -11,13 +11,15 @@ initialize_app(cred)
 db = firestore.client()
 
 def verify_firebase_token(authorization: str = Header(...)):
-   if not authorization.startswith("Bearer "):
-      raise HTTPException(status_code=403, detail="Invalid auth header")
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=403, detail="Invalid auth header")
 
-   id_token = authorization.split(" ")[1]
+    id_token = authorization.split(" ")[1]
 
-   try:
-      decoded_token = auth.verify_id_token(id_token)
-      return decoded_token  # contient email, uid, etc.
-   except Exception:
-      raise HTTPException(status_code=403, detail="Invalid or expired token")
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        role = decoded_token.get("role", "client")  # "client" par défaut
+        decoded_token["role"] = role  # Ajout explicite
+        return decoded_token
+    except Exception:
+        raise HTTPException(status_code=403, detail="Invalid or expired token")
