@@ -3,7 +3,6 @@ import Cart from './Cart'
 import { useState } from 'react';
 
 
-
 function Menu({shots, fetchShots}) {
    const [cart_table, setCartTable] = useState([]);
 

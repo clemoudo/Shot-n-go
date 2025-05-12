@@ -5,56 +5,7 @@
    font-family: sans-serif;
  }
  
- .upload-section {
-   margin-bottom: 2rem;
- }
- 
- .upload-section input {
-   margin-right: 1rem;
- }
- 
- .message {
-   margin-top: 0.5rem;
-   color: green;
- }
- 
- .images-grid {
-   display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-   gap: 1rem;
- }
- 
- .image-card {
-   border: 1px solid #ddd;
-   padding: 1rem;
-   border-radius: 8px;
-   text-align: center;
-   background: #f9f9f9;
- }
- 
- .preview-image {
-   width: 100%;
-   height: auto;
-   max-height: 150px;
-   object-fit: cover;
-   margin-bottom: 0.5rem;
-   border-radius: 4px;
- }
- 
- .delete-btn {
-   background-color: #db4437;
-   color: white;
-   border: none;
-   padding: 6px 10px;
-   border-radius: 4px;
-   cursor: pointer;
- }
- 
- .delete-btn:hover {
-   background-color: #c1351d;
- }
- 
- .new-shot-form {
+.new-shot-form {
   max-width: 600px;
   margin: 2rem auto;
   background-color: #ffffff;

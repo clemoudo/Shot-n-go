@@ -42,7 +42,7 @@ function App() {
 
 	const fetchShots = async () => {
 		try {
-			const response = await fetch("/api/shot/receive/");
+			const response = await fetch("/api/shots/");
 			if (!response.ok) {
 				const text = await response.text();
 				console.error("Erreur HTTP:", response.status, response.statusText, text);
@@ -50,7 +50,7 @@ function App() {
 			}
 
 			const data = await response.json();
-			console.log("Shots récupérés :", data.shots);
+			// console.log("Shots récupérés :", data.shots);
 			setShots(data.shots);
 			setLoading(false);
 		} catch (error) {

@@ -9,7 +9,7 @@ function ShoppingList({addToCart, removeItem, shots, fetchShots}) {
 	
 	const fetchMachines = async () => {
 		try {
-		  const response = await fetch("/api/machine/gt_all/");
+		  const response = await fetch("/api/machines/");
 		  if (response.ok) {
 			const data = await response.json();
 			setMachine(data)
