@@ -40,7 +40,7 @@ export default function Admin() {
     return () => unsubscribe();
   }, [auth]);
 
-  const handleUpload = async () => {
+  const uploadImage = async () => {
     const token = localStorage.getItem("token");
     if (!file || !token) return;
 
@@ -69,8 +69,7 @@ export default function Admin() {
     }
   };
 
-
-  const handleDeleteImage = async (filename) => {
+  const deleteImage = async (filename) => {
     const token = localStorage.getItem("token");
     if (!token || !window.confirm(`Supprimer ${filename} ?`)) return;
 
@@ -90,7 +89,7 @@ export default function Admin() {
   const handleDeleteShot = async (name) => {
     if (!window.confirm(`Supprimer le shot "${name}" ?`)) return;
     try {
-      await axios.delete(`/api/shot/supr/${encodeURIComponent(name)}`);
+      await axios.delete(`/api/shots/${encodeURIComponent(name)}`);
       setMessage("Shot supprimé");
     } catch (err) {
       console.error("Erreur suppression shot :", err);
@@ -109,14 +108,17 @@ export default function Admin() {
   const handleNewImageChange = (e) => {
     const { files } = e.target;
     setFile(files);
-    newShot.image = files[0].name;
+
+    const imageUrl = `http://shot-n-go.m1-1.ephec-ti.be/images/${files[0].name}`;
+    setNewShot((prev) => ({
+      ...prev,
+      image: imageUrl
+    }));
   };
 
   const handleNewShotSubmit = async (event) => {
     event.preventDefault();
     const token = localStorage.getItem("token");
-
-    newShot.image = file[0].name;
 
     const formData = new FormData();
     Object.entries(newShot).forEach(([key, val]) => {
@@ -124,14 +126,14 @@ export default function Admin() {
     })
 
     try {
-      await axios.post("/api/shots/", formData, {
+      await axios.post("/api/shots", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      handleUpload();
+      uploadImage();
 
       setMessage("Shot ajouté !");
       setNewShot({

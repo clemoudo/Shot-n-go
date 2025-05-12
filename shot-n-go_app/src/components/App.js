@@ -42,7 +42,7 @@ function App() {
 
 	const fetchShots = async () => {
 		try {
-			const response = await fetch("/api/shots/");
+			const response = await fetch("/api/shots");
 			if (!response.ok) {
 				const text = await response.text();
 				console.error("Erreur HTTP:", response.status, response.statusText, text);

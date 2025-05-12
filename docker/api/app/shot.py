@@ -16,7 +16,7 @@ collection_shots = db.collection("Shots")
 machines_collection = db.collection("Machine")
 users_collection = db.collection("User")
 
-@router.post("/api/shots/")
+@router.post("/api/shots")
 async def add_shot(
     name: str = Form(...),
     price: str = Form(...),
@@ -63,7 +63,7 @@ async def add_shot(
     collection_shots.document(new_id).set(shot_data)
     return {"message": "Shot ajouté", "shot_id": new_id}
 
-@router.get("/api/shots/")
+@router.get("/api/shots")
 async def get_shots():
     cache_key = "shots_cache"
     start = time.time()
@@ -95,7 +95,7 @@ def delete_shot(shot_name: str):
         return {"message": f"shot {shot_name} supprimé"}
     return {"error": "Shot non trouvé"}, 404
 
-@router.get("/api/machines/", response_model=List[Machine])
+@router.get("/api/machines", response_model=List[Machine])
 async def get_machines():
     # Vérifie si les machines sont déjà en cache
     cached_machines = await redis.get("machines_cache")
@@ -135,7 +135,8 @@ async def get_machines():
 
     return machines
 
-@router.get("/api/queue/")
+# TODO revoir en entier
+@router.get("/api/queue")
 def get_queue():
     docs = users_collection.stream()
     queue = []
