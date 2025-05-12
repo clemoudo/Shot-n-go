@@ -2,19 +2,14 @@ from pydantic import BaseModel
 from typing import List
 
 class Shot(BaseModel):
+    id: str
     name: str
-    category: str
-    sweetness: int
-    alcoholLevel: int
     price: float
-    cover: str
-    stock: int
+    stock: float
+    image: str
+    category: str
 
-class AlcoolItem(BaseModel):
-    alcool: Shot
-    stock: bool
-
-class MachineSchema(BaseModel):
+class Machine(BaseModel):
     nom: str
-    alcools: List[AlcoolItem]
+    alcools: List[Shot]
     queue: List[str]

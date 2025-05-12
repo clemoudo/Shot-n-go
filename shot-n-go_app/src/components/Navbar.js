@@ -13,7 +13,7 @@ function Navbar({ user }) {
     const checkAdminRole = async () => {
       if (user) {
         try {
-          const tokenResult = await getIdTokenResult(user, true); // force refresh
+          const tokenResult = await getIdTokenResult(user, true);
           setIsAdmin(tokenResult.claims.role === "admin");
         } catch (err) {
           console.error("Erreur lors de la récupération du rôle :", err);

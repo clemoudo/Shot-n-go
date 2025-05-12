@@ -73,7 +73,7 @@ function App() {
 					<Route path="/queue" element={<Queue />} />
 					{/* <Route path="/admin" element={<Admin shots={shots} setShots={setShots} loading={loading} setLoading={setLoading} fetchShots={fetchShots} />} /> */}
 					<Route path="/admin" element={<Admin />} />
-					<Route path="/login" element={<Login />} />
+					<Route path="/login" element={<Login fetchShots={fetchShots} />} />
 					<Route path="/leaderboard" element={<Leaderboard />} />
 				</Routes>
 			</div>
