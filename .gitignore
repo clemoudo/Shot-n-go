@@ -7,5 +7,5 @@
 **/firebase-key.json
 KEY/
 
-# Fichier pour la définition de rôle (clement)
-setRole.js
+# Modules
+**/node_modules/
