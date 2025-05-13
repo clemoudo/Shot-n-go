@@ -112,12 +112,12 @@
 	color: #666;
 }
 
-.cart-table .quantity {
+.cart-table .cart-quantity {
 	align-items: center;
 	gap: 5px;
 }
 
-.cart-table .quantity button {
+.cart-table .cart-quantity button {
 	background-color: #e6eef6; /* Bleu très pâle */
 	border: 1px solid #bbb;
 	padding: 5px 10px;
@@ -126,11 +126,11 @@
 	color: #222;
 }
 
-.cart-table .quantity button:hover {
+.cart-table .cart-quantity button:hover {
 	background-color: #d0deec;
 }
 
-.cart-table .price {
+.cart-table .cart-price {
 	font-weight: bold;
 	color: #111;
 }

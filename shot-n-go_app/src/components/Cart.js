@@ -47,12 +47,12 @@ function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 											<span className="product-unitPrice">{shotElem.price}€</span>
 										</div>
 									</td>
-									<td className="quantity">
+									<td className="cart-quantity">
 										<button onClick={() => removeItem(shotElem)}>-</button>
 										<span>{shotElem.amount}</span>
 										<button onClick={() => addToCart(shotElem,1)}>+</button>
 									</td>
-									<td className="price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
+									<td className="cart-price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
 									<td><button onClick={()=> deleteItem(shotElem)}> --- </button></td> 
 								</tr>
 							))}
