@@ -3,7 +3,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin() {
+export default function Admin({ shotState }) {
+  const { shots, fetchShots } = shotState;
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -40,6 +41,10 @@ export default function Admin() {
     return () => unsubscribe();
   }, [auth]);
 
+  useEffect(() => {
+    fetchShots();
+  }, []);
+
   const uploadImage = async () => {
     const token = localStorage.getItem("token");
     if (!file || !token) return;
@@ -71,7 +76,7 @@ export default function Admin() {
 
   const deleteImage = async (filename) => {
     const token = localStorage.getItem("token");
-    if (!token || !window.confirm(`Supprimer ${filename} ?`)) return;
+    if (!token) return;
 
     try {
       await axios.delete(`/images/${filename}`, {
@@ -81,16 +86,18 @@ export default function Admin() {
       });
       setMessage("Image supprimée");
     } catch (err) {
-      console.error("Erreur suppression :", err);
+      console.error("Erreur suppression image :", err);
       setMessage("Échec de la suppression");
     }
   };
 
-  const handleDeleteShot = async (name) => {
-    if (!window.confirm(`Supprimer le shot "${name}" ?`)) return;
+  const handleDeleteShot = async (id, image) => {
+    if (!window.confirm(`Supprimer le shot "${id}" et son image "${image}" ?`)) return;
     try {
-      await axios.delete(`/api/shots/${encodeURIComponent(name)}`);
+      await axios.delete(`/api/shots/${encodeURIComponent(id)}`);
+      deleteImage(image);
       setMessage("Shot supprimé");
+      fetchShots();
     } catch (err) {
       console.error("Erreur suppression shot :", err);
       setMessage("Échec de la suppression");
@@ -109,7 +116,7 @@ export default function Admin() {
     const { files } = e.target;
     setFile(files);
 
-    const imageUrl = `http://shot-n-go.m1-1.ephec-ti.be/images/${files[0].name}`;
+    const imageUrl = files[0].name;
     setNewShot((prev) => ({
       ...prev,
       image: imageUrl
@@ -143,6 +150,7 @@ export default function Admin() {
         image: "",
         category: ""
       });
+      fetchShots();
 
     } catch (err) {
       console.error("Erreur envoi shot :", err);
@@ -177,21 +185,30 @@ export default function Admin() {
         </form>
       </section>
 
-      {/* Liste des shots
-      <section className="shots-list">
-        <h2>Shots existants</h2>
-        <div className="images-grid">
-          {shots.map((shot) => (
-            <div key={shot.id} className="image-card">
-              <img src={`data:image/png;base64,${shot.cover}`} alt={shot.name} className="preview-image" />
-              <p><strong>{shot.name}</strong></p>
-              <p>{shot.category} — {shot.price}€</p>
-              <p>Alcool: {shot.alcoholLevel} | Sucre: {shot.sweetness}</p>
-              <button onClick={() => handleDeleteShot(shot.name)} className="delete-btn">Supprimer</button>
-            </div>
-          ))}
-        </div>
-      </section> */}
+      {/* Supprimer un shot via liste déroulante */}
+      <section className="delete-shot-form">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const { id, image } = JSON.parse(e.target.elements.shotData.value);
+            handleDeleteShot(id, image);
+          }}
+        >
+          <fieldset>
+            <legend>Supprimer un Shot</legend>
+            <label htmlFor="shotData">Sélectionnez un shot à supprimer</label>
+            <select name="shotData" id="shotData" required>
+              <option value="">-- Choisir un shot --</option>
+              {shots.map((shot) => (
+                <option key={shot.id} value={JSON.stringify({ id: shot.id, image: shot.image })}>
+                  {shot.id} {shot.name}
+                </option>
+              ))}
+            </select>
+            <button type="submit">Supprimer Shot</button>
+          </fieldset>
+        </form>
+      </section>
 
       {message && <p className="message">{message}</p>}
     </div>

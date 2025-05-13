@@ -18,6 +18,7 @@ function App() {
 	const [loading, setLoading] = useState(true);
 	const [authLoading, setAuthLoading] = useState(true);
 	const [user, setUser] = useState(null);
+	const [cart, setCart] = useState([]);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -42,19 +43,56 @@ function App() {
 
 	const fetchShots = async () => {
 		try {
-			const response = await fetch("/api/shots");
+			const storedEtag = localStorage.getItem("shotsEtag");
+			const storedShots = localStorage.getItem("shotsData");
+
+			const response = await fetch(`/api/shots`, {
+				headers: {
+					"If-None-Match": storedEtag || ""
+				}
+			});
+
+			if (response.status === 304) {
+				console.log("Les shots sont déjà à jour (304 Not Modified)");
+
+				// Charger les shots depuis le localStorage
+				if (storedShots) {
+					setShots(JSON.parse(storedShots));
+				}
+				setLoading(false);
+				return;
+			}
+
 			if (!response.ok) {
 				const text = await response.text();
 				console.error("Erreur HTTP:", response.status, response.statusText, text);
+
+				// Fallback local en cas d'échec réseau
+				if (storedShots) {
+					setShots(JSON.parse(storedShots));
+				}
 				return;
 			}
 
 			const data = await response.json();
-			// console.log("Shots récupérés :", data.shots);
 			setShots(data.shots);
+
+			// Stocker le nouvel ETag et les données localement
+			const newEtag = response.headers.get("ETag");
+			if (newEtag) {
+				localStorage.setItem("shotsEtag", newEtag);
+			}
+			localStorage.setItem("shotsData", JSON.stringify(data.shots));
+
 			setLoading(false);
 		} catch (error) {
 			console.error("Erreur de connexion:", error);
+
+			// Fallback en cas d'erreur réseau
+			const storedShots = localStorage.getItem("shotsData");
+			if (storedShots) {
+				setShots(JSON.parse(storedShots));
+			}
 		}
 	};
 
@@ -68,12 +106,11 @@ function App() {
 			<div className="container">
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/menu" element={<Menu shots={shots} fetchShots={fetchShots} />} />
+					<Route path="/menu" element={<Menu shotState={{ shots, fetchShots }} cartState={{ cart, setCart }} />} />
 					<Route path="/games" element={<Games />} />
 					<Route path="/queue" element={<Queue />} />
-					{/* <Route path="/admin" element={<Admin shots={shots} setShots={setShots} loading={loading} setLoading={setLoading} fetchShots={fetchShots} />} /> */}
-					<Route path="/admin" element={<Admin />} />
-					<Route path="/login" element={<Login fetchShots={fetchShots} />} />
+					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} />} />
+					<Route path="/login" element={<Login />} />
 					<Route path="/leaderboard" element={<Leaderboard />} />
 				</Routes>
 			</div>

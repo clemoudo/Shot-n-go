@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
-function ShoppingList({addToCart, removeItem, shots, fetchShots}) {
-	const [loading,setLoading] = useState(true)
-	const [listMachine,setMachine] = useState([])
-	const [filter,setFilter] = useState("all")
+function ShoppingList({addToCart, removeItem, shotState}) {
+   const { shots, fetchShots } = shotState;
+	const [loading, setLoading] = useState(true)
+	const [listMachine, setMachine] = useState([])
+	const [filter, setFilter] = useState("all")
 	
 	const fetchMachines = async () => {
 		try {
@@ -33,38 +34,54 @@ function ShoppingList({addToCart, removeItem, shots, fetchShots}) {
 	}
 	return (
 		<div>
-			{(listMachine.length >= 1)?(
+			{listMachine.length >= 1 ? (
 				<div className='sort_by'>
 					<div className="dropdown">
 						<button className="dropbtn">
-							{(filter === "all")?("all"):(listMachine.find((machine) => machine.id === filter).nom)}
+							{filter === "all"
+								? "all"
+								: listMachine.find((machine) => machine.id === filter)?.nom || "unknown"}
 							<i className="fa fa-caret-down" />
 						</button>
 						<div className="dropdown-content">
 							<button onClick={() => setFilter("all")}>all</button>
-							{listMachine.map((machine) =>(<button onClick={() => setFilter(machine.id)}>{machine.nom}</button>))}
+							{listMachine.map((machine) => (
+								<button key={machine.id} onClick={() => setFilter(machine.id)}>
+									{machine.nom}
+								</button>
+							))}
 						</div>
 					</div>
-				</div>)
-			:(
-			<div className='sort_by'> </div>)}
-			<ul className='shot-list'>
+				</div>
+			) : (
+				<div className='sort_by'></div>
+			)}
 
-				{(filter === "all")?(shots.map((shotElem) => (
-					<ShotItem
-						shotElem={shotElem}
-						addToCart={addToCart} 
-						removeItem={removeItem}
-					/>
-				))):(listMachine.find((machine) => machine.id === filter).alcools.map((shotElem) => (
-					<ShotItem
-						shotElem={shotElem.alcool}
-						addToCart={addToCart} 
-						removeItem={removeItem}
-					/>)))}
+			<ul className='shot-list'>
+				{filter === "all" ? (
+					shots.map((shotElem) => (
+						<ShotItem
+							key={shotElem.id}
+							shotElem={shotElem}
+							addToCart={addToCart}
+							removeItem={removeItem}
+						/>
+					))
+				) : (
+					listMachine
+						.find((machine) => machine.id === filter)
+						?.alcools?.map((shotElem, index) => (
+							<ShotItem
+								key={shotElem.alcool.id || index}
+								shotElem={shotElem.alcool}
+								addToCart={addToCart}
+								removeItem={removeItem}
+							/>
+						))
+				)}
 			</ul>
 		</div>
-	)
+	);
 }
 
 export default ShoppingList

@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Form, Depends, HTTPException
+from fastapi import APIRouter, Form, Depends, HTTPException, Request, Query
+from fastapi.responses import JSONResponse, Response
 from app.firebase import db
 from typing import List
 from app.models import Shot, Machine
@@ -8,6 +9,7 @@ import json
 import logging
 import time
 from app.firebase import verify_firebase_token
+import hashlib
 
 logger = logging.getLogger("shot_api")
 
@@ -26,15 +28,15 @@ async def add_shot(
     user_data: dict = Depends(verify_firebase_token)
 ):
     if user_data["role"] != "admin":
-      raise HTTPException(status_code=403, detail="Access denied: admin only")
-    
+        raise HTTPException(status_code=403, detail="Access denied: admin only")
+
     # Vérif des float
     try:
         price_float = float(price)
         stock_float = float(stock)
     except ValueError:
         raise HTTPException(status_code=400, detail="Prix ou stock invalide (doivent être des nombres)")
-    
+
     if price_float < 0 or price_float > 100:
         raise HTTPException(400, detail="Le prix doit être entre 0 et 100 €")
 
@@ -61,39 +63,76 @@ async def add_shot(
     }
 
     collection_shots.document(new_id).set(shot_data)
+
+    # Invalidation du cache
+    await redis.delete("shots_cache")
+    await redis.delete("shots_cache_hash")
+
     return {"message": "Shot ajouté", "shot_id": new_id}
 
 @router.get("/api/shots")
-async def get_shots():
+async def get_shots(request: Request):
     cache_key = "shots_cache"
     start = time.time()
 
     cached_data = await redis.get(cache_key)
-    if cached_data:
-        duration = time.time() - start
-        logger.info(f"[CACHE HIT] Clé: {cache_key} | Durée: {duration:.3f}s")
-        return {"shots": json.loads(cached_data)}
+    cached_hash = await redis.get(f"{cache_key}_hash")
 
+    # Si les données sont en bytes, les décoder
+    if isinstance(cached_data, bytes):
+        cached_data = cached_data.decode()
+    if isinstance(cached_hash, bytes):
+        cached_hash = cached_hash.decode()
+
+    client_etag = request.headers.get("if-none-match")
+
+    # Si cache et hash existent
+    if cached_data and cached_hash:
+        if client_etag == cached_hash:
+            logger.info(f"[CACHE VALID] ETag client: {client_etag} correspond à cache.")
+            return Response(status_code=304)
+
+        logger.info(f"[CACHE HIT] Clé: {cache_key} | Durée: {time.time() - start:.3f}s")
+        return JSONResponse(
+            content={"shots": json.loads(cached_data)},
+            headers={"ETag": str(cached_hash)}
+        )
+
+    # Requête Firestore (cache manquant)
     logger.info(f"[CACHE MISS] Clé: {cache_key} - Requête Firestore en cours...")
     shots = [doc.to_dict() for doc in collection_shots.stream()]
+    shots_json = json.dumps(shots)
+    shots_hash = hashlib.md5(shots_json.encode()).hexdigest()
 
-    await redis.set(cache_key, json.dumps(shots), ex=60 * 5)
-    duration = time.time() - start
-    logger.info(f"[CACHE SET] Clé: {cache_key} | {len(shots)} éléments | Durée: {duration:.3f}s")
+    # Stockage dans Redis
+    await redis.set(cache_key, shots_json, ex=60 * 5)
+    await redis.set(f"{cache_key}_hash", shots_hash, ex=60 * 5)
 
-    return {"shots": shots}
+    logger.info(f"[CACHE SET] Clé: {cache_key} | {len(shots)} éléments | Durée: {time.time() - start:.3f}s")
 
-@router.delete("/api/shots/{shot_name}")
-def delete_shot(shot_name: str):
-    shot_to_delete = collection_shots.where("name", "==", shot_name).stream()
-    found = False
-    for shot in shot_to_delete:
-        found = True
-        collection_shots.document(shot.id).delete()
+    return JSONResponse(
+        content={"shots": shots},
+        headers={"ETag": str(shots_hash)}
+    )
 
-    if found:
-        return {"message": f"shot {shot_name} supprimé"}
-    return {"error": "Shot non trouvé"}, 404
+
+@router.delete("/api/shots/{shot_id}")
+async def delete_shot(shot_id: str):
+    doc_ref = collection_shots.document(shot_id)
+    doc = doc_ref.get()
+
+    if not doc.exists:
+        raise HTTPException(status_code=404, detail="Shot non trouvé")
+
+    # Supprime le document
+    doc_ref.delete()
+
+    # Invalide le cache Redis
+    cache_key = "shots_cache"
+    await redis.delete(cache_key)
+    await redis.delete(f"{cache_key}_hash")
+
+    return {"message": f"Shot {shot_id} supprimé et cache invalidé"}
 
 @router.get("/api/machines", response_model=List[Machine])
 async def get_machines():
