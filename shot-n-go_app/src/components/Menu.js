@@ -1,16 +1,14 @@
 import ShoppingList from './ShoppingList'
 import Cart from './Cart'
-import { useState } from 'react';
 
-
-
-function Menu({shots, fetchShots}) {
-   const [cart_table, setCartTable] = useState([]);
+function Menu({ shotState, cartState }) {
+   const { shots, fetchShots } = shotState;
+   const { cart, setCart } = cartState;
 
    // Fonction pour ajouter un article
-   const addToCart = (shotElem,addedAmount) => {
+   const addToCart = (shotElem, addedAmount) => {
       if (addedAmount > 0){
-         setCartTable((prevCart) => {
+         setCart((prevCart) => {
             const currentShot = prevCart.find((shot) => shot.id === shotElem.id);
             if (currentShot) {
                   return prevCart.map((shot) =>
@@ -25,7 +23,7 @@ function Menu({shots, fetchShots}) {
 
    // Fonction pour retirer un article
    const removeItem = (shotElem) => {
-      setCartTable((prevCart) => {
+      setCart((prevCart) => {
          const currentShot = prevCart.find((shot) => shot.id === shotElem.id);
          if (!currentShot) return prevCart;
    
@@ -55,7 +53,7 @@ function Menu({shots, fetchShots}) {
    
       if (!confirmDelete) return;
    
-      setCartTable((prevCart) =>
+      setCart((prevCart) =>
          prevCart.filter((shot) => shot.id !== shotElem.id)
       );
    };   
@@ -67,14 +65,14 @@ function Menu({shots, fetchShots}) {
    
       if (!confirmClear) return;
    
-      setCartTable([]);
+      setCart([]);
    };   
    
    
    return (
       <>
-         <Cart cart_table={cart_table} setCartTable={setCartTable} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} clearCart={clearCart} />
-         <ShoppingList cart_table={cart_table} addToCart={addToCart} removeItem={removeItem} shots={shots} fetchShots={fetchShots} />
+         <Cart cart={cart} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} clearCart={clearCart} />
+         <ShoppingList addToCart={addToCart} removeItem={removeItem} shotState={{ shots, fetchShots }} />
       </>
    );
 }

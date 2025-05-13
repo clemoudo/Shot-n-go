@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import '../styles/Cart.css'
 
-function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clearCart}) {
+function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 	const [isOpen, setIsOpen] = useState(false)
-	const total = cart_table.reduce(
+	const total = cart.reduce(
 		(acc, shotType) => acc + shotType.amount * shotType.price, 0
 	)
 	let nbr_short_cart = 0
-	cart_table.forEach(element => {
+	cart.forEach(element => {
 		nbr_short_cart += element.amount
 	});
 	
@@ -23,7 +23,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 			</button>
 			<h2>Panier</h2>
 			<h3>Total : {total.toFixed(2)}€</h3>
-			{cart_table.length > 0 ? (
+			{cart.length > 0 ? (
 				<div>
 					<table className="cart-table">
 						<thead>
@@ -32,7 +32,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 							</tr>
 						</thead>
 						<tbody>
-							{cart_table
+							{cart
 							.sort(function(shotA, shotB){
 								if (shotA.name > shotB.name)return 1;
 								if (shotA.name < shotB.name)return -1;
@@ -42,17 +42,17 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 								<tr key={`${shotElem.id}`}>
 									<td className="product">
 										<div className="product-info">
-											<img src={`data:image/jpeg;base64,${shotElem.cover}`} alt={shotElem.name} />
+											<img loading='lazy' src={`/images/${shotElem.image}`} alt={shotElem.name} />
 											<span className="product-name">{shotElem.name}</span>
 											<span className="product-unitPrice">{shotElem.price}€</span>
 										</div>
 									</td>
-									<td className="quantity">
+									<td className="cart-quantity">
 										<button onClick={() => removeItem(shotElem)}>-</button>
 										<span>{shotElem.amount}</span>
 										<button onClick={() => addToCart(shotElem,1)}>+</button>
 									</td>
-									<td className="price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
+									<td className="cart-price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
 									<td><button onClick={()=> deleteItem(shotElem)}> --- </button></td> 
 								</tr>
 							))}
@@ -73,7 +73,7 @@ function Cart({cart_table, setCartTable, addToCart, removeItem, deleteItem, clea
 				className='cart-button'
 				onClick={() => setIsOpen(true)}
 			>
-			{nbr_short_cart > 0 ? ("ouvrir le panier(" + nbr_short_cart + ")"):('ouvrir le panier')}
+			{nbr_short_cart > 0 ? ("Ouvrir le panier (" + nbr_short_cart + ")"):('ouvrir le panier')}
 			</button>
 		</div>
 		</>
