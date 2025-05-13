@@ -42,7 +42,7 @@ function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 								<tr key={`${shotElem.id}`}>
 									<td className="product">
 										<div className="product-info">
-											<img src={`/images/${shotElem.image}`} alt={shotElem.name} />
+											<img loading='lazy' src={`/images/${shotElem.image}`} alt={shotElem.name} />
 											<span className="product-name">{shotElem.name}</span>
 											<span className="product-unitPrice">{shotElem.price}€</span>
 										</div>
@@ -73,7 +73,7 @@ function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 				className='cart-button'
 				onClick={() => setIsOpen(true)}
 			>
-			{nbr_short_cart > 0 ? ("ouvrir le panier(" + nbr_short_cart + ")"):('ouvrir le panier')}
+			{nbr_short_cart > 0 ? ("Ouvrir le panier (" + nbr_short_cart + ")"):('ouvrir le panier')}
 			</button>
 		</div>
 		</>

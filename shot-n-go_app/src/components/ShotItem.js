@@ -33,39 +33,19 @@ function ShotItem({ shotElem, addToCart }) {
 
     return (
         <li className="shot-item" key={shotElem.id}>
-            {/* Affichage de l'image */}
-            {shotElem.image ? (
-                <img className="shot-item-cover" src={`/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
-            ) : (
-                <p>Image non disponible</p>
-            )}
-
-            {/* Nom du shot */}
-            <p>{shotElem.name}</p>
-
-            <div>
-                {/* Stock */}
-                {shotElem.stock <= 0.1 ? (
-                    <p className="pricecase">OUT OF STOCK</p>
-                ) : (
-                    <div className="priceButton">
-                        {/* Prix */}
-                        {shotElem.price ? (
-                            <p className="pricecase">Prix: {shotElem.price.toFixed(2)}€</p>
-                        ) : (
-                            <p className="pricecase">Prix indisponible</p>
-                        )}
-
-                        {/* Contrôles de quantité */}
-                        <div className="quantity">
-                            <button onClick={lessOneAddAmout}>-</button>
+            <div className="shot-item-container">
+                <img className="shot-item-cover" loading='lazy' src={`/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
+                <div className="shot-item-details">
+                    <p className="shot-name">{shotElem.name}</p>
+                    <p className="pricecase">{shotElem.price} €</p>
+                    <div className="quantity">
+                        <button onClick={lessOneAddAmout}>-</button>
                             <button onClick={() => { addToCart(shotElem, addAmount); setAddAmount(0); }}>
                                 {addAmount}
                             </button>
                             <button onClick={plusOneAddAmout}>+</button>
-                        </div>
                     </div>
-                )}
+                </div>
             </div>
         </li>
     );

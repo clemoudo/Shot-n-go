@@ -124,3 +124,77 @@
    outline: none;
    box-shadow: 0 0 0 3px rgba(219, 68, 55, 0.4); /* Shadow effet au focus */
 }
+
+.nav ul {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav .icon {
+  display: none;
+  color: white;
+  font-size: 1.8rem;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 873px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    gap: 0;
+  }
+
+  .nav .icon {
+    display: block;
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .nav-links {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1rem;
+  }
+
+  .nav.responsive .nav-links {
+    display: flex;
+  }
+
+  .nav ul {
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+  }
+
+  .nav ul li {
+    width: 100%;
+    text-align: left;
+  }
+
+  .user-menu {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0;
+    gap: 0;
+  }
+
+  .nav.responsive .user-menu {
+    display: flex;
+  }
+
+  .site-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+}
