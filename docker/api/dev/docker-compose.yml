@@ -7,11 +7,18 @@ services:
       - ../images:/images
     networks:
       - redis_net
+      - db_net
     depends_on:
       - redis
+      - mariadb
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - DB_HOST=mariadb 
+      - DB_PORT=3306
+      - DB_NAME=shotngo
+      - DB_USER=shotuser
+      - DB_PASSWORD=shotpass
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/"]
@@ -33,5 +40,23 @@ services:
       timeout: 5s
       retries: 3
 
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: shotngo
+      MYSQL_USER: shotuser
+      MYSQL_PASSWORD: shotpass
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # initialise la db à la première exécution
+    networks:
+      - db_net
+
 networks:
   redis_net:
+  db_net:
+
+volumes:
+  mariadb_data:

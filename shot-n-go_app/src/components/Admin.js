@@ -12,7 +12,6 @@ export default function Admin({ shotState }) {
   const [newShot, setNewShot] = useState({
     name: "",
     price: "",
-    stock: "",
     image: "",
     category: ""
   });
@@ -146,7 +145,6 @@ export default function Admin({ shotState }) {
       setNewShot({
         name: "",
         price: "",
-        stock: "",
         image: "",
         category: ""
       });
@@ -171,13 +169,11 @@ export default function Admin({ shotState }) {
           <fieldset>
             <legend>Ajouter un Shot</legend>
             <label>Nom</label>
-            <input name="name" placeholder="Nom" value={newShot.name} onChange={handleNewShotChange} required />
+            <input name="name" placeholder="Nom" type="text" value={newShot.name} onChange={handleNewShotChange} required />
             <label>Prix (€)</label>
             <input name="price" placeholder="Prix" type="number" min="0" max="100" step="0.01" value={newShot.price} onChange={handleNewShotChange} required />
-            <label>Stock (%)</label>
-            <input name="stock" placeholder="Stock" type="number" min="0" max="1" step="0.01" value={newShot.stock} onChange={handleNewShotChange} required />
             <label>Catégorie</label>
-            <input name="category" placeholder="Catégorie" value={newShot.category} onChange={handleNewShotChange} required />
+            <input name="category" placeholder="Catégorie" type="text" value={newShot.category} onChange={handleNewShotChange} required />
             <label>Image</label>
             <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
             <button type="submit">Ajouter Shot</button>

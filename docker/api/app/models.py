@@ -5,11 +5,9 @@ class Shot(BaseModel):
     id: str
     name: str
     price: float
-    stock: float
     image: str
     category: str
 
 class Machine(BaseModel):
+    id: str
     nom: str
-    alcools: List[Shot]
-    queue: List[str]
