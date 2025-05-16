@@ -7,7 +7,6 @@ from app.redis_client import redis
 from app.firebase import verify_firebase_token
 from fastapi.responses import JSONResponse, Response
 import json, hashlib
-from sqlalchemy import delete
 
 router = APIRouter()
 
@@ -85,7 +84,14 @@ async def add_shot(
     }
 
 @router.delete("/api/shots/{shot_id}")
-async def delete_shot(shot_id: int, db=Depends(get_db)):
+async def delete_shot(
+    shot_id: int,
+    db=Depends(get_db),
+    user_data: dict = Depends(verify_firebase_token)
+):
+    if user_data["role"] != "admin":
+        raise HTTPException(403, detail="Admin seulement")
+    
     try:
         result = await db.execute(select(Shot).where(Shot.id == shot_id))
         shot = result.scalar_one_or_none()

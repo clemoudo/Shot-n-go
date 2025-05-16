@@ -1,9 +1,13 @@
 .admin-panel {
-   padding: 2rem;
-   max-width: 900px;
-   margin: auto;
-   font-family: sans-serif;
- }
+  padding: 2rem;
+  max-width: 900px;
+  margin: auto;
+  font-family: sans-serif;
+}
+
+.msg {
+  margin-top: 1.5rem;
+}
  
 .new-shot-form {
   max-width: 600px;

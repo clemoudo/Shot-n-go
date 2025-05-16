@@ -3,11 +3,29 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin({ shotState }) {
+export default function Admin({ shotState, machineState }) {
   const { shots, fetchShots } = shotState;
+  const { machines, fetchMachines } = machineState;
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState({
+    shotAdd: "",
+    shotDelete: ""
+  });
+
+  function setMsgShotAdd(newMsg) {
+    setMsg(prevMsg => ({
+      ...prevMsg,
+      shotAdd: newMsg
+    }));
+  }
+
+  function setMsgShotDelete(newMsg) {
+    setMsg(prevMsg => ({
+      ...prevMsg,
+      shotDelete: newMsg
+    }));
+  }
 
   const [newShot, setNewShot] = useState({
     name: "",
@@ -42,6 +60,7 @@ export default function Admin({ shotState }) {
 
   useEffect(() => {
     fetchShots();
+    fetchMachines();
   }, []);
 
   const uploadImage = async () => {
@@ -49,7 +68,6 @@ export default function Admin({ shotState }) {
     if (!file || !token) return;
 
     setLoading(true);
-    setMessage("");
 
     try {
       const formData = new FormData();
@@ -62,12 +80,10 @@ export default function Admin({ shotState }) {
         },
       });
 
-      setMessage("Image et shot ajoutés !");
       setFile(null);
       fileInputRef.current.value = "";
     } catch (err) {
       console.error("Upload échoué :", err);
-      setMessage("Erreur pendant l'envoi");
     } finally {
       setLoading(false);
     }
@@ -83,23 +99,28 @@ export default function Admin({ shotState }) {
           Authorization: `Bearer ${token}`,
         },
       });
-      setMessage("Image supprimée");
     } catch (err) {
       console.error("Erreur suppression image :", err);
-      setMessage("Échec de la suppression");
     }
   };
 
   const handleDeleteShot = async (id, image) => {
+    const token = localStorage.getItem("token");
+
     if (!window.confirm(`Supprimer le shot "${id}" et son image "${image}" ?`)) return;
     try {
-      await axios.delete(`/api/shots/${encodeURIComponent(id)}`);
+      await axios.delete(`/api/shots/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       deleteImage(image);
-      setMessage("Shot supprimé");
+      setMsgShotDelete(`Shot "${id}" et image "${image}" supprimés`);
       fetchShots();
     } catch (err) {
       console.error("Erreur suppression shot :", err);
-      setMessage("Échec de la suppression");
+      setMsgShotDelete(`Échec de la suppression du shot "${id}" et de l'image "${image}"`);
     }
   };
 
@@ -141,7 +162,7 @@ export default function Admin({ shotState }) {
 
       uploadImage();
 
-      setMessage("Shot ajouté !");
+      setMsgShotAdd(`Shot "${newShot.name}" et image "${newShot.image}" ajoutés !`);
       setNewShot({
         name: "",
         price: "",
@@ -152,7 +173,7 @@ export default function Admin({ shotState }) {
 
     } catch (err) {
       console.error("Erreur envoi shot :", err);
-      setMessage("Erreur lors de l'ajout du shot");
+      setMsgShotAdd(`Erreur lors de l'ajout du shot "${newShot.name}" et de l'image "${newShot.image}"`);
     }
   };
 
@@ -177,6 +198,7 @@ export default function Admin({ shotState }) {
             <label>Image</label>
             <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
             <button type="submit">Ajouter Shot</button>
+            {msg.shotAdd && <p className="msg">{msg.shotAdd}</p>}
           </fieldset>
         </form>
       </section>
@@ -202,11 +224,12 @@ export default function Admin({ shotState }) {
               ))}
             </select>
             <button type="submit">Supprimer Shot</button>
+            {msg.shotDelete && <p className="msg">{msg.shotDelete}</p>}
           </fieldset>
         </form>
       </section>
 
-      {message && <p className="message">{message}</p>}
+      {/* {console.log(machines)} */}
     </div>
   );
 }
