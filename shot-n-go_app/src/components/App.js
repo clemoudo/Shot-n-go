@@ -54,7 +54,7 @@ function App() {
 			});
 
 			if (response.status === 304) {
-				console.log("Les shots sont déjà à jour (304 Not Modified)");
+				// console.log("Les shots sont déjà à jour (304 Not Modified)");
 
 				// Charger les shots depuis le localStorage
 				if (storedShots) {

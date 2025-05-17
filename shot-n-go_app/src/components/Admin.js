@@ -6,7 +6,9 @@ import axios from "axios";
 export default function Admin({ shotState, machineState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
-  const [file, setFile] = useState(null);
+  const [window, setWindow] = useState("shot")
+
+  // --- Gestion des messages ---
   const [msg, setMsg] = useState({
     shotAdd: "",
     shotDelete: "",
@@ -28,6 +30,7 @@ export default function Admin({ shotState, machineState }) {
     }));
   }
 
+  // --- Modèle des éléments à ajouter ---
   const [newShot, setNewShot] = useState({
     name: "",
     price: "",
@@ -38,8 +41,11 @@ export default function Admin({ shotState, machineState }) {
     name: "" 
   });
 
+  // Pour l'ajout d'image dans le form de l'ajout des shots
+  const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
 
+  // --- Gestion des users (admin) ---
   const [isAdmin, setIsAdmin] = useState(null);
   const auth = getAuth();
 
@@ -62,11 +68,18 @@ export default function Admin({ shotState, machineState }) {
     return () => unsubscribe();
   }, [auth]);
 
+  // Fetch lors du chargement du composant
   useEffect(() => {
     fetchShots();
     fetchMachines();
   }, []);
 
+  // --- Gestion de la page à afficher ---
+  const handleWindows = (e) => {
+    setWindow(e.target.value)
+  }
+
+  // --- Gestion des images ---
   const uploadImage = async () => {
     const token = localStorage.getItem("token");
     if (!file || !token) return;
@@ -104,6 +117,7 @@ export default function Admin({ shotState, machineState }) {
     }
   };
 
+  // --- Gestion des shots ---
   const handleDeleteShot = async (id, image) => {
     const token = localStorage.getItem("token");
 
@@ -177,6 +191,7 @@ export default function Admin({ shotState, machineState }) {
     }
   };
 
+  // --- Gestion des machines ---
   const handleNewMachineChange = (e) => {
     setNewMachine({ name: e.target.value });
   };
@@ -233,97 +248,107 @@ export default function Admin({ shotState, machineState }) {
     <div className="admin-panel">
       <h1>Panneau Admin</h1>
 
+      <select onChange={handleWindows}>
+        <option value="shot">Shot</option>
+        <option value="machine">Machine</option>
+        <option value="machineShot">Machine-Shot</option>
+      </select>
+
       <div className="forms-wrapper">
-        {/* Ajouter un shot */}
-        <section className="form-container new-form">
-          <form onSubmit={handleNewShotSubmit}>
-            <fieldset>
-              <legend>Ajouter un Shot</legend>
-              <label>Nom</label>
-              <input name="name" placeholder="Nom" type="text" value={newShot.name} onChange={handleNewShotChange} required />
-              <label>Prix (€)</label>
-              <input name="price" placeholder="Prix" type="number" min="0" max="100" step="0.01" value={newShot.price} onChange={handleNewShotChange} required />
-              <label>Catégorie</label>
-              <input name="category" placeholder="Catégorie" type="text" value={newShot.category} onChange={handleNewShotChange} required />
-              <label>Image</label>
-              <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
-              <button type="submit">Ajouter Shot</button>
-              {msg.shotAdd && <p className="msg">{msg.shotAdd}</p>}
-            </fieldset>
-          </form>
-        </section>
+        {window == "shot" && (<>
+          {/* Ajouter un shot */}
+          <section className="form-container new-form">
+            <form onSubmit={handleNewShotSubmit}>
+              <fieldset>
+                <legend>Ajouter un Shot</legend>
+                <label>Nom</label>
+                <input name="name" placeholder="Nom" type="text" value={newShot.name} onChange={handleNewShotChange} required />
+                <label>Prix (€)</label>
+                <input name="price" placeholder="Prix" type="number" min="0" max="100" step="0.01" value={newShot.price} onChange={handleNewShotChange} required />
+                <label>Catégorie</label>
+                <input name="category" placeholder="Catégorie" type="text" value={newShot.category} onChange={handleNewShotChange} required />
+                <label>Image</label>
+                <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
+                <button type="submit">Ajouter Shot</button>
+                {msg.shotAdd && <p className="msg">{msg.shotAdd}</p>}
+              </fieldset>
+            </form>
+          </section>
 
-        {/* Supprimer un shot via liste déroulante */}
-        <section className="form-container delete-form">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const { id, image } = JSON.parse(e.target.elements.shotData.value);
-              handleDeleteShot(id, image);
-            }}
-          >
-            <fieldset>
-              <legend>Supprimer un Shot</legend>
-              <label htmlFor="shotData">Sélectionnez un shot à supprimer</label>
-              <select name="shotData" id="shotData" required>
-                <option value="">-- Choisir un shot --</option>
-                {shots.map((shot) => (
-                  <option key={shot.id} value={JSON.stringify({ id: shot.id, image: shot.image })}>
-                    {shot.id} {shot.name}
-                  </option>
-                ))}
-              </select>
-              <button type="submit">Supprimer Shot</button>
-              {msg.shotDelete && <p className="msg">{msg.shotDelete}</p>}
-            </fieldset>
-          </form>
-        </section>
+          {/* Supprimer un shot */}
+          <section className="form-container delete-form">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const { id, image } = JSON.parse(e.target.elements.shotData.value);
+                handleDeleteShot(id, image);
+              }}
+            >
+              <fieldset>
+                <legend>Supprimer un Shot</legend>
+                <label htmlFor="shotData">Sélectionnez un shot à supprimer</label>
+                <select name="shotData" id="shotData" required>
+                  <option value="">-- Choisir un shot --</option>
+                  {shots.map((shot) => (
+                    <option key={shot.id} value={JSON.stringify({ id: shot.id, image: shot.image })}>
+                      {shot.id} {shot.name}
+                    </option>
+                  ))}
+                </select>
+                <button type="submit">Supprimer Shot</button>
+                {msg.shotDelete && <p className="msg">{msg.shotDelete}</p>}
+              </fieldset>
+            </form>
+          </section>
+        </>)}
 
-        {/* Ajouter une machine */}
-        <section className="form-container new-form">
-          <form onSubmit={handleNewMachineSubmit}>
-            <fieldset>
-              <legend>Ajouter une Machine</legend>
-              <label>Nom</label>
-              <input
-                name="name"
-                placeholder="Nom"
-                type="text"
-                value={newMachine.name}
-                onChange={handleNewMachineChange}
-                required
-              />
-              <button type="submit">Ajouter Machine</button>
-              {msg.machineAdd && <p className="msg">{msg.machineAdd}</p>}
-            </fieldset>
-          </form>
-        </section>
+        {window == "machine" && (<>
+          {/* Ajouter une machine */}
+          <section className="form-container new-form">
+            <form onSubmit={handleNewMachineSubmit}>
+              <fieldset>
+                <legend>Ajouter une Machine</legend>
+                <label>Nom</label>
+                <input
+                  name="name"
+                  placeholder="Nom"
+                  type="text"
+                  value={newMachine.name}
+                  onChange={handleNewMachineChange}
+                  required
+                />
+                <button type="submit">Ajouter Machine</button>
+                {msg.machineAdd && <p className="msg">{msg.machineAdd}</p>}
+              </fieldset>
+            </form>
+          </section>
 
-        {/* Supprimer une machine via liste déroulante */}
-        <section className="form-container delete-form">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const machineId = parseInt(e.target.elements.machineId.value);
-              handleDeleteMachine(machineId);
-            }}
-          >
-            <fieldset>
-              <legend>Supprimer une Machine</legend>
-              <label htmlFor="machineId">Sélectionnez une machine à supprimer</label>
-              <select name="machineId" id="machineId" required>
-                <option value="">-- Choisir une machine --</option>
-                {machines.map((machine) => (
-                  <option key={machine.id} value={machine.id}>
-                    {machine.id} {machine.name}
-                  </option>
-                ))}
-              </select>
-              <button type="submit">Supprimer Machine</button>
-              {msg.machineDelete && <p className="msg">{msg.machineDelete}</p>}
-            </fieldset>
-          </form>
-        </section>
+          {/* Supprimer une machine */}
+          <section className="form-container delete-form">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const machineId = parseInt(e.target.elements.machineId.value);
+                handleDeleteMachine(machineId);
+              }}
+            >
+              <fieldset>
+                <legend>Supprimer une Machine</legend>
+                <label htmlFor="machineId">Sélectionnez une machine à supprimer</label>
+                <select name="machineId" id="machineId" required>
+                  <option value="">-- Choisir une machine --</option>
+                  {machines.map((machine) => (
+                    <option key={machine.id} value={machine.id}>
+                      {machine.id} {machine.name}
+                    </option>
+                  ))}
+                </select>
+                <button type="submit">Supprimer Machine</button>
+                {msg.machineDelete && <p className="msg">{msg.machineDelete}</p>}
+              </fieldset>
+            </form>
+          </section>
+        </>)}
       </div>
     </div>
   );
