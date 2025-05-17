@@ -8,8 +8,15 @@
 .msg {
   margin-top: 1.5rem;
 }
- 
-.new-shot-form {
+
+.forms-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.form-container {
   max-width: 600px;
   margin: 2rem auto;
   background-color: #ffffff;
@@ -17,31 +24,33 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', sans-serif;
+  flex: 1 1 300px; /* S'adapte jusqu'à 300px de largeur minimale */
 }
 
-.new-shot-form fieldset {
+.form-container fieldset {
   border: none;
   padding: 0;
   margin: 0;
 }
 
-.new-shot-form legend {
+.form-container legend {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
   color: #333;
 }
 
-.new-shot-form label {
+.form-container label {
   display: block;
   margin-top: 1rem;
   font-weight: 500;
   color: #555;
 }
 
-.new-shot-form input[type="text"],
-.new-shot-form input[type="number"],
-.new-shot-form input[type="file"] {
+.form-container input[type="text"],
+.form-container input[type="number"],
+.form-container input[type="file"],
+.form-container select {
   width: 100%;
   padding: 0.5rem 0.75rem;
   margin-top: 0.25rem;
@@ -51,9 +60,8 @@
   box-sizing: border-box;
 }
 
-.new-shot-form button[type="submit"] {
+.form-container button[type="submit"] {
   margin-top: 1.5rem;
-  background-color: #4caf50;
   color: white;
   padding: 0.75rem 1.25rem;
   border: none;
@@ -63,62 +71,18 @@
   transition: background-color 0.3s ease;
 }
 
-.new-shot-form button[type="submit"]:hover {
+.new-form button[type="submit"] {
+  background-color: #4caf50;
+}
+
+.new-form button[type="submit"]:hover {
   background-color: #43a047;
 }
 
-.delete-shot-form {
-  max-width: 600px;
-  margin: 2rem auto;
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.delete-shot-form fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-.delete-shot-form legend {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.delete-shot-form label {
-  display: block;
-  margin-top: 1rem;
-  font-weight: 500;
-  color: #555;
-}
-
-.delete-shot-form select {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  margin-top: 0.25rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.delete-shot-form button[type="submit"] {
-  margin-top: 1.5rem;
+.delete-form button[type="submit"] {
   background-color: #f44336;
-  color: white;
-  padding: 0.75rem 1.25rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.delete-shot-form button[type="submit"]:hover {
+.delete-form button[type="submit"]:hover {
   background-color: #e53935;
 }

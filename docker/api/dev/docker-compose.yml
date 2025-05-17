@@ -53,6 +53,11 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - db_net
+    healthcheck:
+      test: ["CMD", "mariadb", "-h", "localhost", "-u", "root", "-prootpassword", "-e", "SELECT 1;"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   redis_net:

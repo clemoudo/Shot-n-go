@@ -26,7 +26,7 @@ async def get_machines(db=Depends(get_db)):
     try:
         result = await db.execute(select(Machine))
         machines = result.scalars().all()
-        data = [{"id": m.id, "nom": m.nom} for m in machines]
+        data = [{"id": m.id, "name": m.name} for m in machines]
 
         await redis.set(cache_key, json.dumps(data), ex=60)
 
@@ -46,7 +46,7 @@ async def get_machine(machine_id: int, db=Depends(get_db)):
 
         return {
             "id": machine.id,
-            "nom": machine.nom
+            "name": machine.name
         }
 
     except SQLAlchemyError:
@@ -77,7 +77,7 @@ async def add_machine(
         "message": "Machine ajoutée",
         "machine": {
             "id": new_machine.id,
-            "nom": new_machine.nom
+            "name": new_machine.name
         }
     }
 

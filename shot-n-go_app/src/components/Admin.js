@@ -7,10 +7,11 @@ export default function Admin({ shotState, machineState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
   const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({
     shotAdd: "",
-    shotDelete: ""
+    shotDelete: "",
+    machineAdd: "",
+    machineDelete: ""
   });
 
   function setMsgShotAdd(newMsg) {
@@ -32,6 +33,9 @@ export default function Admin({ shotState, machineState }) {
     price: "",
     image: "",
     category: ""
+  });
+  const [newMachine, setNewMachine] = useState({ 
+    name: "" 
   });
 
   const fileInputRef = useRef(null);
@@ -67,13 +71,11 @@ export default function Admin({ shotState, machineState }) {
     const token = localStorage.getItem("token");
     if (!file || !token) return;
 
-    setLoading(true);
-
     try {
       const formData = new FormData();
       formData.append("file", file[0]);
 
-      const uploadRes = await axios.post(`/images/upload`, formData, {
+      await axios.post(`/images/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -84,8 +86,6 @@ export default function Admin({ shotState, machineState }) {
       fileInputRef.current.value = "";
     } catch (err) {
       console.error("Upload échoué :", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -177,6 +177,55 @@ export default function Admin({ shotState, machineState }) {
     }
   };
 
+  const handleNewMachineChange = (e) => {
+    setNewMachine({ name: e.target.value });
+  };
+
+  const handleNewMachineSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("name", newMachine.name);
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/machines", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Erreur");
+
+      setMsg({ machineAdd: "Machine ajoutée" });
+      setNewMachine({ name: "" });
+      fetchMachines(); // à implémenter
+    } catch (err) {
+      setMsg({ machineAdd: "Erreur ajout" });
+    }
+  };
+
+  const handleDeleteMachine = async (machineId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/machines/${machineId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Erreur");
+
+      setMsg({ machineDelete: `${data.message}` });
+      fetchMachines(); // refresh list
+    } catch (err) {
+      setMsg({ machineDelete: "Erreur suppression" });
+    }
+  };
+
   if (isAdmin === null) return <p>Chargement...</p>;
   if (!isAdmin) return <p>Accès refusé : vous n'avez pas les droits administrateur.</p>;
 
@@ -184,52 +233,98 @@ export default function Admin({ shotState, machineState }) {
     <div className="admin-panel">
       <h1>Panneau Admin</h1>
 
-      {/* Ajouter un shot */}
-      <section className="new-shot-form">
-        <form onSubmit={handleNewShotSubmit}>
-          <fieldset>
-            <legend>Ajouter un Shot</legend>
-            <label>Nom</label>
-            <input name="name" placeholder="Nom" type="text" value={newShot.name} onChange={handleNewShotChange} required />
-            <label>Prix (€)</label>
-            <input name="price" placeholder="Prix" type="number" min="0" max="100" step="0.01" value={newShot.price} onChange={handleNewShotChange} required />
-            <label>Catégorie</label>
-            <input name="category" placeholder="Catégorie" type="text" value={newShot.category} onChange={handleNewShotChange} required />
-            <label>Image</label>
-            <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
-            <button type="submit">Ajouter Shot</button>
-            {msg.shotAdd && <p className="msg">{msg.shotAdd}</p>}
-          </fieldset>
-        </form>
-      </section>
+      <div className="forms-wrapper">
+        {/* Ajouter un shot */}
+        <section className="form-container new-form">
+          <form onSubmit={handleNewShotSubmit}>
+            <fieldset>
+              <legend>Ajouter un Shot</legend>
+              <label>Nom</label>
+              <input name="name" placeholder="Nom" type="text" value={newShot.name} onChange={handleNewShotChange} required />
+              <label>Prix (€)</label>
+              <input name="price" placeholder="Prix" type="number" min="0" max="100" step="0.01" value={newShot.price} onChange={handleNewShotChange} required />
+              <label>Catégorie</label>
+              <input name="category" placeholder="Catégorie" type="text" value={newShot.category} onChange={handleNewShotChange} required />
+              <label>Image</label>
+              <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
+              <button type="submit">Ajouter Shot</button>
+              {msg.shotAdd && <p className="msg">{msg.shotAdd}</p>}
+            </fieldset>
+          </form>
+        </section>
 
-      {/* Supprimer un shot via liste déroulante */}
-      <section className="delete-shot-form">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const { id, image } = JSON.parse(e.target.elements.shotData.value);
-            handleDeleteShot(id, image);
-          }}
-        >
-          <fieldset>
-            <legend>Supprimer un Shot</legend>
-            <label htmlFor="shotData">Sélectionnez un shot à supprimer</label>
-            <select name="shotData" id="shotData" required>
-              <option value="">-- Choisir un shot --</option>
-              {shots.map((shot) => (
-                <option key={shot.id} value={JSON.stringify({ id: shot.id, image: shot.image })}>
-                  {shot.id} {shot.name}
-                </option>
-              ))}
-            </select>
-            <button type="submit">Supprimer Shot</button>
-            {msg.shotDelete && <p className="msg">{msg.shotDelete}</p>}
-          </fieldset>
-        </form>
-      </section>
+        {/* Supprimer un shot via liste déroulante */}
+        <section className="form-container delete-form">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const { id, image } = JSON.parse(e.target.elements.shotData.value);
+              handleDeleteShot(id, image);
+            }}
+          >
+            <fieldset>
+              <legend>Supprimer un Shot</legend>
+              <label htmlFor="shotData">Sélectionnez un shot à supprimer</label>
+              <select name="shotData" id="shotData" required>
+                <option value="">-- Choisir un shot --</option>
+                {shots.map((shot) => (
+                  <option key={shot.id} value={JSON.stringify({ id: shot.id, image: shot.image })}>
+                    {shot.id} {shot.name}
+                  </option>
+                ))}
+              </select>
+              <button type="submit">Supprimer Shot</button>
+              {msg.shotDelete && <p className="msg">{msg.shotDelete}</p>}
+            </fieldset>
+          </form>
+        </section>
 
-      {/* {console.log(machines)} */}
+        {/* Ajouter une machine */}
+        <section className="form-container new-form">
+          <form onSubmit={handleNewMachineSubmit}>
+            <fieldset>
+              <legend>Ajouter une Machine</legend>
+              <label>Nom</label>
+              <input
+                name="name"
+                placeholder="Nom"
+                type="text"
+                value={newMachine.name}
+                onChange={handleNewMachineChange}
+                required
+              />
+              <button type="submit">Ajouter Machine</button>
+              {msg.machineAdd && <p className="msg">{msg.machineAdd}</p>}
+            </fieldset>
+          </form>
+        </section>
+
+        {/* Supprimer une machine via liste déroulante */}
+        <section className="form-container delete-form">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const machineId = parseInt(e.target.elements.machineId.value);
+              handleDeleteMachine(machineId);
+            }}
+          >
+            <fieldset>
+              <legend>Supprimer une Machine</legend>
+              <label htmlFor="machineId">Sélectionnez une machine à supprimer</label>
+              <select name="machineId" id="machineId" required>
+                <option value="">-- Choisir une machine --</option>
+                {machines.map((machine) => (
+                  <option key={machine.id} value={machine.id}>
+                    {machine.id} {machine.name}
+                  </option>
+                ))}
+              </select>
+              <button type="submit">Supprimer Machine</button>
+              {msg.machineDelete && <p className="msg">{msg.machineDelete}</p>}
+            </fieldset>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }
