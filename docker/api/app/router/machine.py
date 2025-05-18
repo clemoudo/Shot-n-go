@@ -34,23 +34,6 @@ async def get_machines(db=Depends(get_db)):
 
     except SQLAlchemyError:
         raise HTTPException(500, detail="Erreur lors de la récupération des machines")
-    
-@router.get("/api/machines/{machine_id}")
-async def get_machine(machine_id: int, db=Depends(get_db)):
-    try:
-        result = await db.execute(select(Machine).where(Machine.id == machine_id))
-        machine = result.scalar_one_or_none()
-
-        if not machine:
-            raise HTTPException(status_code=404, detail="Machine non trouvée")
-
-        return {
-            "id": machine.id,
-            "name": machine.name
-        }
-
-    except SQLAlchemyError:
-        raise HTTPException(status_code=500, detail="Erreur lors de la récupération")
 
 @router.post("/api/machines")
 async def add_machine(

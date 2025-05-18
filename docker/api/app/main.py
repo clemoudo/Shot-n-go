@@ -4,6 +4,7 @@ from app.router.shot import router as shot_router
 from app.router.image import router as image_router
 from app.router.machine import router as machine_router
 from app.router.machineShot import router as machineShot_router
+from app.router.wallet import router as wallet_router
 import logging
 
 # Structure des logs pour redis
@@ -32,6 +33,7 @@ app.include_router(shot_router)
 app.include_router(image_router)
 app.include_router(machine_router)
 app.include_router(machineShot_router)
+app.include_router(wallet_router)
 
 @app.get("/api/")
 def read_root():

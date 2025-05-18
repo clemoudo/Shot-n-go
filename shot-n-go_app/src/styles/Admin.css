@@ -47,9 +47,7 @@
   color: #555;
 }
 
-.form-container input[type="text"],
-.form-container input[type="number"],
-.form-container input[type="file"],
+.form-container input,
 .form-container select {
   width: 100%;
   padding: 0.5rem 0.75rem;

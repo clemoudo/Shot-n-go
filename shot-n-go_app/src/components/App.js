@@ -26,22 +26,29 @@ function App() {
 	const location = useLocation();
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+		const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
 			if (firebaseUser) {
 				setUser(firebaseUser);
+				
+				// Récupérer le token ID Firebase
+				const token = await firebaseUser.getIdToken();
+				localStorage.setItem("token", token);
+
 				if (location.pathname === "/Login") {
-					navigate("/");
+				navigate("/");
 				}
 			} else {
 				setUser(null);
+				localStorage.removeItem("token");
+
 				if (location.pathname !== "/Login") {
-					navigate("/Login");
+				navigate("/Login");
 				}
 			}
 			setAuthLoading(false);
 		});
 		return () => unsubscribe();
-	}, [navigate, location]);
+		}, [navigate, location]);
 
 	const fetchWithCache = async (key, url, setData) => {
 		try {

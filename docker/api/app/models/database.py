@@ -8,8 +8,9 @@ class Wallet(Base):
     __tablename__ = "Wallet"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("User.id"))
-    credit = Column(Float)
+    user_id = Column(String(128), unique=True, nullable=False)
+    user_email = Column(String(128), unique=True, nullable=False)
+    credit = Column(Float, default=0, nullable=False)
 
 
 class Shot(Base):
