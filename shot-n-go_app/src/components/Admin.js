@@ -3,17 +3,20 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin({ shotState, machineState }) {
+export default function Admin({ shotState, machineState, machineShotsState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
-  const [window, setWindow] = useState("shot")
+  const { machineShots, setMachineShots, fetchMachineShots } = machineShotsState;
+  const [windowForm, setWindowForm] = useState("shot")
 
   // --- Gestion des messages ---
   const [msg, setMsg] = useState({
     shotAdd: "",
     shotDelete: "",
     machineAdd: "",
-    machineDelete: ""
+    machineDelete: "",
+    machineShotAdd: "",
+    machineShotDelete: ""
   });
 
   function setMsgShotAdd(newMsg) {
@@ -27,6 +30,34 @@ export default function Admin({ shotState, machineState }) {
     setMsg(prevMsg => ({
       ...prevMsg,
       shotDelete: newMsg
+    }));
+  }
+
+  function setMsgMachineAdd(newMsg) {
+    setMsg(prevMsg => ({
+      ...prevMsg,
+      machineAdd: newMsg
+    }));
+  }
+
+  function setMsgMachineDelete(newMsg) {
+    setMsg(prevMsg => ({
+      ...prevMsg,
+      machineDelete: newMsg
+    }));
+  }
+
+  function setMsgMachineShotAdd(newMsg) {
+    setMsg(prevMsg => ({
+      ...prevMsg,
+      machineShotAdd: newMsg
+    }));
+  }
+
+  function setMsgMachineShotDelete(newMsg) {
+    setMsg(prevMsg => ({
+      ...prevMsg,
+      machineShotDelete: newMsg
     }));
   }
 
@@ -76,7 +107,7 @@ export default function Admin({ shotState, machineState }) {
 
   // --- Gestion de la page à afficher ---
   const handleWindows = (e) => {
-    setWindow(e.target.value)
+    setWindowForm(e.target.value)
   }
 
   // --- Gestion des images ---
@@ -213,11 +244,11 @@ export default function Admin({ shotState, machineState }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Erreur");
 
-      setMsg({ machineAdd: "Machine ajoutée" });
+      setMsgMachineAdd("Machine ajoutée");
       setNewMachine({ name: "" });
       fetchMachines(); // à implémenter
     } catch (err) {
-      setMsg({ machineAdd: "Erreur ajout" });
+      setMsgMachineAdd("Erreur ajout");
     }
   };
 
@@ -234,12 +265,52 @@ export default function Admin({ shotState, machineState }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Erreur");
 
-      setMsg({ machineDelete: `${data.message}` });
+      setMsgMachineDelete(`${data.message}`);
       fetchMachines(); // refresh list
     } catch (err) {
-      setMsg({ machineDelete: "Erreur suppression" });
+      setMsgMachineDelete("Erreur suppression");
     }
   };
+
+  // --- Gestion des relations machine-shot ---
+  const handleNewMachineShotSubmit = async (machineId, shotId, stock) => {
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+    formData.append("stock", stock);
+
+    try {
+      await axios.post(`/api/machines/${machineId}/shots/${shotId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setMsgMachineShotAdd(`Shot "${shotId}" ajouté à la machine "${machineId}" !`);
+    } catch (err) {
+      console.error("Erreur envoi shot :", err);
+      setMsgMachineShotAdd(`Erreur lors de l'ajout du shot "${shotId}" à la machine "${machineId}"`);
+    }
+  };
+
+  const handleDeleteMachineShot = async (machineId, shotId) => {
+    const token = localStorage.getItem("token");
+
+    if (!window.confirm(`Supprimer le shot "${shotId}" de la machine "${machineId}" ?`)) return;
+    try {
+      await axios.delete(`/api/machines/${machineId}/shots/${shotId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setMsgMachineShotDelete(`Shot "${shotId}" de la machine "${machineId}" supprimé`);
+    } catch (err) {
+      console.error("Erreur suppression shot :", err);
+      setMsgMachineShotDelete(`Échec de la suppression du shot "${shotId}" de la machine "${machineId}"`);
+    }
+  }
 
   if (isAdmin === null) return <p>Chargement...</p>;
   if (!isAdmin) return <p>Accès refusé : vous n'avez pas les droits administrateur.</p>;
@@ -255,7 +326,7 @@ export default function Admin({ shotState, machineState }) {
       </select>
 
       <div className="forms-wrapper">
-        {window == "shot" && (<>
+        {windowForm === "shot" && (<>
           {/* Ajouter un shot */}
           <section className="form-container new-form">
             <form onSubmit={handleNewShotSubmit}>
@@ -302,7 +373,7 @@ export default function Admin({ shotState, machineState }) {
           </section>
         </>)}
 
-        {window == "machine" && (<>
+        {windowForm === "machine" && (<>
           {/* Ajouter une machine */}
           <section className="form-container new-form">
             <form onSubmit={handleNewMachineSubmit}>
@@ -345,6 +416,107 @@ export default function Admin({ shotState, machineState }) {
                 </select>
                 <button type="submit">Supprimer Machine</button>
                 {msg.machineDelete && <p className="msg">{msg.machineDelete}</p>}
+              </fieldset>
+            </form>
+          </section>
+        </>)}
+
+        {windowForm === "machineShot" && (<>
+          {/* Ajouter un shot à une machine */}
+          <section className="form-container new-form">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const machineId = parseInt(e.target.elements.machineId.value);
+              const shotId = parseInt(e.target.elements.shotId.value);
+              const stock = parseFloat(e.target.elements.stock.value);
+              handleNewMachineShotSubmit(machineId, shotId, stock);
+            }}>
+              <fieldset>
+                <legend>Ajouter un shot à une machine</legend>
+                <label>Id machine</label>
+                <select
+                  name="machineId"
+                  placeholder="Id machine"
+                  type="text"
+                  required
+                >
+                  <option value="">-- Choisir une machine --</option>
+                  {machines.map((machine) => (
+                    <option key={`m${machine.id}`} value={machine.id}>
+                      {machine.id} {machine.name}
+                    </option>
+                  ))}
+                </select>
+                <label>Id shot</label>
+                <select
+                  name="shotId"
+                  placeholder="Id shot"
+                  type="text"
+                  required
+                >
+                  <option value="">-- Choisir un shot --</option>
+                  {shots.map((shot) => (
+                    <option key={`s${shot.id}`} value={shot.id}>
+                      {shot.id} {shot.name}
+                    </option>
+                  ))}
+                </select>
+                <label>Stock (%)</label>
+                <input name="stock" placeholder="Stock" type="number" min="0" max="1" step="0.01" required />
+                <button type="submit">Ajouter shot</button>
+                {msg.machineShotAdd && <p className="msg">{msg.machineShotAdd}</p>}
+              </fieldset>
+            </form>
+          </section>
+
+          {/* Supprimer un shot d'une machine */}
+          <section className="form-container delete-form">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const machineId = parseInt(e.target.elements.machineId.value);
+                const shotId = parseInt(e.target.elements.shotId.value);
+                handleDeleteMachineShot(machineId, shotId);
+              }}
+            >
+              <fieldset>
+                <legend>Supprimer un shot à une machine</legend>
+                <label>Id machine</label>
+                <select
+                  name="machineId"
+                  placeholder="Id machine"
+                  type="text"
+                  onChange={(e) => {
+                    if(!e.target.value){
+                      setMachineShots([]);
+                      return;
+                    }
+                    fetchMachineShots(e.target.value)}}
+                  required
+                >
+                  <option value="">-- Choisir une machine --</option>
+                  {machines.map((machine) => (
+                    <option key={`m${machine.id}`} value={machine.id}>
+                      {machine.id} {machine.name}
+                    </option>
+                  ))}
+                </select>
+                <label>Id shot</label>
+                <select
+                  name="shotId"
+                  placeholder="Id shot"
+                  type="text"
+                  required
+                >
+                  <option value="">-- Choisir un shot --</option>
+                  {machineShots.shots && machineShots.shots.map((shot) => (
+                    <option key={`s${shot.id}`} value={shot.id}>
+                      {shot.id} {shot.name}
+                    </option>
+                  ))}
+                </select>
+                <button type="submit">Supprimer Machine</button>
+                {msg.machineShotDelete && <p className="msg">{msg.machineShotDelete}</p>}
               </fieldset>
             </form>
           </section>
