@@ -21,8 +21,8 @@ function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 			>
 				Fermer
 			</button>
-			<h2>Panier</h2>
-			<h3>Total : {total.toFixed(2)}€</h3>
+			<h1>Panier</h1>
+			<h2>Total : {total.toFixed(2)}€</h2>
 			{cart.length > 0 ? (
 				<div>
 					<table className="cart-table">
@@ -53,7 +53,7 @@ function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 										<button onClick={() => addToCart(shotElem,1)}>+</button>
 									</td>
 									<td className="cart-price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
-									<td><button onClick={()=> deleteItem(shotElem)}> --- </button></td> 
+									<td className='cart-remove'><button onClick={()=> deleteItem(shotElem)}>x</button></td> 
 								</tr>
 							))}
 						</tbody>
