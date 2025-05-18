@@ -1,0 +1,67 @@
+services:
+  api:
+    build: ../api
+    image: clemoudo/shot-n-go:api-dev-latest
+    volumes:
+      - ./KEY/firebase-key.json:/code/KEY/firebase-key.json
+      - ../api/images:/images
+    networks:
+      - redis_net
+      - db_net
+    depends_on:
+      - redis
+      - mariadb
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=mariadb 
+      - DB_PORT=3306
+      - DB_NAME=shotngo
+      - DB_USER=shotuser
+      - DB_PASSWORD=shotpass
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    ports:
+      - "8000:5000/tcp"
+
+  redis:
+    image: redis:alpine
+    networks:
+      - redis_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: shotngo
+      MYSQL_USER: shotuser
+      MYSQL_PASSWORD: shotpass
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ../mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - db_net
+    healthcheck:
+      test: ["CMD", "mariadb", "-h", "localhost", "-u", "root", "-prootpassword", "-e", "SELECT 1;"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  redis_net:
+  db_net:
+
+volumes:
+  mariadb_data:

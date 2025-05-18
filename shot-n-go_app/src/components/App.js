@@ -15,6 +15,8 @@ import Leaderboard from './Leaderboard';
 
 function App() {
 	const [shots, setShots] = useState([]);
+	const [machines, setMachines] = useState([]);
+	const [machineShots, setMachineShots] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [authLoading, setAuthLoading] = useState(true);
 	const [user, setUser] = useState(null);
@@ -41,23 +43,21 @@ function App() {
 		return () => unsubscribe();
 	}, [navigate, location]);
 
-	const fetchShots = async () => {
+	const fetchWithCache = async (key, url, setData) => {
 		try {
-			const storedEtag = localStorage.getItem("shotsEtag");
-			const storedShots = localStorage.getItem("shotsData");
+			const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+			const storedEtag = localStorage.getItem(`${key}Etag`);
+			const storedData = localStorage.getItem(`${key}Data`);
 
-			const response = await fetch(`/api/shots`, {
+			const response = await fetch(url, {
 				headers: {
 					"If-None-Match": storedEtag || ""
 				}
 			});
 
 			if (response.status === 304) {
-				console.log("Les shots sont déjà à jour (304 Not Modified)");
-
-				// Charger les shots depuis le localStorage
-				if (storedShots) {
-					setShots(JSON.parse(storedShots));
+				if (storedData) {
+					setData(JSON.parse(storedData));
 				}
 				setLoading(false);
 				return;
@@ -65,36 +65,49 @@ function App() {
 
 			if (!response.ok) {
 				const text = await response.text();
-				console.error("Erreur HTTP:", response.status, response.statusText, text);
+				console.error(`Erreur HTTP (${capitalized}):`, response.status, response.statusText, text);
 
-				// Fallback local en cas d'échec réseau
-				if (storedShots) {
-					setShots(JSON.parse(storedShots));
+				if (storedData) {
+					setData(JSON.parse(storedData));
 				}
+				setLoading(false);
 				return;
 			}
 
 			const data = await response.json();
-			setShots(data.shots);
+			const extractedData = data[key] || data; // gère les réponses de type { shots: [...] } ou juste [...]
 
-			// Stocker le nouvel ETag et les données localement
+			setData(extractedData);
+
 			const newEtag = response.headers.get("ETag");
 			if (newEtag) {
-				localStorage.setItem("shotsEtag", newEtag);
+				localStorage.setItem(`${key}Etag`, newEtag);
 			}
-			localStorage.setItem("shotsData", JSON.stringify(data.shots));
+			localStorage.setItem(`${key}Data`, JSON.stringify(extractedData));
 
 			setLoading(false);
 		} catch (error) {
-			console.error("Erreur de connexion:", error);
+			console.error(`Erreur de connexion (${key}) :`, error);
 
-			// Fallback en cas d'erreur réseau
-			const storedShots = localStorage.getItem("shotsData");
-			if (storedShots) {
-				setShots(JSON.parse(storedShots));
+			const fallback = localStorage.getItem(`${key}Data`);
+			if (fallback) {
+				setData(JSON.parse(fallback));
 			}
+			setLoading(false);
 		}
 	};
+
+	const fetchShots = () => {
+		fetchWithCache("shots", "/api/shots", setShots)
+	}
+
+	const fetchMachines = () => {
+		fetchWithCache("machines", "/api/machines", setMachines)
+	}
+
+	const fetchMachineShots = (machineId) => {
+		fetchWithCache(`machine:${machineId}:shots`, `/api/machines/${machineId}/shots`, setMachineShots)
+	}
 
 	if (authLoading) {
 		return <div>Chargement de l'utilisateur...</div>;
@@ -106,10 +119,10 @@ function App() {
 			<div className="container">
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/menu" element={<Menu shotState={{ shots, fetchShots }} cartState={{ cart, setCart }} />} />
+					<Route path="/menu" element={<Menu machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, fetchMachineShots }} cartState={{ cart, setCart }} />} />
 					<Route path="/games" element={<Games />} />
 					<Route path="/queue" element={<Queue />} />
-					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} />} />
+					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/leaderboard" element={<Leaderboard />} />
 				</Routes>

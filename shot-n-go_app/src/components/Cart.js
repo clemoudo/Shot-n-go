@@ -73,7 +73,7 @@ function Cart({cart, addToCart, removeItem, deleteItem, clearCart}) {
 				className='cart-button'
 				onClick={() => setIsOpen(true)}
 			>
-			{nbr_short_cart > 0 ? ("Ouvrir le panier (" + nbr_short_cart + ")"):('ouvrir le panier')}
+			{nbr_short_cart > 0 ? ("Ouvrir le panier (" + nbr_short_cart + ")"):('Ouvrir le panier')}
 			</button>
 		</div>
 		</>
