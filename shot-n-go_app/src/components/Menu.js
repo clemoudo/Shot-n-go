@@ -1,8 +1,7 @@
 import ShoppingList from './ShoppingList'
 import Cart from './Cart'
 
-function Menu({ shotState, cartState }) {
-   const { shots, fetchShots } = shotState;
+function Menu({ machineState, machineShotsState, cartState }) {
    const { cart, setCart } = cartState;
 
    // Fonction pour ajouter un article
@@ -72,7 +71,7 @@ function Menu({ shotState, cartState }) {
    return (
       <>
          <Cart cart={cart} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} clearCart={clearCart} />
-         <ShoppingList addToCart={addToCart} removeItem={removeItem} shotState={{ shots, fetchShots }} />
+         <ShoppingList addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
       </>
    );
 }

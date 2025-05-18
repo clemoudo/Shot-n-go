@@ -280,17 +280,21 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
     formData.append("stock", stock);
 
     try {
-      await axios.post(`/api/machines/${machineId}/shots/${shotId}`, formData, {
+      const response = await axios.post(`/api/machines/${machineId}/shots/${shotId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      setMsgMachineShotAdd(`Shot "${shotId}" ajouté à la machine "${machineId}" !`);
+      // Récupère le message de succès depuis la réponse
+      const successMsg = response.data.message;
+      setMsgMachineShotAdd(successMsg);
+
     } catch (err) {
       console.error("Erreur envoi shot :", err);
-      setMsgMachineShotAdd(`Erreur lors de l'ajout du shot "${shotId}" à la machine "${machineId}"`);
+      const details = err.response?.data?.detail;
+      setMsgMachineShotAdd(details);
     }
   };
 
@@ -299,16 +303,18 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
 
     if (!window.confirm(`Supprimer le shot "${shotId}" de la machine "${machineId}" ?`)) return;
     try {
-      await axios.delete(`/api/machines/${machineId}/shots/${shotId}`, {
+      const response = await axios.delete(`/api/machines/${machineId}/shots/${shotId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      setMsgMachineShotDelete(`Shot "${shotId}" de la machine "${machineId}" supprimé`);
+      const successMsg = response.data.message;
+      setMsgMachineShotDelete(successMsg);
     } catch (err) {
       console.error("Erreur suppression shot :", err);
-      setMsgMachineShotDelete(`Échec de la suppression du shot "${shotId}" de la machine "${machineId}"`);
+      const details = err.response?.data?.detail;
+      setMsgMachineShotDelete(details);
     }
   }
 

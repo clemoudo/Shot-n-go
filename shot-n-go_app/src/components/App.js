@@ -119,7 +119,7 @@ function App() {
 			<div className="container">
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/menu" element={<Menu shotState={{ shots, fetchShots }} machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, fetchMachineShots }} cartState={{ cart, setCart }} />} />
+					<Route path="/menu" element={<Menu machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, fetchMachineShots }} cartState={{ cart, setCart }} />} />
 					<Route path="/games" element={<Games />} />
 					<Route path="/queue" element={<Queue />} />
 					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} />} />
