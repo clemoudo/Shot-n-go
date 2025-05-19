@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import '../styles/Cart.css'
+import axios from "axios";
 
-function Cart({selectedMachineId, cart, addToCart, removeItem, deleteItem}) {
+function Cart({selectedMachineId, cartState, addToCart, removeItem, deleteItem}) {
+	const { cart, setCart } = cartState;
 	const [isOpen, setIsOpen] = useState(false)
 	const [isValid, setIsValid] = useState(false)
 	const toggleIsValid = () => setIsValid(!isValid)
@@ -14,14 +16,54 @@ function Cart({selectedMachineId, cart, addToCart, removeItem, deleteItem}) {
 		nbr_short_cart += element.amount
 	});
 
-	const handlePurshase = () => {
-		let purshaseCart = cart.map((shot) => ({
-			id: shot.id,
-			quantity: shot.amount
-		}))
+	const handlePurchase = async () => {
+		const token = localStorage.getItem("token");
+		if (!token) {
+			alert("Utilisateur non authentifié.");
+			return;
+		}
 
-		console.log(selectedMachineId, purshaseCart);
-	}
+		if (!selectedMachineId) {
+			alert("Veuillez sélectionner une machine.");
+			return;
+		}
+
+		if (!cart.length) {
+			alert("Votre panier est vide.");
+			return;
+		}
+
+		const purchaseCart = cart.map((shot) => ({
+			shot_id: shot.id,
+			quantity: shot.amount,
+		}));
+
+		const commande = {
+			machine_id: selectedMachineId,
+			shots: purchaseCart,
+		};
+
+		try {
+			const response = await axios.post("/api/commandes", commande, {
+				headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+				},
+			});
+
+			const { message, commande_id, total_cost, credit_restant } = response.data;
+			console.log(`${message}\nCommande #${commande_id}\nTotal: ${total_cost}€\nCrédit restant: ${credit_restant}€`);
+			alert(``)
+
+			// Réinitialiser le panier
+			setCart([]);
+			setIsValid(false);
+		} catch (err) {
+			console.error("Erreur lors de la commande :", err);
+			const msg = err.response?.data?.detail || "Erreur inconnue lors de la commande.";
+			console.log(msg);
+		}
+		};
 	
 	return isOpen ? (
 		<>
@@ -73,7 +115,7 @@ function Cart({selectedMachineId, cart, addToCart, removeItem, deleteItem}) {
 							</tbody>
 						</table>
 						<button className='cart-setValid' onClick={toggleIsValid}>{isValid ? "Annuler" : "Valider le panier"}</button>
-						{isValid && <button className='cart-purshase' onClick={handlePurshase}>Payer</button>}
+						{isValid && <button className='cart-purshase' onClick={handlePurchase}>Payer</button>}
 					</div>
 				) : (
 					<div>Votre panier est vide</div>

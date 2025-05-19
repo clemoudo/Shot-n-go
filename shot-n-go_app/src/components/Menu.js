@@ -61,8 +61,8 @@ function Menu({ machineState, machineShotsState, cartState }) {
    
    return (
       <>
-         <Cart selectedMachineId={selectedMachineId} cart={cart} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} />
-         <ShoppingList selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} cartState={{ cart, setCart }} addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
+         <Cart selectedMachineId={selectedMachineId} cartState={cartState} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} />
+         <ShoppingList selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} cartState={cartState} addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
       </>
    );
 }

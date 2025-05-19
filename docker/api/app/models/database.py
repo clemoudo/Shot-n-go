@@ -44,7 +44,7 @@ class Commande(Base):
     id = Column(Integer, primary_key=True)
     wallet_id = Column(Integer, ForeignKey("Wallet.id"))
     machine_id = Column(Integer, ForeignKey("Machine.id"))
-    user_id = Column(Integer, ForeignKey("User.id"))
+    user_id = Column(String)
     order_date = Column(DateTime)
     state = Column(String(50))
 
