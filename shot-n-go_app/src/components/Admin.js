@@ -3,11 +3,13 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin({ shotState, machineState, machineShotsState }) {
+export default function Admin({ shotState, machineState, machineShotsState, commandeState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
   const { machineShots, setMachineShots, fetchMachineShots } = machineShotsState;
-  const [windowForm, setWindowForm] = useState("wallet")
+  const { commandes, fetchCommandes } = commandeState;
+  const [stateCommande, setStateCommande] = useState("in progress");
+  const [windowForm, setWindowForm] = useState("wallet");
 
   // --- Gestion des messages ---
   const [msg, setMsg] = useState({});
@@ -61,7 +63,12 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
   useEffect(() => {
     fetchShots();
     fetchMachines();
+    fetchCommandes(stateCommande);
   }, []);
+
+  useEffect(() => {
+    fetchCommandes(stateCommande);
+  }, [stateCommande])
 
   // --- Gestion de la page à afficher ---
   const handleWindows = (e) => {
@@ -332,6 +339,7 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
 
       <select onChange={handleWindows}>
         <option value="wallet">Wallet</option>
+        <option value="commande">Commande</option>
         <option value="shot">Shot</option>
         <option value="machine">Machine</option>
         <option value="machineShot">Machine-Shot</option>
@@ -594,6 +602,32 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
             </form>
           </section>
         </>)}
+
+        {windowForm === "commande" && (
+          <section className="form-container">
+            <legend>Commandes "{stateCommande}"</legend>
+            <label>Etat des commandes</label>
+            <select onChange={(e) => setStateCommande(e.target.value)}>
+              <option value="in progress">in progress</option>
+              <option value="done">done</option>
+            </select>
+            <h3>{commandes.count || 0} commandes trouvées</h3>
+            <table>
+              <thead>
+                <tr><th key="cId">Id</th><th key="cMachine">Machine</th><th key="cEmail">Email</th><th key="cTimestamp">Timestamp</th><th key="cEtat">Etat</th></tr>
+              </thead>
+              <tbody>
+                {commandes.commandes?.map((cmd) => (
+                  <tr key={`c${cmd.commande_id}`}>
+                    {Object.keys(cmd).map((c) => (
+                      <td key={`c${cmd.commande_id}:${c}`}>{cmd[c]}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
       </div>
     </div>
   );

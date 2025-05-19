@@ -84,3 +84,11 @@
 .delete-form button[type="submit"]:hover {
   background-color: #e53935;
 }
+
+table td {
+  background-color: #dedede;
+}
+
+table tr {
+  border-top: 1px rgb(168, 168, 168) solid;
+}

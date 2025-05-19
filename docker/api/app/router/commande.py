@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from app.models.database import Commande, ComShot, Shot, Wallet
 from app.firebase import verify_firebase_token
 from app.db import SessionLocal
+from sqlalchemy.orm import joinedload
 
 router = APIRouter()
 
@@ -21,6 +22,48 @@ class ShotItem(BaseModel):
 class CommandeCreate(BaseModel):
     machine_id: int
     shots: List[ShotItem]
+
+@router.get("/api/commandes")
+async def get_commandes_by_state(
+    state: Optional[str] = Query(None, description="Filtrer par état : 'in progress' ou 'done'"),
+    db=Depends(get_db),
+    user_data: dict = Depends(verify_firebase_token)
+):
+    if user_data["role"] != "admin":
+        raise HTTPException(403, detail="Admin seulement")
+
+    try:
+        query = select(Commande).options(
+            joinedload(Commande.wallet),
+            joinedload(Commande.machine)
+        )
+
+        if state:
+            if state not in ("in progress", "done"):
+                raise HTTPException(status_code=400, detail="État invalide. Utiliser 'in progress' ou 'done'.")
+            query = query.where(Commande.state == state)
+
+        result = await db.execute(query)
+        commandes = result.scalars().all()
+
+        commandes_data = []
+        for cmd in commandes:
+            commandes_data.append({
+                "commande_id": cmd.id,
+                "machine": f"{cmd.machine.name} (#{cmd.machine.id})" if cmd.machine else "Machine inconnue",
+                "user_email": cmd.wallet.user_email if cmd.wallet else "Inconnu",
+                "order_date": cmd.order_date.strftime("%Y-%m-%d %H:%M:%S") if cmd.order_date else "N/A",
+                "state": cmd.state
+            })
+
+        return {
+            "message": "Commandes enrichies récupérées avec succès.",
+            "count": len(commandes_data),
+            "commandes": commandes_data
+        }
+
+    except SQLAlchemyError:
+        raise HTTPException(status_code=500, detail="Erreur lors de la récupération des commandes.")
 
 @router.post("/api/commandes")
 async def create_commande(

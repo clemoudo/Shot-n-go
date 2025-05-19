@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
+import axios from "axios";
 
 import Footer from './Footer';
 import Navbar from './Navbar';
@@ -17,6 +18,7 @@ function App() {
 	const [shots, setShots] = useState([]);
 	const [machines, setMachines] = useState([]);
 	const [machineShots, setMachineShots] = useState([]);
+	const [commandes, setCommandes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [authLoading, setAuthLoading] = useState(true);
 	const [user, setUser] = useState(null);
@@ -51,17 +53,18 @@ function App() {
 		}, [navigate, location]);
 
 	const fetchWithCache = async (key, url, setData) => {
+		const token = localStorage.getItem("token");
 		try {
 			const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
 			const storedEtag = localStorage.getItem(`${key}Etag`);
 			const storedData = localStorage.getItem(`${key}Data`);
 
-			const response = await fetch(url, {
+			const response = await axios.get(url, {
 				headers: {
-					"If-None-Match": storedEtag || ""
+					"If-None-Match": storedEtag || "",
+					Authorization: `Bearer ${token}`
 				}
 			});
-
 			if (response.status === 304) {
 				if (storedData) {
 					setData(JSON.parse(storedData));
@@ -70,10 +73,8 @@ function App() {
 				return;
 			}
 
-			if (!response.ok) {
-				const text = await response.text();
-				console.error(`Erreur HTTP (${capitalized}):`, response.status, response.statusText, text);
-
+			if (response.status < 200 || response.status >= 300) {
+				console.error(`Erreur HTTP (${capitalized}):`, response.status, response.statusText);
 				if (storedData) {
 					setData(JSON.parse(storedData));
 				}
@@ -81,12 +82,12 @@ function App() {
 				return;
 			}
 
-			const data = await response.json();
+			const data = response.data;
 			const extractedData = data[key] || data; // gère les réponses de type { shots: [...] } ou juste [...]
 
 			setData(extractedData);
 
-			const newEtag = response.headers.get("ETag");
+			const newEtag = response.headers["etag"];
 			if (newEtag) {
 				localStorage.setItem(`${key}Etag`, newEtag);
 			}
@@ -94,7 +95,7 @@ function App() {
 
 			setLoading(false);
 		} catch (error) {
-			console.error(`Erreur de connexion (${key}) :`, error);
+			// console.error(`Erreur de connexion (${key}) :`, error);
 
 			const fallback = localStorage.getItem(`${key}Data`);
 			if (fallback) {
@@ -115,6 +116,11 @@ function App() {
 	const fetchMachineShots = (machineId) => {
 		fetchWithCache(`machine:${machineId}:shots`, `/api/machines/${machineId}/shots`, setMachineShots)
 	}
+	
+	const fetchCommandes = (state) => {
+		const key = `commandes_${state}`;
+		fetchWithCache(key, `/api/commandes?state=${encodeURIComponent(state)}`, setCommandes);
+	}
 
 	if (authLoading) {
 		return <div>Chargement de l'utilisateur...</div>;
@@ -129,7 +135,7 @@ function App() {
 					<Route path="/menu" element={<Menu machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, fetchMachineShots }} cartState={{ cart, setCart }} />} />
 					<Route path="/games" element={<Games />} />
 					<Route path="/queue" element={<Queue />} />
-					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} />} />
+					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} commandeState={{ commandes, fetchCommandes }} />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/leaderboard" element={<Leaderboard />} />
 				</Routes>

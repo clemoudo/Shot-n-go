@@ -52,8 +52,7 @@ function Cart({selectedMachineId, cartState, addToCart, removeItem, deleteItem})
 			});
 
 			const { message, commande_id, total_cost, credit_restant } = response.data;
-			console.log(`${message}\nCommande #${commande_id}\nTotal: ${total_cost}€\nCrédit restant: ${credit_restant}€`);
-			alert(``)
+			alert(`${message}\nCommande #${commande_id}\nTotal: ${total_cost}€\nCrédit restant: ${credit_restant}€`);
 
 			// Réinitialiser le panier
 			setCart([]);
