@@ -545,7 +545,7 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
               handleNewWalletSubmit(userEmail, amount);
             }}>
               <fieldset>
-                <legend>Ajouter un shot à une machine</legend>
+                <legend>Créditer un wallet</legend>
                 <label htmlFor="userEmail">Email utilisateur</label>
                 <input
                   name="userEmail"
@@ -564,7 +564,7 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
                   required
                 />
 
-                <button type="submit">Créer Wallet</button>
+                <button type="submit">Créditer le wallet</button>
                 {msg.walletAdd && <p className="msg">{msg.walletAdd}</p>}
               </fieldset>
             </form>
@@ -580,7 +580,7 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
               }}
             >
               <fieldset>
-                <legend>Supprimer un shot à une machine</legend>
+                <legend>Supprimer un wallet</legend>
                 <label htmlFor="userEmail">Email utilisateur</label>
                 <input
                   name="userEmail"

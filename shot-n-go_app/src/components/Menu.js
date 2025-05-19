@@ -1,8 +1,10 @@
 import ShoppingList from './ShoppingList'
 import Cart from './Cart'
+import { useState } from 'react';
 
 function Menu({ machineState, machineShotsState, cartState }) {
    const { cart, setCart } = cartState;
+   const [selectedMachineId, setSelectedMachineId] = useState("");
 
    // Fonction pour ajouter un article
    const addToCart = (shotElem, addedAmount) => {
@@ -55,23 +57,12 @@ function Menu({ machineState, machineShotsState, cartState }) {
       setCart((prevCart) =>
          prevCart.filter((shot) => shot.id !== shotElem.id)
       );
-   };   
-
-   const clearCart = () => {
-      const confirmClear = window.confirm(
-         "Êtes-vous sûr de vouloir supprimer tous les articles du panier ?"
-      );
-   
-      if (!confirmClear) return;
-   
-      setCart([]);
-   };   
-   
+   };
    
    return (
       <>
-         <Cart cart={cart} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} clearCart={clearCart} />
-         <ShoppingList addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
+         <Cart selectedMachineId={selectedMachineId} cart={cart} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} />
+         <ShoppingList selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} cartState={{ cart, setCart }} addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
       </>
    );
 }
