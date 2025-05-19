@@ -85,10 +85,22 @@
   background-color: #e53935;
 }
 
-table td {
+.form-container td {
   background-color: #dedede;
 }
 
-table tr {
+.form-container tr {
   border-top: 1px rgb(168, 168, 168) solid;
+}
+
+.form-container.commande {
+  max-width: 700px;
+}
+
+.form-container.commande tr {
+  height: 50px;
+}
+
+.form-container.commande button {
+  border-radius: 8px;
 }

@@ -66,9 +66,29 @@ export default function Admin({ shotState, machineState, machineShotsState, comm
     fetchCommandes(stateCommande);
   }, []);
 
+  // --- Gestion des commandes
   useEffect(() => {
     fetchCommandes(stateCommande);
   }, [stateCommande])
+
+  const toggleState = async (commandeId) => {
+    const token = localStorage.getItem("token");
+    const newState = (stateCommande === "in progress" ? "done" : "in progress")
+
+    try {
+      const response = await axios.patch(`/api/commandes/${commandeId}/${newState}`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      console.log("Commande mise à jour :", response.data);
+      fetchCommandes(stateCommande);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la commande :", error);
+      // Gère l’erreur ici (ex : toast d’erreur)
+    }
+  };
 
   // --- Gestion de la page à afficher ---
   const handleWindows = (e) => {
@@ -604,17 +624,24 @@ export default function Admin({ shotState, machineState, machineShotsState, comm
         </>)}
 
         {windowForm === "commande" && (
-          <section className="form-container">
+          <section className="form-container commande">
             <legend>Commandes "{stateCommande}"</legend>
             <label>Etat des commandes</label>
-            <select onChange={(e) => setStateCommande(e.target.value)}>
+            <select value={stateCommande} onChange={(e) => setStateCommande(e.target.value)}>
               <option value="in progress">in progress</option>
               <option value="done">done</option>
             </select>
             <h3>{commandes.count || 0} commandes trouvées</h3>
             <table>
               <thead>
-                <tr><th key="cId">Id</th><th key="cMachine">Machine</th><th key="cEmail">Email</th><th key="cTimestamp">Timestamp</th><th key="cEtat">Etat</th></tr>
+                <tr>
+                  <th key="cId">Id</th>
+                  <th key="cMachine">Machine</th>
+                  <th key="cEmail">Email</th>
+                  <th key="cTimestamp">Timestamp</th>
+                  <th key="cEtat">Etat</th>
+                  <th key="cDone"></th>
+                </tr>
               </thead>
               <tbody>
                 {commandes.commandes?.map((cmd) => (
@@ -622,6 +649,9 @@ export default function Admin({ shotState, machineState, machineShotsState, comm
                     {Object.keys(cmd).map((c) => (
                       <td key={`c${cmd.commande_id}:${c}`}>{cmd[c]}</td>
                     ))}
+                    <td key={`c${cmd.commande_id}:done`}>
+                      <button onClick={() => toggleState(cmd.commande_id)}>{stateCommande === "in progress" ? "Done" : "In progress"}</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

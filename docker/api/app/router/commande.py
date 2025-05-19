@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+import hashlib
+import json
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response
+from fastapi.responses import JSONResponse
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
@@ -8,6 +11,7 @@ from app.models.database import Commande, ComShot, Shot, Wallet
 from app.firebase import verify_firebase_token
 from app.db import SessionLocal
 from sqlalchemy.orm import joinedload
+from app.redis_client import redis
 
 router = APIRouter()
 
@@ -25,12 +29,33 @@ class CommandeCreate(BaseModel):
 
 @router.get("/api/commandes")
 async def get_commandes_by_state(
+    request: Request,
     state: Optional[str] = Query(None, description="Filtrer par état : 'in progress' ou 'done'"),
     db=Depends(get_db),
     user_data: dict = Depends(verify_firebase_token)
 ):
     if user_data["role"] != "admin":
         raise HTTPException(403, detail="Admin seulement")
+
+    # Génère les clés de cache
+    cache_key = f"commandes:{state or 'all'}"
+    cache_hash_key = f"{cache_key}_hash"
+
+    # Lecture depuis Redis
+    cached_data = await redis.get(cache_key)
+    cached_hash = await redis.get(cache_hash_key)
+
+    if isinstance(cached_data, bytes):
+        cached_data = cached_data.decode()
+    if isinstance(cached_hash, bytes):
+        cached_hash = cached_hash.decode()
+
+    client_etag = request.headers.get("if-none-match")
+
+    if cached_data and cached_hash:
+        if client_etag == cached_hash:
+            return Response(status_code=304)
+        return JSONResponse(content=json.loads(cached_data), headers={"ETag": cached_hash})
 
     try:
         query = select(Commande).options(
@@ -56,11 +81,19 @@ async def get_commandes_by_state(
                 "state": cmd.state
             })
 
-        return {
+        response = {
             "message": "Commandes enrichies récupérées avec succès.",
             "count": len(commandes_data),
             "commandes": commandes_data
         }
+
+        # Cache les données + ETag
+        response_json = json.dumps(response)
+        response_hash = hashlib.md5(response_json.encode()).hexdigest()
+        await redis.set(cache_key, response_json, ex=300)
+        await redis.set(cache_hash_key, response_hash, ex=300)
+
+        return JSONResponse(content=response, headers={"ETag": response_hash})
 
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des commandes.")
@@ -134,3 +167,37 @@ async def create_commande(
     except SQLAlchemyError as e:
         await db.rollback()
         raise HTTPException(status_code=500, detail=f"Erreur lors de la création de la commande. Erreur SQL : ${e}")
+
+@router.patch("/api/commandes/{commande_id}/{newState}")
+async def mark_commande_done(
+    commande_id: int = Path(..., description="ID de la commande à changer d'état"),
+    newState: str = Path(..., description="Nouvel état 'in progress' ou 'done'"),
+    db=Depends(get_db),
+    user_data: dict = Depends(verify_firebase_token)
+):
+    if user_data["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Accès réservé aux administrateurs.")
+
+    try:
+        result = await db.execute(select(Commande).where(Commande.id == commande_id))
+        commande = result.scalar_one_or_none()
+
+        if not commande:
+            raise HTTPException(status_code=404, detail="Commande non trouvée.")
+
+        if commande.state == newState:
+            return {"message": f"Commande déjà marquée comme '{newState}'."}
+
+        commande.state = newState
+        await db.commit()
+
+        return {
+            "message": "Commande mise à jour avec succès.",
+            "commande_id": commande.id,
+            "nouvel_etat": commande.state
+        }
+
+    except SQLAlchemyError as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Erreur lors de la mise à jour de la commande.")
+    

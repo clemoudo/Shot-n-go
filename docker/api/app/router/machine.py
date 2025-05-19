@@ -28,7 +28,7 @@ async def get_machines(db=Depends(get_db)):
         machines = result.scalars().all()
         data = [{"id": m.id, "name": m.name} for m in machines]
 
-        await redis.set(cache_key, json.dumps(data), ex=60)
+        await redis.set(cache_key, json.dumps(data), ex=60*5)
 
         return data
 
