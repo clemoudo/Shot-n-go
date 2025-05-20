@@ -24,11 +24,7 @@ function Leaderboard({ leaderboardState }) {
                         key={user.user_id}
                         className={`leaderboard_podium-item leaderboard_podium-item--${index + 1}`}
                     >
-                        <div className="leaderboard_medal">
-                            {index === 0 && ":first_place:"}
-                            {index === 1 && ":second_place:"}
-                            {index === 2 && ":third_place:"}
-                        </div>
+                        <img className="leaderboard_medal" src={`/images/pudium${index + 1}.png`} />
                         <p className="leaderboard_name">{user.user_name}</p>
                         <p className="leaderboard_shots">{user.total_shots} shots</p>
                     </div>

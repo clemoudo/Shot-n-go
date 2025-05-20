@@ -43,17 +43,16 @@
 .leaderboard_podium-item--2 {
     order: 1;
     height: 220px;
-    background-color: #e0e0e0;
+    background-color: #e4e4e4;
 }
 .leaderboard_podium-item--3 {
     order: 3;
     height: 150px;
-    background-color: #d6ac84;
+    background-color: #efcbaa;
 }
 
 .leaderboard_medal {
-    font-size: 2rem;
-    font-weight: bold;
+    width: 48px;
 }
 
 .leaderboard_name {
