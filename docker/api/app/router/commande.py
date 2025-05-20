@@ -157,6 +157,10 @@ async def create_commande(
             db.add(new_comshot)
 
         await db.commit()
+
+        await redis.delete("commandes:in progress")
+        await redis.delete("commandes:in progress_hash")
+
         return {
             "message": "Commande créée et payée avec succès.",
             "commande_id": new_commande.id,
@@ -190,6 +194,11 @@ async def mark_commande_done(
 
         commande.state = newState
         await db.commit()
+
+        await redis.delete("commandes:in progress")
+        await redis.delete("commandes:in progress_hash")
+        await redis.delete("commandes:done")
+        await redis.delete("commandes:done_hash")
 
         return {
             "message": "Commande mise à jour avec succès.",

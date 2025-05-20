@@ -19,6 +19,8 @@ function App() {
 	const [machines, setMachines] = useState([]);
 	const [machineShots, setMachineShots] = useState([]);
 	const [commandes, setCommandes] = useState([]);
+	const [queue, setQueue] = useState([]);
+
 	const [loading, setLoading] = useState(true);
 	const [authLoading, setAuthLoading] = useState(true);
 	const [user, setUser] = useState(null);
@@ -122,6 +124,18 @@ function App() {
 		fetchWithCache(key, `/api/commandes?state=${encodeURIComponent(state)}`, setCommandes);
 	}
 
+	const fetchQueue = (machineId) => {
+		fetchWithCache(`machine:${machineId}:queue`, `/api/machines/${machineId}/queue`, setQueue);
+	}
+
+	useEffect(() => {
+		fetchMachines();
+  	}, []);
+
+	useEffect(() => {
+		machines[0] && fetchMachineShots(machines[0]?.id);
+	}, [machines])
+
 	if (authLoading) {
 		return <div>Chargement de l'utilisateur...</div>;
 	}
@@ -132,10 +146,21 @@ function App() {
 			<div className="container">
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/menu" element={<Menu machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, fetchMachineShots }} cartState={{ cart, setCart }} />} />
+					<Route path="/menu" element={<Menu 
+						machineState={{ machines, fetchMachines }} 
+						machineShotsState={{ machineShots, fetchMachineShots }} 
+						cartState={{ cart, setCart }} />} />
 					<Route path="/games" element={<Games />} />
-					<Route path="/queue" element={<Queue />} />
-					<Route path="/admin" element={<Admin shotState={{ shots, fetchShots }} machineState={{ machines, fetchMachines }} machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} commandeState={{ commandes, fetchCommandes }} />} />
+					<Route path="/queue" element={<Queue
+						queueState={{ queue, fetchQueue }}  
+						machineState={{ machines, fetchMachines }}
+					/>} />
+					<Route path="/admin" element={<Admin 
+						shotState={{ shots, fetchShots }} 
+						machineState={{ machines, fetchMachines }} 
+						machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} 
+						commandeState={{ commandes, fetchCommandes }} 
+					/>} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/leaderboard" element={<Leaderboard />} />
 				</Routes>
