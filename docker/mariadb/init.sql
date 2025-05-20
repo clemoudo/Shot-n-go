@@ -3,7 +3,8 @@ USE shotngo;
 
 CREATE TABLE Wallet (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(128) NOT NULL,
+    user_id VARCHAR(128) NOT NULL UNIQUE,
+    user_email VARCHAR(128) NOT NULL UNIQUE,
     credit FLOAT NOT NULL DEFAULT 0
 );
 

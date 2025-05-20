@@ -3,61 +3,21 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin({ shotState, machineState, machineShotsState }) {
+export default function Admin({ shotState, machineState, machineShotsState, commandeState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
   const { machineShots, setMachineShots, fetchMachineShots } = machineShotsState;
-  const [windowForm, setWindowForm] = useState("shot")
+  const { commandes, fetchCommandes } = commandeState;
+  const [stateCommande, setStateCommande] = useState("in progress");
+  const [windowForm, setWindowForm] = useState("wallet");
 
   // --- Gestion des messages ---
-  const [msg, setMsg] = useState({
-    shotAdd: "",
-    shotDelete: "",
-    machineAdd: "",
-    machineDelete: "",
-    machineShotAdd: "",
-    machineShotDelete: ""
-  });
+  const [msg, setMsg] = useState({});
 
-  function setMsgShotAdd(newMsg) {
+  function setMessage(dest, newMsg) {
     setMsg(prevMsg => ({
       ...prevMsg,
-      shotAdd: newMsg
-    }));
-  }
-
-  function setMsgShotDelete(newMsg) {
-    setMsg(prevMsg => ({
-      ...prevMsg,
-      shotDelete: newMsg
-    }));
-  }
-
-  function setMsgMachineAdd(newMsg) {
-    setMsg(prevMsg => ({
-      ...prevMsg,
-      machineAdd: newMsg
-    }));
-  }
-
-  function setMsgMachineDelete(newMsg) {
-    setMsg(prevMsg => ({
-      ...prevMsg,
-      machineDelete: newMsg
-    }));
-  }
-
-  function setMsgMachineShotAdd(newMsg) {
-    setMsg(prevMsg => ({
-      ...prevMsg,
-      machineShotAdd: newMsg
-    }));
-  }
-
-  function setMsgMachineShotDelete(newMsg) {
-    setMsg(prevMsg => ({
-      ...prevMsg,
-      machineShotDelete: newMsg
+      [dest]: newMsg
     }));
   }
 
@@ -103,7 +63,32 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
   useEffect(() => {
     fetchShots();
     fetchMachines();
+    fetchCommandes(stateCommande);
   }, []);
+
+  // --- Gestion des commandes
+  useEffect(() => {
+    fetchCommandes(stateCommande);
+  }, [stateCommande])
+
+  const toggleState = async (commandeId) => {
+    const token = localStorage.getItem("token");
+    const newState = (stateCommande === "in progress" ? "done" : "in progress")
+
+    try {
+      const response = await axios.patch(`/api/commandes/${commandeId}/${newState}`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      console.log("Commande mise à jour :", response.data);
+      fetchCommandes(stateCommande);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la commande :", error);
+      // Gère l’erreur ici (ex : toast d’erreur)
+    }
+  };
 
   // --- Gestion de la page à afficher ---
   const handleWindows = (e) => {
@@ -161,11 +146,11 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
         },
       });
       deleteImage(image);
-      setMsgShotDelete(`Shot "${id}" et image "${image}" supprimés`);
+      setMessage("shotDelete", `Shot "${id}" et image "${image}" supprimés`);
       fetchShots();
     } catch (err) {
       console.error("Erreur suppression shot :", err);
-      setMsgShotDelete(`Échec de la suppression du shot "${id}" et de l'image "${image}"`);
+      setMessage("shotDelete", `Échec de la suppression du shot "${id}" et de l'image "${image}"`);
     }
   };
 
@@ -207,7 +192,7 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
 
       uploadImage();
 
-      setMsgShotAdd(`Shot "${newShot.name}" et image "${newShot.image}" ajoutés !`);
+      setMessage("shotAdd", `Shot "${newShot.name}" et image "${newShot.image}" ajoutés !`);
       setNewShot({
         name: "",
         price: "",
@@ -218,7 +203,7 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
 
     } catch (err) {
       console.error("Erreur envoi shot :", err);
-      setMsgShotAdd(`Erreur lors de l'ajout du shot "${newShot.name}" et de l'image "${newShot.image}"`);
+      setMessage("shotAdd", `Erreur lors de l'ajout du shot "${newShot.name}" et de l'image "${newShot.image}"`);
     }
   };
 
@@ -244,11 +229,11 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Erreur");
 
-      setMsgMachineAdd("Machine ajoutée");
+      setMessage("machineAdd", "Machine ajoutée");
       setNewMachine({ name: "" });
       fetchMachines(); // à implémenter
     } catch (err) {
-      setMsgMachineAdd("Erreur ajout");
+      setMessage("machineAdd", "Erreur ajout");
     }
   };
 
@@ -265,10 +250,10 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Erreur");
 
-      setMsgMachineDelete(`${data.message}`);
+      setMessage("machineDelete", `${data.message}`);
       fetchMachines(); // refresh list
     } catch (err) {
-      setMsgMachineDelete("Erreur suppression");
+      setMessage("machineDelete", "Erreur suppression");
     }
   };
 
@@ -289,12 +274,12 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
 
       // Récupère le message de succès depuis la réponse
       const successMsg = response.data.message;
-      setMsgMachineShotAdd(successMsg);
+      setMessage("machineShotAdd", successMsg);
 
     } catch (err) {
       console.error("Erreur envoi shot :", err);
       const details = err.response?.data?.detail;
-      setMsgMachineShotAdd(details);
+      setMessage("machineShotAdd", details);
     }
   };
 
@@ -310,11 +295,58 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
         },
       });
       const successMsg = response.data.message;
-      setMsgMachineShotDelete(successMsg);
+      setMessage("machineShotDelete", successMsg);
     } catch (err) {
       console.error("Erreur suppression shot :", err);
       const details = err.response?.data?.detail;
-      setMsgMachineShotDelete(details);
+      setMessage("MachineShotDelete", details);
+    }
+  }
+  
+  // --- Gestion des wallets ---
+  const handleNewWalletSubmit = async (userEmail, amount) => {
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+    formData.append("user_email", userEmail);
+    formData.append("amount", amount);
+
+    try {
+      const response = await axios.post(`/api/wallets`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Récupère le message de succès depuis la réponse
+      const successMsg = response.data.message;
+      setMessage("walletAdd", successMsg);
+
+    } catch (err) {
+      console.error("Erreur envoi wallet :", err);
+      const details = err.response?.data?.detail;
+      setMessage("WalletAdd", details);
+    }
+  };
+
+  const handleDeleteWallet = async (userEmail) => {
+    const token = localStorage.getItem("token");
+
+    if (!window.confirm(`Supprimer le wallet de "${userEmail}" ?`)) return;
+    try {
+      const response = await axios.delete(`/api/wallets/${userEmail}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        }
+      });
+      const successMsg = response.data.message;
+      setMessage("walletDelete", successMsg);
+    } catch (err) {
+      console.error("Erreur suppression wallet :", err);
+      const details = err.response?.data?.detail;
+      setMessage("walletDelete", details);
     }
   }
 
@@ -326,6 +358,8 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
       <h1>Panneau Admin</h1>
 
       <select onChange={handleWindows}>
+        <option value="wallet">Wallet</option>
+        <option value="commande">Commande</option>
         <option value="shot">Shot</option>
         <option value="machine">Machine</option>
         <option value="machineShot">Machine-Shot</option>
@@ -527,6 +561,103 @@ export default function Admin({ shotState, machineState, machineShotsState }) {
             </form>
           </section>
         </>)}
+
+        {windowForm === "wallet" && (<>
+          {/* Ajouter un wallet */}
+          <section className="form-container new-form">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const userEmail = e.target.elements.userEmail.value;
+              const amountStr = e.target.elements.amount.value;
+              const amount = amountStr ? parseFloat(amountStr) : 0;
+              handleNewWalletSubmit(userEmail, amount);
+            }}>
+              <fieldset>
+                <legend>Créditer un wallet</legend>
+                <label htmlFor="userEmail">Email utilisateur</label>
+                <input
+                  name="userEmail"
+                  type="email"
+                  placeholder="exemple@domaine.com"
+                  required
+                />
+
+                <label htmlFor="amount">Montant (€)</label>
+                <input
+                  name="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  required
+                />
+
+                <button type="submit">Créditer le wallet</button>
+                {msg.walletAdd && <p className="msg">{msg.walletAdd}</p>}
+              </fieldset>
+            </form>
+          </section>
+
+          {/* Supprimer un wallet */}
+          <section className="form-container delete-form">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const userEmail = e.target.elements.userEmail.value;
+                handleDeleteWallet(userEmail);
+              }}
+            >
+              <fieldset>
+                <legend>Supprimer un wallet</legend>
+                <label htmlFor="userEmail">Email utilisateur</label>
+                <input
+                  name="userEmail"
+                  type="email"
+                  placeholder="exemple@domaine.com"
+                  required
+                />
+                <button type="submit">Supprimer le wallet</button>
+                {msg.walletDelete && <p className="msg">{msg.walletDelete}</p>}
+              </fieldset>
+            </form>
+          </section>
+        </>)}
+
+        {windowForm === "commande" && (
+          <section className="form-container commande">
+            <legend>Commandes "{stateCommande}"</legend>
+            <label>Etat des commandes</label>
+            <select value={stateCommande} onChange={(e) => setStateCommande(e.target.value)}>
+              <option value="in progress">in progress</option>
+              <option value="done">done</option>
+            </select>
+            <h3>{commandes.count || 0} commandes trouvées</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th key="cId">Id</th>
+                  <th key="cMachine">Machine</th>
+                  <th key="cEmail">Email</th>
+                  <th key="cTimestamp">Timestamp</th>
+                  <th key="cEtat">Etat</th>
+                  <th key="cDone"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {commandes.commandes?.map((cmd) => (
+                  <tr key={`c${cmd.commande_id}`}>
+                    {Object.keys(cmd).map((c) => (
+                      <td key={`c${cmd.commande_id}:${c}`}>{cmd[c]}</td>
+                    ))}
+                    <td key={`c${cmd.commande_id}:done`}>
+                      <button onClick={() => toggleState(cmd.commande_id)}>{stateCommande === "in progress" ? "Done" : "In progress"}</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
       </div>
     </div>
   );

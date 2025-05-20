@@ -28,29 +28,12 @@ async def get_machines(db=Depends(get_db)):
         machines = result.scalars().all()
         data = [{"id": m.id, "name": m.name} for m in machines]
 
-        await redis.set(cache_key, json.dumps(data), ex=60)
+        await redis.set(cache_key, json.dumps(data), ex=60*5)
 
         return data
 
     except SQLAlchemyError:
         raise HTTPException(500, detail="Erreur lors de la récupération des machines")
-    
-@router.get("/api/machines/{machine_id}")
-async def get_machine(machine_id: int, db=Depends(get_db)):
-    try:
-        result = await db.execute(select(Machine).where(Machine.id == machine_id))
-        machine = result.scalar_one_or_none()
-
-        if not machine:
-            raise HTTPException(status_code=404, detail="Machine non trouvée")
-
-        return {
-            "id": machine.id,
-            "name": machine.name
-        }
-
-    except SQLAlchemyError:
-        raise HTTPException(status_code=500, detail="Erreur lors de la récupération")
 
 @router.post("/api/machines")
 async def add_machine(

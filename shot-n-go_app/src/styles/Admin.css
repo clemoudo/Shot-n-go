@@ -47,9 +47,7 @@
   color: #555;
 }
 
-.form-container input[type="text"],
-.form-container input[type="number"],
-.form-container input[type="file"],
+.form-container input,
 .form-container select {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -85,4 +83,24 @@
 
 .delete-form button[type="submit"]:hover {
   background-color: #e53935;
+}
+
+.form-container td {
+  background-color: #dedede;
+}
+
+.form-container tr {
+  border-top: 1px rgb(168, 168, 168) solid;
+}
+
+.form-container.commande {
+  max-width: 700px;
+}
+
+.form-container.commande tr {
+  height: 50px;
+}
+
+.form-container.commande button {
+  border-radius: 8px;
 }

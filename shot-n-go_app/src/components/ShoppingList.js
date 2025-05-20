@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
-function ShoppingList({addToCart, removeItem, machineState, machineShotsState}) {
+function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem, machineState, machineShotsState }) {
    const { machines, fetchMachines } = machineState;
    const { machineShots, fetchMachineShots } = machineShotsState;
+   const { selectedMachineId, setSelectedMachineId } = selectedMachineIdState;
+   const { cart, setCart } = cartState;
 	const [loading, setLoading] = useState(true)
-	const [filter, setFilter] = useState("all")
-	const [selectedMachineId, setSelectedMachineId] = useState("");
-
 
 	useEffect(() => {
 		fetchMachines();
@@ -23,6 +22,13 @@ function ShoppingList({addToCart, removeItem, machineState, machineShotsState}) 
 		}
 	}, [machines]);
 
+	const handleChangeMachine = (machineId) => {
+		if (cart.length > 0 && !window.confirm(`Voulez-vous vraiment supprimer votre panier actuel ?`)) return;
+		setCart([]);
+		setSelectedMachineId(machineId);
+		fetchMachineShots(machineId);
+	}
+
 	if (loading) {
 		return <div>Chargement des shots...</div>;
 	}
@@ -35,8 +41,7 @@ function ShoppingList({addToCart, removeItem, machineState, machineShotsState}) 
 					className="machine-select"
 					value={selectedMachineId}
 					onChange={(e) => {
-						setSelectedMachineId(e.target.value);
-						fetchMachineShots(e.target.value);
+						handleChangeMachine(e.target.value)
 					}}
 				>
 					{machines.map((machine) => (
