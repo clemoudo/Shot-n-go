@@ -199,7 +199,9 @@ async def mark_commande_done(
         await redis.delete("commandes:in progress_hash")
         await redis.delete("commandes:done")
         await redis.delete("commandes:done_hash")
-
+        await redis.delete("leaderboard:total_shots")
+        await redis.delete("leaderboard:total_shots_hash")
+        
         return {
             "message": "Commande mise à jour avec succès.",
             "commande_id": commande.id,

@@ -20,6 +20,7 @@ function App() {
 	const [machineShots, setMachineShots] = useState([]);
 	const [commandes, setCommandes] = useState([]);
 	const [queue, setQueue] = useState([]);
+	const [leaderboard, setLeaderboard] = useState([]);
 
 	const [loading, setLoading] = useState(true);
 	const [authLoading, setAuthLoading] = useState(true);
@@ -128,6 +129,10 @@ function App() {
 		fetchWithCache(`machine:${machineId}:queue`, `/api/machines/${machineId}/queue`, setQueue);
 	}
 
+	const fetchLeaderboard = () => {
+		fetchWithCache(`leaderboard:total_shot`, `/api/leaderboard`, setLeaderboard);
+	}
+
 	useEffect(() => {
 		fetchMachines();
   	}, []);
@@ -162,7 +167,9 @@ function App() {
 						commandeState={{ commandes, fetchCommandes }} 
 					/>} />
 					<Route path="/login" element={<Login />} />
-					<Route path="/leaderboard" element={<Leaderboard />} />
+					<Route path="/leaderboard" element={<Leaderboard
+						leaderboardState={{ leaderboard, fetchLeaderboard }}
+					/>} />
 				</Routes>
 			</div>
 			{user && <Footer />}
