@@ -2,15 +2,14 @@ import ShoppingList from './ShoppingList'
 import Cart from './Cart'
 import { useState } from 'react';
 
-
-
-function Menu({shots, setShots}) {
-   const [cart_table, setCartTable] = useState([]);
+function Menu({ machineState, machineShotsState, cartState }) {
+   const { cart, setCart } = cartState;
+   const [selectedMachineId, setSelectedMachineId] = useState("");
 
    // Fonction pour ajouter un article
-   const addToCart = (shotElem,addedAmount) => {
+   const addToCart = (shotElem, addedAmount) => {
       if (addedAmount > 0){
-         setCartTable((prevCart) => {
+         setCart((prevCart) => {
             const currentShot = prevCart.find((shot) => shot.id === shotElem.id);
             if (currentShot) {
                   return prevCart.map((shot) =>
@@ -25,7 +24,7 @@ function Menu({shots, setShots}) {
 
    // Fonction pour retirer un article
    const removeItem = (shotElem) => {
-      setCartTable((prevCart) => {
+      setCart((prevCart) => {
          const currentShot = prevCart.find((shot) => shot.id === shotElem.id);
          if (!currentShot) return prevCart;
    
@@ -55,26 +54,15 @@ function Menu({shots, setShots}) {
    
       if (!confirmDelete) return;
    
-      setCartTable((prevCart) =>
+      setCart((prevCart) =>
          prevCart.filter((shot) => shot.id !== shotElem.id)
       );
-   };   
-
-   const clearCart = () => {
-      const confirmClear = window.confirm(
-         "Êtes-vous sûr de vouloir supprimer tous les articles du panier ?"
-      );
-   
-      if (!confirmClear) return;
-   
-      setCartTable([]);
-   };   
-   
+   };
    
    return (
       <>
-         <Cart cart_table={cart_table} setCartTable={setCartTable} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} clearCart={clearCart} />
-         <ShoppingList cart_table={cart_table} addToCart={addToCart} removeItem={removeItem} shots={shots} setShots={setShots} />
+         <Cart selectedMachineId={selectedMachineId} cartState={cartState} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} />
+         <ShoppingList selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} cartState={cartState} addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
       </>
    );
 }

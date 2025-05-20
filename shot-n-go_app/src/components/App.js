@@ -1,74 +1,180 @@
-	// import Banner from './Banner'
-	// import logo from '../assets/logo.svg'
-	import Footer from './Footer'
-	import Navbar from './Navbar'
-	import Home from './Home'
-	import Menu from './Menu'
-	import Games from './Games'
-	import Queue from './Queue'
-	import Admin_pannel from './Admin_pannel'
-	import Login from './Login'
-	import { useState, useEffect } from "react";
-	import { Route, Routes } from "react-router-dom"
-	import Leaderboard from './Leaderboard';
+import { useEffect, useState } from "react";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
+import axios from "axios";
 
-	function App() {
-		const [shots, setShots] = useState([]);
-		const [loading, setLoading] = useState(true);
+import Footer from './Footer';
+import Navbar from './Navbar';
+import Home from './Home';
+import Menu from './Menu';
+import Games from './Games';
+import Queue from './Queue';
+import Admin from './Admin';
+import Login from './Login';
+import Leaderboard from './Leaderboard';
 
+function App() {
+	const [shots, setShots] = useState([]);
+	const [machines, setMachines] = useState([]);
+	const [machineShots, setMachineShots] = useState([]);
+	const [commandes, setCommandes] = useState([]);
+	const [queue, setQueue] = useState([]);
+	const [leaderboard, setLeaderboard] = useState([]);
 
-		const fetchShots = async () => {
-			try {
-			  const response = await fetch("/api/shot/receive/");
-			  if (!response.ok) {
-				const text = await response.text(); // pour voir le message d’erreur du serveur
-				console.error("Erreur HTTP:", response.status, response.statusText, text);
-				return;
-			  }
-		  
-			  const data = await response.json();
-			  console.log("Shots récupérés :", data.shots); // Debug info
-			  setShots(data.shots);
-			  setLoading(false);
-			} catch (error) {
-			  console.error("Erreur de connexion:", error);
+	const [loading, setLoading] = useState(true);
+	const [authLoading, setAuthLoading] = useState(true);
+	const [user, setUser] = useState(null);
+	const [cart, setCart] = useState([]);
+
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+			if (firebaseUser) {
+				setUser(firebaseUser);
+				
+				// Récupérer le token ID Firebase
+				const token = await firebaseUser.getIdToken();
+				localStorage.setItem("token", token);
+
+				if (location.pathname === "/Login") {
+				navigate("/");
+				}
+			} else {
+				setUser(null);
+				localStorage.removeItem("token");
+
+				if (location.pathname !== "/Login") {
+				navigate("/Login");
+				}
 			}
-		  };
-		  
-		
-		  useEffect(() => {
-			console.log("useEffect mounted");
-			const intervalId = setInterval(() => {
-			  console.log("Interval tick");
-			  fetchShots();
-			}, 60000);
-			return () => {
-			  console.log("useEffect unmounted");
-			  clearInterval(intervalId);
-			};
-		  }, []);
+			setAuthLoading(false);
+		});
+		return () => unsubscribe();
+		}, [navigate, location]);
 
-		return (
-			<div>
-				{/* <Banner>
-					<img src={logo} alt="Shot'N'Go" className='logo' />
-					<h1 className='title'>Shot'N'Go</h1>
-				</Banner> */}
-				<Navbar />
-				<div className="container">
-					<Routes>
-						<Route path="/" element={<Home />} />
-						<Route path="/menu" element={ <Menu shots={shots} setShots={setShots}/> } />
-						<Route path="/games" element={ <Games /> } />
-						<Route path="/Queue" element={<Queue />} />
-						<Route path='/Admin_pannel' element={<Admin_pannel shots={shots} setShots={setShots} loading={loading} setLoading={setLoading} fetchShots={fetchShots} />}/>
-						<Route path='/Login' element={<Login />}/>
-						<Route path="/leaderboard" element={<Leaderboard />} />
-					</Routes>
-				</div>
-				<Footer />
-			</div>
-		)
+	const fetchWithCache = async (key, url, setData) => {
+		const token = localStorage.getItem("token");
+		try {
+			const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+			const storedEtag = localStorage.getItem(`${key}Etag`);
+			const storedData = localStorage.getItem(`${key}Data`);
+
+			const response = await axios.get(url, {
+				headers: {
+					"If-None-Match": storedEtag || "",
+					Authorization: `Bearer ${token}`
+				}
+			});
+			if (response.status === 304) {
+				if (storedData) {
+					setData(JSON.parse(storedData));
+				}
+				setLoading(false);
+				return;
+			}
+
+			if (response.status < 200 || response.status >= 300) {
+				console.error(`Erreur HTTP (${capitalized}):`, response.status, response.statusText);
+				if (storedData) {
+					setData(JSON.parse(storedData));
+				}
+				setLoading(false);
+				return;
+			}
+
+			const data = response.data;
+			const extractedData = data[key] || data; // gère les réponses de type { shots: [...] } ou juste [...]
+
+			setData(extractedData);
+
+			const newEtag = response.headers["etag"];
+			if (newEtag) {
+				localStorage.setItem(`${key}Etag`, newEtag);
+			}
+			localStorage.setItem(`${key}Data`, JSON.stringify(extractedData));
+
+			setLoading(false);
+		} catch (error) {
+			// console.error(`Erreur de connexion (${key}) :`, error);
+
+			const fallback = localStorage.getItem(`${key}Data`);
+			if (fallback) {
+				setData(JSON.parse(fallback));
+			}
+			setLoading(false);
+		}
+	};
+
+	const fetchShots = () => {
+		fetchWithCache("shots", "/api/shots", setShots)
 	}
 
-	export default App
+	const fetchMachines = () => {
+		fetchWithCache("machines", "/api/machines", setMachines)
+	}
+
+	const fetchMachineShots = (machineId) => {
+		fetchWithCache(`machine:${machineId}:shots`, `/api/machines/${machineId}/shots`, setMachineShots)
+	}
+	
+	const fetchCommandes = (state) => {
+		const key = `commandes_${state}`;
+		fetchWithCache(key, `/api/commandes?state=${encodeURIComponent(state)}`, setCommandes);
+	}
+
+	const fetchQueue = (machineId) => {
+		fetchWithCache(`machine:${machineId}:queue`, `/api/machines/${machineId}/queue`, setQueue);
+	}
+
+	const fetchLeaderboard = () => {
+		fetchWithCache(`leaderboard:total_shot`, `/api/leaderboard`, setLeaderboard);
+	}
+
+	useEffect(() => {
+		fetchMachines();
+  	}, []);
+
+	useEffect(() => {
+		machines[0] && fetchMachineShots(machines[0]?.id);
+	}, [machines])
+
+	if (authLoading) {
+		return <div>Chargement de l'utilisateur...</div>;
+	}
+
+	return (
+		<div>
+			{user && <Navbar user={user} />} {/* Navbar seulement si connecté */}
+			<div className="container">
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/menu" element={<Menu 
+						machineState={{ machines, fetchMachines }} 
+						machineShotsState={{ machineShots, fetchMachineShots }} 
+						cartState={{ cart, setCart }} />} />
+					<Route path="/games" element={<Games />} />
+					<Route path="/queue" element={<Queue
+						queueState={{ queue, fetchQueue }}  
+						machineState={{ machines, fetchMachines }}
+					/>} />
+					<Route path="/admin" element={<Admin 
+						shotState={{ shots, fetchShots }} 
+						machineState={{ machines, fetchMachines }} 
+						machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} 
+						commandeState={{ commandes, fetchCommandes }} 
+					/>} />
+					<Route path="/login" element={<Login />} />
+					<Route path="/leaderboard" element={<Leaderboard
+						leaderboardState={{ leaderboard, fetchLeaderboard }}
+					/>} />
+				</Routes>
+			</div>
+			{user && <Footer />}
+		</div>
+	);
+}
+
+export default App;

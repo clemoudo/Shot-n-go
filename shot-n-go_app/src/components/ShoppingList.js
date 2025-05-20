@@ -1,75 +1,70 @@
-//import { shotList } from '../datas/shotList'
-import { useEffect,useState } from 'react';
+import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
 import '../styles/ShoppingList.css'
 
-function ShoppingList({addToCart, removeItem, shots, setShots}) {
-	const [loading,setLoading] = useState(true)
-	const [listMachine,setMachine] = useState([])
-	const [filter,setFilter] = useState("all")
-	
-	const fetchmachines = async () => {
-		try {
-		  const response = await fetch("/api/machine/gt_all/");
-		  if (response.ok) {
-			const data = await response.json();
-			setMachine(data)
-			setLoading(false)
-		  } else {
-			console.error("Erreur lors de la récupération des machines.");
-		  }
-		} catch (error) {
-		  console.error("Erreur de connexion:", error);
+function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem, machineState, machineShotsState }) {
+   const { machines, fetchMachines } = machineState;
+   const { machineShots, fetchMachineShots } = machineShotsState;
+   const { selectedMachineId, setSelectedMachineId } = selectedMachineIdState;
+   const { cart, setCart } = cartState;
+	const [loading, setLoading] = useState(true)
+
+	useEffect(() => {
+		fetchMachines();
+	}, []);
+
+	useEffect(() => {
+		if (machines.length > 0) {
+			const firstId = machines[0].id;
+			setSelectedMachineId(firstId);
+			fetchMachineShots(firstId);
+			setLoading(false);
 		}
-	  };
-	
-	
-	 useEffect(() => {
-		fetchmachines();
-		// Mettre en place un intervalle pour récupérer les utilisateurs toutes les 5 secondes
-		const intervalId = setInterval(fetchmachines, 60000); // Rafraîchir toutes les 5 secondes
-	
-		// Nettoyage de l'intervalle lors du démontage du composant
-		return () => clearInterval(intervalId);
-	  }, []);
-	
+	}, [machines]);
+
+	const handleChangeMachine = (machineId) => {
+		if (cart.length > 0 && !window.confirm(`Voulez-vous vraiment supprimer votre panier actuel ?`)) return;
+		setCart([]);
+		setSelectedMachineId(machineId);
+		fetchMachineShots(machineId);
+	}
+
 	if (loading) {
 		return <div>Chargement des shots...</div>;
 	}
 	return (
-		<div>
-			{(listMachine.length >= 1)?(
-				<div className='sort_by'>
-					<div className="dropdown">
-						<button className="dropbtn">
-							{(filter === "all")?("all"):(listMachine.find((machine) => machine.id === filter).nom)}
-							<i className="fa fa-caret-down" />
-						</button>
-						<div className="dropdown-content">
-							<button onClick={() => setFilter("all")}>all</button>
-							{listMachine.map((machine) =>(<button onClick={() => setFilter(machine.id)}>{machine.nom}</button>))}
-						</div>
-					</div>
-				</div>)
-			:(
-			<div className='sort_by'> </div>)}
-			<ul className='shot-list'>
+		<div className="machine-selector-container">
+			<div className="machine-selector-header">
+				<label htmlFor="machine-select">Choisissez une machine :</label>
+				<select
+					id="machine-select"
+					className="machine-select"
+					value={selectedMachineId}
+					onChange={(e) => {
+						handleChangeMachine(e.target.value)
+					}}
+				>
+					{machines.map((machine) => (
+						<option key={`m${machine.id}`} value={machine.id}>
+							{machine.name}
+						</option>
+					))}
+				</select>
+			</div>
 
-				{(filter === "all")?(shots.map((shotElem) => (
-					<ShotItem
-						shotElem={shotElem}
-						addToCart={addToCart} 
-						removeItem={removeItem}
-					/>
-				))):(listMachine.find((machine) => machine.id === filter).alcools.map((shotElem) => (
-					<ShotItem
-						shotElem={shotElem.alcool}
-						addToCart={addToCart} 
-						removeItem={removeItem}
-					/>)))}
+			<ul className="shot-list">
+				{machineShots.shots &&
+					machineShots.shots.map((shotElem) => (
+						<ShotItem
+							key={shotElem.id}
+							shotElem={shotElem}
+							addToCart={addToCart}
+							removeItem={removeItem}
+						/>
+					))}
 			</ul>
 		</div>
-	)
+	);
 }
 
 export default ShoppingList

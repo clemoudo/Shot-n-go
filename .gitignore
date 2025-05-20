@@ -5,3 +5,7 @@
 
 # Ignore firebase credentials
 **/firebase-key.json
+KEY/
+
+# Modules
+**/node_modules/

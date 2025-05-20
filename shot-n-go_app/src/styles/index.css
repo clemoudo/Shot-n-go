@@ -10,4 +10,5 @@ body {
 .container {
    margin: 1rem;
    text-align: center;
+   min-height: 75vh;
 }

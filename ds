@@ -1,0 +1,253 @@
+[33mcommit 9209a5c9dbd1c88fd37177eebc57b9435f4575c3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeatures_#54[m[33m, [m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m
+Merge: 42961b2 f2c9f61
+Author: Martin Stocq <146483925+dssq133@users.noreply.github.com>
+Date:   Tue Apr 8 15:16:54 2025 +0200
+
+    Merge pull request #49 from clemoudo/feature_#35
+    
+    ajout d'une prevention sur l'age et abus d'alcool  #35
+
+[33mcommit 42961b22e74bf6fb71f4f0cb6821b7b53420d6cc[m
+Merge: c20da12 f7d4e69
+Author: Martin Stocq <146483925+dssq133@users.noreply.github.com>
+Date:   Tue Apr 8 15:16:41 2025 +0200
+
+    Merge pull request #52 from clemoudo/feature_#61
+    
+    Feature #61
+
+[33mcommit f7d4e69b9cf2c9a5aced9c5d4e86dc95589a1614[m[33m ([m[1;31morigin/feature_#61[m[33m, [m[1;32mfeature_#61[m[33m)[m
+Author: martin <martin.Stocq@gmail.com>
+Date:   Tue Apr 8 14:37:47 2025 +0200
+
+    amélioriation leaderboard  #60
+
+[33mcommit 37050e2303b1b67e88b5775fa2bf0e936cafc2bb[m
+Author: martin <martin.Stocq@gmail.com>
+Date:   Tue Apr 8 14:22:26 2025 +0200
+
+    Sauvegarde des changements dans Leaderboard.css
+
+[33mcommit f2c9f619565937ece91afc8f7e8014975b35477f[m[33m ([m[1;31morigin/feature_#35[m[33m, [m[1;32mfeature_#35[m[33m)[m
+Author: martin <martin.Stocq@gmail.com>
+Date:   Mon Apr 7 12:58:03 2025 +0200
+
+    ajout d'une prevention sur l'age et abus d'alcool  #35
+
+[33mcommit c20da12f7598b92e98e9e44c1edbe8ee59425834[m
+Author: Clément Vier <c.vier@students.ephec.be>
+Date:   Mon Apr 7 12:07:06 2025 +0200
+
+    Rename leaderboard.js to Leaderboard.js
+
+[33mcommit 6f64df406663eab72dc09db3dfcbb2c93b2740ca[m
+Merge: c42866e d232ab8
+Author: Clément Vier <c.vier@students.ephec.be>
+Date:   Mon Apr 7 12:06:17 2025 +0200
+
+    Merge pull request #42 from clemoudo/feature_#60
+    
+    Feature #60
+
+[33mcommit c42866ea6fa5c20e535b6bffa73c07e790694e51[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Mon Apr 7 11:55:03 2025 +0200
+
+    boutton du panier donne le bon nombre
+
+[33mcommit aae1f7a5f3626ac786a69aa101463bfd25453000[m
+Author: clemoudo <c.vier@students.ephec.be>
+Date:   Thu Apr 3 09:42:02 2025 +0000
+
+    requete api https
+
+[33mcommit d232ab89f7434e308156d4cab4f556a5cc86bbec[m
+Author: martin <martin.Stocq@gmail.com>
+Date:   Thu Apr 3 11:07:17 2025 +0200
+
+    ajout d'un leaderboard #60
+
+[33mcommit 544d568794bc2d85b5479b2cf317883e0c55024c[m
+Author: martin <martin.Stocq@gmail.com>
+Date:   Thu Apr 3 11:03:30 2025 +0200
+
+    ajout d'un leaderboard #60
+
+[33mcommit 604484203753fef387ffec058427c1e2dbcde332[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Wed Apr 2 15:31:35 2025 +0200
+
+    ajout boutton sur le menu
+
+[33mcommit 22ff1fd3c49ecc5d13ee9f88368cd9adbf044c54[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Tue Apr 1 15:01:53 2025 +0200
+
+    feature #29 mettre en relation la db avec le menu + corrections mineures dans le code
+
+[33mcommit 0bdf492dc30a45b0332bb273cf202ec7c91f14e8[m
+Merge: d8a7548 5ba1625
+Author: Corentin Mertens <c.mertens@students.ephec.be>
+Date:   Tue Apr 1 14:41:10 2025 +0200
+
+    Merge pull request #41 from clemoudo/backend_test
+    
+    Backend test
+
+[33mcommit 5ba1625487a1c9ddcf4757ffaaa1e4f4ba938b35[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Tue Apr 1 14:38:00 2025 +0200
+
+    panier et menu affiche les images dynamiquement
+
+[33mcommit 0921ab91e924cd9aaf27004aaedd611285b224c3[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Tue Apr 1 14:10:24 2025 +0200
+
+    menu affiche les images dynamiquement
+
+[33mcommit 5227a92f3f85c855ad75fc6d28a777b61b8928c0[m
+Author: Breit <l.breitenstein@students.ephec.be>
+Date:   Fri Mar 28 12:22:32 2025 +0100
+
+    Ajout partie graphique Authentification coté frontend (à travailler)
+
+[33mcommit 7b334e9058446dab071154aecd140dfc6b7c48a5[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Fri Mar 28 12:02:54 2025 +0100
+
+    reparation erreur avec le cart
+
+[33mcommit 593a34241e4a713f10d0856a3f99a99c331bad69[m
+Merge: ec5bae5 8ef1f7a
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Fri Mar 28 11:40:06 2025 +0100
+
+    Merge branch 'test_corentin' of https://github.com/clemoudo/Shot-n-go into backend_test
+
+[33mcommit ec5bae5968c3ebe6a81e9a543794409727bac084[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Fri Mar 28 11:38:40 2025 +0100
+
+    ajout prix db
+
+[33mcommit 8ef1f7a7b885983529239dc1b79ed5942375660c[m[33m ([m[1;31morigin/test_corentin[m[33m)[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Fri Mar 28 11:15:18 2025 +0100
+
+    shots affiché dynamiquement sans images
+
+[33mcommit 209bd22c1826652eaeb7d7396b76d52ec9e8a8bc[m
+Author: Breit <l.breitenstein@students.ephec.be>
+Date:   Fri Mar 28 11:04:23 2025 +0100
+
+    Amélioration esthétisme de l'interface qui intéragit avec la DB
+
+[33mcommit 98f299ec7e8ca2105fa57be55e8d10af0ab169a1[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Fri Mar 28 10:45:45 2025 +0100
+
+    ajout fichier backend
+
+[33mcommit 8bb0ab32c6befe9a9eb9dac7c89afe9c408e15f4[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Fri Mar 28 10:23:42 2025 +0100
+
+    ajout dossier backend
+
+[33mcommit 79b69cbbe778e6b4a5dd32bf245c5fa6c4fb7ab2[m
+Merge: d8a7548 147a5b3
+Author: Corentin Mertens <c.mertens@students.ephec.be>
+Date:   Thu Mar 27 18:05:14 2025 +0100
+
+    Merge pull request #40 from clemoudo/test_corentin
+    
+    Test corentin
+
+[33mcommit 147a5b3c481f9097a4506270a09ebc2ccab22b1a[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Thu Mar 27 17:46:21 2025 +0100
+
+    je comprend que dalle
+
+[33mcommit 96c6a782c01c9feb79a22ff35411465e7beb0115[m
+Author: BlacF0X <c.mertens@students.ephec.be>
+Date:   Thu Mar 27 17:35:27 2025 +0100
+
+    test backend
+
+[33mcommit d8a7548ff144147cc54eddb95faa40549d79f06c[m
+Merge: 0bf8130 b5271b8
+Author: Corentin Mertens <c.mertens@students.ephec.be>
+Date:   Thu Mar 27 11:11:15 2025 +0100
+
+    Merge pull request #39 from clemoudo/feature_#10
+    
+    Feature #10
+
+[33mcommit b5271b8d4ae7cfa007b7fa550add51eb8d11bdf4[m[33m ([m[1;31morigin/feature_#10[m[33m)[m
+Author: Arno <a.starkel@students;ephec.be>
+Date:   Thu Mar 27 11:10:10 2025 +0100
+
+    Feature #10
+
+[33mcommit 0bf81306527570a8e03a24ee7e9175d5f1e1b930[m
+Merge: d1e425e 23450f7
+Author: Corentin Mertens <c.mertens@students.ephec.be>
+Date:   Thu Mar 27 11:07:07 2025 +0100
+
+    Merge pull request #38 from clemoudo/feature_#10
+    
+    Feature #10
+    Ca fonctionne
+
+[33mcommit 23450f7cd70bd729984e8350be2cdc8f4466abe4[m
+Merge: e9b6d74 d1e425e
+Author: Arno <a.starkel@students;ephec.be>
+Date:   Thu Mar 27 11:04:17 2025 +0100
+
+    Merge branch 'develop' of github.com:clemoudo/Shot-n-go into feature_#10
+
+[33mcommit e9b6d742d64fa09877d27b6739fbf4a7f16f221f[m
+Author: Arno <a.starkel@students;ephec.be>
+Date:   Wed Mar 26 15:37:48 2025 +0100
+
+    feature 10 : ajout d'une file d'attente
+
+[33mcommit d1e425ef6bdee0558c8582e7a5f7af9245215752[m
+Merge: 6a1a5b4 5d324bb
+Author: Corentin Mertens <c.mertens@students.ephec.be>
+Date:   Wed Mar 26 15:11:52 2025 +0100
+
+    Merge pull request #36 from clemoudo/feature_#34
+    
+    Feature #34
+
+[33mcommit 5d324bb2d2d486e80a45ce06c90933251d272fad[m[33m ([m[1;31morigin/feature_#34[m[33m)[m
+Author: Clément <c.vier@students.ephec.be>
+Date:   Tue Mar 25 17:20:39 2025 +0100
+
+    Panier mis sous forme de tableau #34
+
+[33mcommit 83f7b19d5d302f2782556c24d592e4f46d454425[m
+Author: Clément <c.vier@students.ephec.be>
+Date:   Tue Mar 25 16:48:26 2025 +0100
+
+    Les fonctions d'ajout et de retrait d'article du panier sont disponible pour les composants Cart et ShotItem
+
+[33mcommit fe14aa3b01935daebe138b58d18561dff7b5fbab[m
+Author: Clément <c.vier@students.ephec.be>
+Date:   Tue Mar 25 16:12:29 2025 +0100
+
+    Refactoring du useState lié au panier pour qu'il puisse contenir l'objet shot entier ainsi que la quantité ajouter au panier
+
+[33mcommit 6a1a5b455433e4e8665627bdfe192adb1c708c3e[m
+Author: Clément <c.vier@students.ephec.be>
+Date:   Tue Mar 25 14:50:19 2025 +0100
+
+    Corrections mineures de syntaxe
+
+[33mcommit 601c361c842be3f4c4e30bc2c0e056e8de7e8926[m
+Merge: 3e46cf9 80df31a
+Author: Clément Vier <c.vier@students.ephec.be>
+Date:

@@ -1,12 +1,20 @@
-FROM python:3.9-alpine
+FROM python:3.12-alpine
 
-RUN apk update && apk add --no-cache curl && apk add --no-cache py3-setuptools
+RUN apk update && apk add --no-cache \
+    curl \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    python3-dev \
+    build-base
 
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /code/requirements.txt
 
 COPY ./app /code/app
 
