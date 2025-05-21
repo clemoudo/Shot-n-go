@@ -18,6 +18,7 @@ function App() {
 	const [shots, setShots] = useState([]);
 	const [machines, setMachines] = useState([]);
 	const [machineShots, setMachineShots] = useState([]);
+	const [wallet, setWallet] = useState(0);
 	const [commandes, setCommandes] = useState([]);
 	const [queue, setQueue] = useState([]);
 	const [leaderboard, setLeaderboard] = useState([]);
@@ -119,6 +120,10 @@ function App() {
 	const fetchMachineShots = (machineId) => {
 		fetchWithCache(`machine:${machineId}:shots`, `/api/machines/${machineId}/shots`, setMachineShots)
 	}
+
+	const fetchWallet = () => {
+		fetchWithCache(`wallet:credit`, `/api/wallets/credit`, setWallet)
+	}
 	
 	const fetchCommandes = (state) => {
 		const key = `commandes_${state}`;
@@ -147,14 +152,22 @@ function App() {
 
 	return (
 		<div>
-			{user && <Navbar user={user} />} {/* Navbar seulement si connecté */}
+			{/* Navbar seulement si connecté */}
+			{user && 
+				<Navbar 
+					user={user}
+					walletState={{ wallet, fetchWallet }}
+				/>
+			}
 			<div className="container">
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/menu" element={<Menu 
 						machineState={{ machines, fetchMachines }} 
 						machineShotsState={{ machineShots, fetchMachineShots }} 
-						cartState={{ cart, setCart }} />} />
+						cartState={{ cart, setCart }} 
+						walletState={{ wallet, fetchWallet }}
+					/>} />
 					<Route path="/games" element={<Games />} />
 					<Route path="/queue" element={<Queue
 						queueState={{ queue, fetchQueue }}  

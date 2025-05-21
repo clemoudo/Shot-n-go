@@ -17,14 +17,15 @@ async def get_db():
     async with SessionLocal() as session:
         yield session
 
-@router.get("/api/wallets/{user_id}/credit")
+@router.get("/api/wallets/credit")
 async def get_wallet_credit(
-    user_id: str,
     db=Depends(get_db),
     user_data: dict = Depends(verify_firebase_token)
 ):
+    
     # Vérifie l'autorisation : admin ou utilisateur propriétaire
-    if user_data["uid"] != user_id and user_data["role"] != "admin":
+    user_id = user_data["uid"]
+    if not user_id and user_data["role"] != "admin":
         raise HTTPException(status_code=403, detail="Accès non autorisé")
 
     try:
@@ -34,7 +35,7 @@ async def get_wallet_credit(
         if wallet is None:
             raise HTTPException(status_code=404, detail="Wallet non trouvé")
 
-        return {"user_id": user_id, "credit": wallet.credit}
+        return wallet.credit
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération du crédit")
 

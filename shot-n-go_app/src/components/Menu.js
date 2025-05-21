@@ -2,7 +2,7 @@ import ShoppingList from './ShoppingList'
 import Cart from './Cart'
 import { useState } from 'react';
 
-function Menu({ machineState, machineShotsState, cartState }) {
+function Menu({ machineState, machineShotsState, cartState, walletState }) {
    const { cart, setCart } = cartState;
    const [selectedMachineId, setSelectedMachineId] = useState("");
 
@@ -61,8 +61,22 @@ function Menu({ machineState, machineShotsState, cartState }) {
    
    return (
       <>
-         <Cart selectedMachineId={selectedMachineId} cartState={cartState} addToCart={addToCart} removeItem={removeItem} deleteItem={deleteItem} />
-         <ShoppingList selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} cartState={cartState} addToCart={addToCart} removeItem={removeItem} machineState={machineState} machineShotsState={machineShotsState} />
+         <Cart 
+            selectedMachineId={selectedMachineId} 
+            walletState={walletState} 
+            cartState={cartState} 
+            addToCart={addToCart} 
+            removeItem={removeItem} 
+            deleteItem={deleteItem} 
+         />
+         <ShoppingList 
+            selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} 
+            cartState={cartState} 
+            addToCart={addToCart} 
+            removeItem={removeItem} 
+            machineState={machineState} 
+            machineShotsState={machineShotsState} 
+         />
       </>
    );
 }

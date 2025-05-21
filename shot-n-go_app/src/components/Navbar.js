@@ -5,22 +5,22 @@ import { auth } from "../firebase";
 import { getIdTokenResult } from "firebase/auth";
 import "../styles/Navbar.css";
 import user_email from "../assets/user_email.png";
-import axios from "axios";
 
-function Navbar({ user }) {
+function Navbar({ user, walletState }) {
+  const { wallet, fetchWallet } = walletState;
   const [isAdmin, setIsAdmin] = useState(false);
   const [isResponsive, setIsResponsive] = useState(false);
-  const [wallet, setWallet] = useState(0);
   const toggleNavbar = () => setIsResponsive(prev => !prev);
 
   useEffect(() => {
-    fetchWallet(user.uid);
+    fetchWallet();
   }, []);
 
   const location = useLocation(); // Pour détecter les changements de route
 
   // Ferme le menu quand la route change
   useEffect(() => {
+    fetchWallet();
     setIsResponsive(false);
   }, [location]);
 
@@ -47,23 +47,6 @@ function Navbar({ user }) {
     }
   };
 
-  const fetchWallet = async (userId) => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.get(`/api/wallets/${userId}/credit`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      setWallet(response.data.credit);
-    } catch (err) {
-      console.error("Erreur récupération du wallet :", err);
-    }
-  };
-
   return (
     <nav className={`nav ${isResponsive ? "responsive" : ""}`} id="myNav">
       <Link to="/" className="site-title">Shot'N'Go</Link>
@@ -84,7 +67,7 @@ function Navbar({ user }) {
                   className="user-avatar"
                 />
                 <span className="username">{user.displayName || "Utilisateur"}</span>
-                <span className="wallet">{wallet.toFixed(2)}€</span>
+                <span className="wallet">{wallet && wallet.toFixed(2) || 0}€</span>
                 <div className="dropdown-menu">
                   <button onClick={handleSignOut} className="logout-btn">
                     Se déconnecter
