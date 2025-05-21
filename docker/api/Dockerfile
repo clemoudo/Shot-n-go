@@ -18,6 +18,10 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 
 COPY ./app /code/app
 
+COPY entrypoint-secrets.sh /entrypoint-secrets.sh
+RUN chmod +X /entrypoint-secrets.sh
+ENTRYPOINT [ "entrypoint-secrets.sh" ]
+
 EXPOSE 5000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5000"]

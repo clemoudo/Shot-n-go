@@ -1,0 +1,132 @@
+services:
+  proxy:
+    build: ./proxy
+    image: clemoudo/shot-n-go:proxy-latest
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    networks:
+      - dmz_net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    secrets:
+      - source: ssl_fullchain
+        target: fullchain.pem
+      - source: ssl_privkey
+        target: privkey.pem
+
+  api:
+    build: ./api
+    image: clemoudo/shot-n-go:api-latest
+    volumes:
+      - api_images:/images
+    networks:
+      - dmz_net
+      - redis_net
+      - db_net
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_NAME=shotngo
+      - DB_USER=shotuser
+    secrets:
+      - shotngo_mysql_password
+      - source: firebase_key
+        target: /code/KEY/firebase-key.json
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  react:
+    build: ./react
+    image: clemoudo/shot-n-go:react-latest
+    networks:
+      - dmz_net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:alpine
+    networks:
+      - redis_net
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mariadb:
+    image: clemoudo/shot-n-go:mariadb-latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    secrets:
+      - shotngo_mysql_root_password
+      - shotngo_mysql_password
+    environment:
+      MYSQL_DATABASE: shotngo
+      MYSQL_USER: shotuser
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - db_net
+
+networks:
+  dmz_net:
+  redis_net:
+  db_net:
+
+volumes:
+  mariadb_data:
+    external: true
+  api_images:
+    external: true
+
+secrets:
+  ssl_fullchain:
+    external: true
+  ssl_privkey:
+    external: true
+  firebase_key:
+    external: true
+  shotngo_mysql_root_password:
+    external: true
+  shotngo_mysql_password:
+    external: true

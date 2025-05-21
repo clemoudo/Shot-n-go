@@ -28,7 +28,7 @@ version=$((latest_version + 1))
 echo "📦 Building version: $version"
 
 # Build, tag et push pour chaque image
-for image in api react proxy; do
+for image in api react proxy mariadb; do
   build_path="$SCRIPT_DIR/$image"
   echo "🔧 Building image: $image from $build_path"
   docker build -t $repo:$image-$version "$build_path"

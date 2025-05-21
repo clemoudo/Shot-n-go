@@ -17,6 +17,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
+    secrets:
+      - source: ssl_fullchain
+        target: fullchain.pem
+      - source: ssl_privkey
+        target: privkey.pem
 
   api:
     build: ./api
@@ -33,7 +38,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - DB_HOST=mariadb 
+      - DB_HOST=mariadb
       - DB_PORT=3306
       - DB_NAME=shotngo
       - DB_USER=shotuser
@@ -91,4 +96,12 @@ networks:
 
 volumes:
   mariadb_data:
+    external: true
   api_images:
+    external: true
+
+secrets:
+  ssl_fullchain:
+    external: true
+  ssl_privkey:
+    external: true
