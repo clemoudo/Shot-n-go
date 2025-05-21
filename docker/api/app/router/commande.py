@@ -160,6 +160,8 @@ async def create_commande(
 
         await redis.delete("commandes:in progress")
         await redis.delete("commandes:in progress_hash")
+        await redis.delete(f"wallet:{user_id}:credit")
+        await redis.delete(f"wallet:{user_id}:credit_hash")
 
         return {
             "message": "Commande créée et payée avec succès.",

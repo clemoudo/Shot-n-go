@@ -177,6 +177,7 @@ function App() {
 						shotState={{ shots, fetchShots }} 
 						machineState={{ machines, fetchMachines }} 
 						machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} 
+						walletState={{ wallet, fetchWallet }} 
 						commandeState={{ commandes, fetchCommandes }} 
 					/>} />
 					<Route path="/login" element={<Login />} />

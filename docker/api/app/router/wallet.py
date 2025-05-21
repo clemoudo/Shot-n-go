@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.db import SessionLocal
 from app.models.database import Wallet
 from app.redis_client import redis
@@ -19,14 +20,32 @@ async def get_db():
 
 @router.get("/api/wallets/credit")
 async def get_wallet_credit(
-    db=Depends(get_db),
+    request: Request,
+    db: AsyncSession = Depends(get_db),
     user_data: dict = Depends(verify_firebase_token)
 ):
-    
-    # Vérifie l'autorisation : admin ou utilisateur propriétaire
     user_id = user_data["uid"]
     if not user_id and user_data["role"] != "admin":
         raise HTTPException(status_code=403, detail="Accès non autorisé")
+
+    # Clés de cache spécifiques à l’utilisateur
+    cache_key = f"wallet:{user_id}:credit"
+    cache_hash_key = f"{cache_key}_hash"
+
+    cached_data = await redis.get(cache_key)
+    cached_hash = await redis.get(cache_hash_key)
+
+    if isinstance(cached_data, bytes):
+        cached_data = cached_data.decode()
+    if isinstance(cached_hash, bytes):
+        cached_hash = cached_hash.decode()
+
+    client_etag = request.headers.get("if-none-match")
+
+    if cached_data and cached_hash:
+        if client_etag == cached_hash:
+            return Response(status_code=304)
+        return JSONResponse(content={"credit": json.loads(cached_data)}, headers={"ETag": cached_hash})
 
     try:
         result = await db.execute(select(Wallet).where(Wallet.user_id == user_id))
@@ -35,7 +54,15 @@ async def get_wallet_credit(
         if wallet is None:
             raise HTTPException(status_code=404, detail="Wallet non trouvé")
 
-        return wallet.credit
+        credit = float(wallet.credit)  # Assure que c’est JSON-serializable
+        credit_json = json.dumps(credit)
+        credit_hash = hashlib.md5(credit_json.encode()).hexdigest()
+
+        await redis.set(cache_key, credit_json, ex=300)
+        await redis.set(cache_hash_key, credit_hash, ex=300)
+
+        return JSONResponse(content={"credit": credit}, headers={"ETag": credit_hash})
+
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération du crédit")
 
@@ -58,11 +85,18 @@ async def create_or_add_credit_to_wallet(
         result = await db.execute(select(Wallet).where(Wallet.user_id == user_id))
         wallet = result.scalar_one_or_none()
 
+        cache_key = f"wallet:{user_id}:credit"
+        cache_hash_key = f"{cache_key}_hash"
+
         if wallet:
             # Ajouter le crédit si wallet existe
             wallet.credit += amount
             await db.commit()
             await db.refresh(wallet)
+
+            await redis.delete(cache_key)
+            await redis.delete(cache_hash_key)
+
             return {
                 "message": f"{amount} crédit(s) ajouté(s) au wallet existant.",
                 "wallet": {

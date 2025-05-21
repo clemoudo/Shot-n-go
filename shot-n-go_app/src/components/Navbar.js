@@ -67,7 +67,7 @@ function Navbar({ user, walletState }) {
                   className="user-avatar"
                 />
                 <span className="username">{user.displayName || "Utilisateur"}</span>
-                <span className="wallet">{wallet && wallet.toFixed(2) || 0}€</span>
+                <span className="wallet">{wallet && wallet.credit.toFixed(2) || 0}€</span>
                 <div className="dropdown-menu">
                   <button onClick={handleSignOut} className="logout-btn">
                     Se déconnecter

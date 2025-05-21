@@ -3,10 +3,11 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin({ shotState, machineState, machineShotsState, commandeState }) {
+export default function Admin({ shotState, machineState, machineShotsState, walletState, commandeState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
   const { machineShots, setMachineShots, fetchMachineShots } = machineShotsState;
+  const { wallet, fetchWallet } = walletState;
   const { commandes, fetchCommandes } = commandeState;
   const [stateCommande, setStateCommande] = useState("in progress");
   const [windowForm, setWindowForm] = useState("wallet");
@@ -322,6 +323,7 @@ export default function Admin({ shotState, machineState, machineShotsState, comm
       // Récupère le message de succès depuis la réponse
       const successMsg = response.data.message;
       setMessage("walletAdd", successMsg);
+      fetchWallet();
 
     } catch (err) {
       console.error("Erreur envoi wallet :", err);
