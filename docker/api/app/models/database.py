@@ -63,3 +63,12 @@ class ComShot(Base):
     commande_id = Column(Integer, ForeignKey("Commande.id"), primary_key=True)
     shot_id = Column(Integer, ForeignKey("Shot.id"), primary_key=True)
     quantity = Column(Integer)
+
+
+class News(Base):
+    __tablename__ = "News"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(64), nullable=False)
+    content = Column(String(512), nullable=False)
+    publish_date = Column(DateTime)
