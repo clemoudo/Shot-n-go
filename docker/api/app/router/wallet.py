@@ -7,16 +7,12 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db import SessionLocal
+from app.db import get_db
 from app.models.database import Wallet
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
 
 router = APIRouter()
-
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
 
 @router.get("/api/wallets/credit")
 async def get_wallet_credit(

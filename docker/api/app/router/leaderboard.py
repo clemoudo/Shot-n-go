@@ -5,15 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from firebase_admin import auth
 import hashlib
 import json
-from app.db import SessionLocal
+from app.db import get_db
 from app.redis_client import redis
 from app.models.database import ComShot, Commande
 
 router = APIRouter()
-
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
 
 @router.get("/api/leaderboard")
 async def get_leaderboard(
