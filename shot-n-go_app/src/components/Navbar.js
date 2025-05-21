@@ -80,7 +80,7 @@ function Navbar({ user, walletState }) {
           )}
         </ul>
       </div>
-      <a href="#" className="icon" onClick={toggleNavbar}>
+      <a href="#" className="icon" onClick={toggleNavbar} alt="burger button">
         <i className="fa fa-bars"></i>
       </a>
     </nav>
