@@ -22,6 +22,7 @@ function App() {
 	const [commandes, setCommandes] = useState([]);
 	const [queue, setQueue] = useState([]);
 	const [leaderboard, setLeaderboard] = useState([]);
+	const [news, setNews] = useState([]);
 
 	const [loading, setLoading] = useState(true);
 	const [authLoading, setAuthLoading] = useState(true);
@@ -138,6 +139,10 @@ function App() {
 		fetchWithCache(`leaderboard:total_shot`, `/api/leaderboard`, setLeaderboard);
 	}
 
+	const fetchNews = () => {
+		fetchWithCache(`news`, `/api/news`, setNews);
+	}
+
 	useEffect(() => {
 		fetchMachines();
   	}, []);
@@ -161,7 +166,9 @@ function App() {
 			}
 			<div className="container">
 				<Routes>
-					<Route path="/" element={<Home />} />
+					<Route path="/" element={<Home
+						newsState={{ news, fetchNews }} 
+					/>} />
 					<Route path="/menu" element={<Menu 
 						machineState={{ machines, fetchMachines }} 
 						machineShotsState={{ machineShots, fetchMachineShots }} 
@@ -179,6 +186,7 @@ function App() {
 						machineShotsState={{ machineShots, setMachineShots, fetchMachineShots }} 
 						walletState={{ wallet, fetchWallet }} 
 						commandeState={{ commandes, fetchCommandes }} 
+						newsState={{ news, fetchNews }} 
 					/>} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/leaderboard" element={<Leaderboard

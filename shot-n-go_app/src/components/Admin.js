@@ -3,12 +3,13 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "../styles/Admin.css";
 import axios from "axios";
 
-export default function Admin({ shotState, machineState, machineShotsState, walletState, commandeState }) {
+export default function Admin({ shotState, machineState, machineShotsState, walletState, commandeState, newsState }) {
   const { shots, fetchShots } = shotState;
   const { machines, fetchMachines } = machineState;
   const { machineShots, setMachineShots, fetchMachineShots } = machineShotsState;
   const { wallet, fetchWallet } = walletState;
   const { commandes, fetchCommandes } = commandeState;
+  const { news, fetchNews } = newsState;
   const [stateCommande, setStateCommande] = useState("in progress");
   const [windowForm, setWindowForm] = useState("wallet");
 
@@ -66,6 +67,10 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
     fetchMachines();
     fetchCommandes(stateCommande);
   }, []);
+
+  useEffect(() => {
+    windowForm && fetchNews();
+  }, [windowForm]);
 
   // --- Gestion des commandes
   useEffect(() => {
@@ -352,6 +357,55 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
     }
   }
 
+  // --- Gestion des news ---
+  const handleNewNewsSubmit = async (title, content) => {
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+
+    try {
+      const response = await axios.post(`/api/news`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Récupère le message de succès depuis la réponse
+      const successMsg = response.data.message;
+      setMessage("newsAdd", successMsg);
+      fetchNews();
+
+    } catch (err) {
+      console.error("Erreur envoi wallet :", err);
+      const details = err.response?.data?.detail;
+      setMessage("newsAdd", details);
+    }
+  };
+
+  const handleDeleteNews = async (newsId) => {
+    const token = localStorage.getItem("token");
+
+    if (!window.confirm(`Supprimer la news #${newsId} ?`)) return;
+    try {
+      const response = await axios.delete(`/api/news/${newsId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        }
+      });
+      const successMsg = response.data.message;
+      setMessage("newsDelete", successMsg);
+      fetchNews();
+    } catch (err) {
+      console.error("Erreur suppression news :", err);
+      const details = err.response?.data?.detail;
+      setMessage("newsDelete", details);
+    }
+  }
+
   if (isAdmin === null) return <p>Chargement...</p>;
   if (!isAdmin) return <p>Accès refusé : vous n'avez pas les droits administrateur.</p>;
 
@@ -362,6 +416,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
       <select onChange={handleWindows}>
         <option value="wallet">Wallet</option>
         <option value="commande">Commande</option>
+        <option value="news">News</option>
         <option value="shot">Shot</option>
         <option value="machine">Machine</option>
         <option value="machineShot">Machine-Shot</option>
@@ -660,6 +715,69 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
             </table>
           </section>
         )}
+
+        {windowForm === "news" && (<>
+          {/* Ajouter une news */}
+          <section className="form-container new-form">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const title = e.target.elements.title.value;
+              const content = e.target.elements.content.value;
+              handleNewNewsSubmit(title, content);
+            }}>
+              <fieldset>
+                <legend>Créditer une news</legend>
+                <label htmlFor="title">Titre</label>
+                <input
+                  name="title"
+                  type="text"
+                  placeholder="Titre"
+                  required
+                />
+
+                <label htmlFor="content">Contenu (max 512 caractères)</label>
+                <textarea
+                  name="content"
+                  placeholder="Contenu de la news"
+                  rows="5"
+                  required
+                ></textarea>
+
+                <button type="submit">Publier la news</button>
+                {msg.newsAdd && <p className="msg">{msg.newsAdd}</p>}
+              </fieldset>
+            </form>
+          </section>
+
+          {/* Supprimer une news */}
+          <section className="form-container delete-form">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const newsId = e.target.elements.newsId.value;
+                handleDeleteNews(newsId);
+              }}
+            >
+              <fieldset>
+                <legend>Supprimer une news</legend>
+                <label>Id news</label>
+                <select
+                  name="newsId"
+                  required
+                >
+                  <option value="">-- Choisir une news --</option>
+                  {news && news.map((n) => (
+                    <option key={`n${n.id}`} value={n.id}>
+                      {n.id} {n.title}
+                    </option>
+                  ))}
+                </select>
+                <button type="submit">Supprimer la news</button>
+                {msg.newsDelete && <p className="msg">{msg.newsDelete}</p>}
+              </fieldset>
+            </form>
+          </section>
+        </>)}
       </div>
     </div>
   );
