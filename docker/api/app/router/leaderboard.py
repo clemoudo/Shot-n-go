@@ -42,6 +42,7 @@ async def get_leaderboard(
         result = await db.execute(
             select(Commande.user_id, func.sum(ComShot.quantity).label("total_shots"))
             .join(ComShot, Commande.id == ComShot.commande_id)
+            .where(Commande.state == "done")
             .group_by(Commande.user_id)
             .order_by(func.sum(ComShot.quantity).desc())
         )

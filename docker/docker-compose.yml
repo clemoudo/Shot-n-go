@@ -6,9 +6,7 @@ services:
       - "80:80/tcp"
       - "443:443/tcp"
     networks:
-      - proxy_net
-      - react_net
-      - api_net
+      - dmz_net
     depends_on:
       - api
       - react
@@ -25,9 +23,9 @@ services:
     image: clemoudo/shot-n-go:api-latest
     volumes:
       - ./api/KEY/firebase-key.json:/code/KEY/firebase-key.json
-      - ./api/images:/images
+      - api_images:/images
     networks:
-      - api_net
+      - dmz_net
       - redis_net
       - db_net
     depends_on:
@@ -52,7 +50,7 @@ services:
     build: ./react
     image: clemoudo/shot-n-go:react-latest
     networks:
-      - react_net
+      - dmz_net
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
@@ -82,15 +80,15 @@ services:
       MYSQL_PASSWORD: shotpass
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # initialise la db à la première exécution
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - db_net
 
 networks:
-  react_net:
-  api_net:
+  dmz_net:
   redis_net:
   db_net:
 
 volumes:
   mariadb_data:
+  api_images:

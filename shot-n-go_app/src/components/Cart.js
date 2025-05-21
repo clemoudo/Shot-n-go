@@ -2,7 +2,8 @@ import { useState } from 'react'
 import '../styles/Cart.css'
 import axios from "axios";
 
-function Cart({selectedMachineId, cartState, addToCart, removeItem, deleteItem}) {
+function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem, deleteItem}) {
+	const { wallet, fetchWallet } = walletState;
 	const { cart, setCart } = cartState;
 	const [isOpen, setIsOpen] = useState(false)
 	const [isValid, setIsValid] = useState(false)
@@ -55,6 +56,7 @@ function Cart({selectedMachineId, cartState, addToCart, removeItem, deleteItem})
 			alert(`${message}\nCommande #${commande_id}\nTotal: ${total_cost}€\nCrédit restant: ${credit_restant}€`);
 
 			// Réinitialiser le panier
+			fetchWallet();
 			setCart([]);
 			setIsValid(false);
 		} catch (err) {
