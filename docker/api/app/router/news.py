@@ -96,3 +96,31 @@ async def publish_news(
     except SQLAlchemyError:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Erreur lors de la publication de l'actualité")
+    
+@router.delete("/api/news/{news_id}")
+async def delete_news(
+    news_id: int,
+    db: AsyncSession = Depends(get_db),
+    user_data: dict = Depends(verify_firebase_token)
+):
+    if user_data["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Seul un administrateur peut supprimer une actu.")
+
+    try:
+        result = await db.execute(select(News).where(News.id == news_id))
+        news = result.scalar_one_or_none()
+
+        if not news:
+            raise HTTPException(status_code=404, detail="Actu introuvable.")
+
+        await db.execute(delete(News).where(News.id == news_id))
+        await db.commit()
+
+        # Invalide le cache des news récentes
+        await redis.delete("news_cache")
+        await redis.delete("news_cache_hash")
+
+        return {"message": f"Actu #{news_id} supprimée avec succès."}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la suppression : {str(e)}")
