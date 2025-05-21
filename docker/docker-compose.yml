@@ -82,7 +82,7 @@ services:
       MYSQL_PASSWORD: shotpass
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # initialise la db à la première exécution
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql # initialise la db à la première exécution
     networks:
       - db_net
 
