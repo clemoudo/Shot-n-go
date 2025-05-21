@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, Form, HTTPException
+import hashlib
+from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from app.db import SessionLocal
@@ -14,26 +16,41 @@ async def get_db():
         yield session
 
 @router.get("/api/machines")
-async def get_machines(db=Depends(get_db)):
+async def get_machines(request: Request, db=Depends(get_db)):
     cache_key = "machines_cache"
+    cache_hash_key = f"{cache_key}_hash"
 
+    # Lire cache existant
     cached_data = await redis.get(cache_key)
-    if cached_data:
-        if isinstance(cached_data, bytes):
-            cached_data = cached_data.decode()
-        return json.loads(cached_data)
+    cached_hash = await redis.get(cache_hash_key)
+
+    if isinstance(cached_data, bytes):
+        cached_data = cached_data.decode()
+    if isinstance(cached_hash, bytes):
+        cached_hash = cached_hash.decode()
+
+    client_etag = request.headers.get("if-none-match")
+
+    if cached_data and cached_hash:
+        if client_etag == cached_hash:
+            return Response(status_code=304)
+        return JSONResponse(content={"machines": json.loads(cached_data)}, headers={"ETag": cached_hash})
 
     try:
         result = await db.execute(select(Machine))
         machines = result.scalars().all()
         data = [{"id": m.id, "name": m.name} for m in machines]
 
-        await redis.set(cache_key, json.dumps(data), ex=60*5)
+        data_json = json.dumps(data)
+        data_hash = hashlib.md5(data_json.encode()).hexdigest()
 
-        return data
+        await redis.set(cache_key, data_json, ex=300)
+        await redis.set(cache_hash_key, data_hash, ex=300)
+
+        return JSONResponse(content={"machines": data}, headers={"ETag": data_hash})
 
     except SQLAlchemyError:
-        raise HTTPException(500, detail="Erreur lors de la récupération des machines")
+        raise HTTPException(status_code=500, detail="Erreur lors de la récupération des machines")
 
 @router.post("/api/machines")
 async def add_machine(
@@ -55,6 +72,7 @@ async def add_machine(
         raise HTTPException(500, detail="Erreur lors de l'ajout de la machine")
 
     await redis.delete("machines_cache")
+    await redis.delete("machines_cache_hash")
 
     return {
         "message": "Machine ajoutée",
@@ -84,6 +102,7 @@ async def delete_machine(
         await db.commit()
 
         await redis.delete("machines_cache")
+        await redis.delete("machines_cache_hash")
 
         return {"message": f"Machine {machine_id} supprimée"}
 
