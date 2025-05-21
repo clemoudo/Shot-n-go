@@ -62,3 +62,37 @@ async def get_all_news(
 
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des actualités")
+
+
+@router.post("/api/news")
+async def publish_news(
+    title: str = Form(...),
+    content: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    user_data: dict = Depends(verify_firebase_token)
+):
+    if user_data.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Accès réservé aux administrateurs")
+
+    if not title or not content:
+        raise HTTPException(status_code=400, detail="Le titre et le contenu sont obligatoires")
+
+    news_item = News(
+        title=title.strip(),
+        content=content.strip(),
+        publish_date=datetime.now()
+    )
+
+    try:
+        db.add(news_item)
+        await db.commit()
+
+        # Invalidation du cache
+        await redis.delete("news_cache")
+        await redis.delete("news_cache_hash")
+
+        return JSONResponse(status_code=201, content={"message": "Actualité publiée avec succès"})
+
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Erreur lors de la publication de l'actualité")
