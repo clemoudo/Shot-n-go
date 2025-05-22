@@ -36,7 +36,7 @@ function App() {
 		const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
 			if (firebaseUser) {
 				setUser(firebaseUser);
-				console.log(firebaseUser)
+				console.log(firebaseUser.emailVerified)
 				
 				// Récupérer le token ID Firebase
 				const token = await firebaseUser.getIdToken();

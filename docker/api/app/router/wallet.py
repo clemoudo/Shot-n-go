@@ -48,7 +48,7 @@ async def get_wallet_credit(
         wallet = result.scalar_one_or_none()
 
         if wallet is None:
-            raise HTTPException(status_code=404, detail="Wallet non trouvé")
+            return JSONResponse(content={"credit": 0.0})
 
         credit = float(wallet.credit)  # Assure que c’est JSON-serializable
         credit_json = json.dumps(credit)
