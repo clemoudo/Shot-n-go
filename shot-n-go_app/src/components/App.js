@@ -36,6 +36,7 @@ function App() {
 		const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
 			if (firebaseUser) {
 				setUser(firebaseUser);
+				console.log(firebaseUser)
 				
 				// Récupérer le token ID Firebase
 				const token = await firebaseUser.getIdToken();
@@ -123,7 +124,7 @@ function App() {
 	}
 
 	const fetchWallet = () => {
-		fetchWithCache(`wallet:credit`, `/api/wallets/credit`, setWallet)
+		fetchWithCache(`wallet:${user.uid}:credit`, `/api/wallets/credit`, setWallet)
 	}
 	
 	const fetchCommandes = (state) => {

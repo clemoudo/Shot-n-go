@@ -19,7 +19,7 @@ admin.initializeApp({
 });
 
 // UID de l'utilisateur à modifier
-const uid = "S0YtLrLSU4ctLskgo81x2w7H1Ru1";
+const uid = "UH3cUW7KV9Svsik4EoAoTnPtPYt1";
 
 // Rôle à attribuer
 const role = "admin";
