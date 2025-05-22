@@ -113,6 +113,7 @@ export default function Login() {
                   placeholder="Pseudo"
                   value={pseudo}
                   onChange={(e) => setPseudo(e.target.value)}
+                  maxlength="16"
                   required
                   className="input"
                />
