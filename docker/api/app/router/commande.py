@@ -159,6 +159,8 @@ async def create_commande(
         await redis.delete("commandes:in progress_hash")
         await redis.delete(f"wallet:{user_id}:credit")
         await redis.delete(f"wallet:{user_id}:credit_hash")
+        await redis.delete(f"machine:{commande_data.machine_id}:queue")
+        await redis.delete(f"machine:{commande_data.machine_id}:queue_hash")
 
         return {
             "message": "Commande créée et payée avec succès.",
@@ -200,6 +202,8 @@ async def mark_commande_done(
         await redis.delete("commandes:done_hash")
         await redis.delete("leaderboard:total_shots")
         await redis.delete("leaderboard:total_shots_hash")
+        await redis.delete(f"machine:{commande.machine_id}:queue")
+        await redis.delete(f"machine:{commande.machine_id}:queue_hash")
         
         return {
             "message": "Commande mise à jour avec succès.",
