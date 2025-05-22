@@ -1,91 +1,127 @@
 .add-user-container {
-    margin-top: 15px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
 .user-input {
-  padding: 8px;
+  padding: 10px 14px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 200px;
+  border-radius: 8px;
+  width: 220px;
+  background-color: #fff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.user-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
 }
 
 .add-btn {
-  padding: 8px 12px;
+  padding: 10px 16px;
   border: none;
   background-color: #28a745;
   color: white;
   font-size: 16px;
-  border-radius: 5px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .add-btn:hover {
   background-color: #218838;
+  transform: scale(1.03);
 }
 
 .error-message {
-  color: red;
+  color: #dc3545;
   margin-top: 10px;
-  font-weight: bold;
+  font-weight: 600;
+  text-align: center;
 }
 
 .queue-container {
   text-align: center;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #f8f8f8;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 30px 25px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.queue-container h2 {
+  margin-bottom: 16px;
+  font-size: 24px;
+  color: #1f2937;
 }
 
 .queue-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 15px;
+  gap: 12px;
+  margin-top: 15px;
+  margin-bottom: 20px;
 }
 
 .queue-item {
-  padding: 10px;
-  background-color: #ddd;
-  border-radius: 5px;
-  font-weight: bold;
+  padding: 12px 18px;
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #1f2937;
+  transition: background-color 0.3s;
 }
 
+.queue-item:hover {
+  background-color: #d1d5db;
+}
+
+/* Retrait du style distinctif pour l'élément actif */
 .queue-item.active {
-  background-color: #bbb;
-  color: white;
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.queue-item:first-child {
+  background-color: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+  border: 2px solid #4f46e5;
+  transform: scale(1.02);
 }
 
 .queue-message {
-  margin-top: 15px;
+  margin-top: 20px;
   font-style: italic;
-  color: #555;
+  color: #6b7280;
 }
 
 .next-btn {
-  padding: 10px 15px;
+  padding: 12px 20px;
   border: none;
   background-color: #007bff;
   color: white;
   font-size: 16px;
-  border-radius: 5px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .next-btn:hover {
   background-color: #0056b3;
+  transform: scale(1.03);
 }
 
 .empty-message {
   font-style: italic;
-  color: #777;
+  color: #9ca3af;
 }
+
