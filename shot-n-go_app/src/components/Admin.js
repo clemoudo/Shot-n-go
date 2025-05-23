@@ -333,7 +333,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
     } catch (err) {
       console.error("Erreur envoi wallet :", err);
       const details = err.response?.data?.detail;
-      setMessage("WalletAdd", details);
+      setMessage("walletAdd", details);
     }
   };
 
