@@ -105,23 +105,23 @@
 }
 
 @media (max-width: 768px) {
-  .home-container {
-    padding: 1rem;
-  }
-
   .news-scroll {
     flex-direction: column;
     animation: none;
     align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 100%; 
   }
 
   .news-card {
     max-width: 90%;
     width: 100%;
-    margin: 0 auto;
+    margin: 1rem 0;
+    box-sizing: border-box;
   }
 
-  .concept-intro h2 {
-    font-size: 1.6rem;
+  .home-container h2 {
+    text-align: center;
   }
 }
