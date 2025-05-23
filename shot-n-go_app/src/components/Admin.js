@@ -104,13 +104,32 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
   // --- Gestion des images ---
   const uploadImage = async () => {
     const token = localStorage.getItem("token");
-    if (!file || !token) return;
+
+    const selectedFile = file[0];
+    const extension = getFileExtension(selectedFile.name);
+    const ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".webp"];
+    const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"];
+
+    if (!ALLOWED_EXTENSIONS.includes(extension)) {
+      setMessage("shotAdd", "Extension de fichier non autorisée.", extension);
+      return null;
+    }
+
+    if (!ALLOWED_TYPES.includes(selectedFile.type)) {
+      setMessage("shotAdd", "Le fichier doit être une image valide (png, jpg, gif, webp).");
+      return null;
+    }
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setMessage("shotAdd", "L'image dépasse la taille maximale autorisée (5 Mo).");
+      return null;
+    }
 
     try {
       const formData = new FormData();
-      formData.append("file", file[0]);
+      formData.append("file", selectedFile);
 
-      await axios.post(`/images/upload`, formData, {
+      const res = await axios.post(`/api/images/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -119,17 +138,26 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
 
       setFile(null);
       fileInputRef.current.value = "";
+
+      return res.data.filename;
     } catch (err) {
       console.error("Upload échoué :", err);
+      setMessage("shotAdd", "Échec lors de l'envoi de l'image.");
+      return null;
     }
   };
+
+  // Helper en dehors de la fonction
+  const getFileExtension = (filename) =>
+    filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 1).toLowerCase();
+
 
   const deleteImage = async (filename) => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
-      await axios.delete(`/images/${filename}`, {
+      await axios.delete(`/api/images/${filename}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -183,10 +211,20 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
     event.preventDefault();
     const token = localStorage.getItem("token");
 
+    // Étape 1 : Upload image
+    const uploadedFilename = await uploadImage();
+    if (!uploadedFilename) {
+      return;
+    }
+
+    // Étape 2 : Création du shot avec le nom du fichier image
     const formData = new FormData();
-    Object.entries(newShot).forEach(([key, val]) => {
+    Object.entries({
+      ...newShot,
+      image: uploadedFilename  // on injecte le nom retourné
+    }).forEach(([key, val]) => {
       formData.append(key, val);
-    })
+    });
 
     try {
       await axios.post("/api/shots", formData, {
@@ -196,9 +234,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
         },
       });
 
-      uploadImage();
-
-      setMessage("shotAdd", `Shot "${newShot.name}" et image "${newShot.image}" ajoutés !`);
+      setMessage("shotAdd", `Shot "${newShot.name}" et image "${uploadedFilename}" ajoutés !`);
       setNewShot({
         name: "",
         price: "",
@@ -206,10 +242,9 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
         category: ""
       });
       fetchShots();
-
     } catch (err) {
       console.error("Erreur envoi shot :", err);
-      setMessage("shotAdd", `Erreur lors de l'ajout du shot "${newShot.name}" et de l'image "${newShot.image}"`);
+      setMessage("shotAdd", `Erreur lors de l'ajout du shot "${newShot.name}"`);
     }
   };
 

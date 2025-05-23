@@ -99,7 +99,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 									<tr key={`${shotElem.id}`}>
 										<td className="product">
 											<div className="product-info">
-												<img loading='lazy' src={`/images/${shotElem.image}`} alt={shotElem.name} />
+												<img loading='lazy' src={`/api/images/${shotElem.image}`} alt={shotElem.name} />
 												<span className="product-name">{shotElem.name}</span>
 												<span className="product-unitPrice">{shotElem.price}€</span>
 											</div>

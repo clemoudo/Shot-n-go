@@ -13,7 +13,7 @@ import Queue from './Queue';
 import Admin from './Admin';
 import Login from './Login';
 import Leaderboard from './Leaderboard';
-import VerifyEmail from './VerifyEmail'; // 1. Importer VerifyEmail
+import VerifyEmail from './VerifyEmail';
 
 function App() {
     const [shots, setShots] = useState([]);
@@ -33,7 +33,6 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 2. Modifier onAuthStateChanged
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             setAuthLoading(true); // Mettre à jour l'état de chargement au début

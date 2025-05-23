@@ -34,7 +34,7 @@ function ShotItem({ shotElem, addToCart }) {
     return (
         <li className="shot-item" key={shotElem.id}>
             <div className="shot-item-container">
-                <img className="shot-item-cover" loading='lazy' src={`/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
+                <img className="shot-item-cover" loading='lazy' src={`/api/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
                 <div className="shot-item-details">
                     <p className="shot-name">{shotElem.name}</p>
                     <p className="pricecase">{shotElem.price} €</p>
