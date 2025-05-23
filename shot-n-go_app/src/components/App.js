@@ -202,7 +202,7 @@ function App() {
                     walletState={{ wallet, fetchWallet }}
                 />
             }
-            <div className="container">
+            <div className="main-container">
                 <Routes>
                     {/* Routes publiques ou semi-publiques */}
                     <Route path="/Login" element={user && user.emailVerified ? <Navigate to="/" replace /> : <Login />} />
