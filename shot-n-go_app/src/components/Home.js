@@ -13,7 +13,20 @@ function Home({ newsState }) {
          <h1>Home</h1>
 
          <div className="about-us-container">
-            {/* Contenu à ajouter ici */}
+            <div className="concept-intro">
+               <h2>Le Concept</h2>
+               <p>
+                  Bienvenue sur <strong>Shot'N'Go</strong>, le premier service de commande en ligne de shots
+                  connecté à une machine distributrice automatisée. Que ce soit pour une soirée entre amis ou un
+                  événement, vous pouvez commander vos shots depuis cette interface, et notre machine se charge
+                  de les préparer et de les servir instantanément.
+               </p>
+               <p>
+                  Notre système garantit une distribution rapide, hygiénique et fun, pour une expérience
+                  inoubliable. Explorez nos actualités ci-dessous et restez à jour sur les nouveautés et
+                  améliorations de votre bar connecté !
+               </p>
+            </div>
          </div>
 
          <h2>Actualités</h2>
