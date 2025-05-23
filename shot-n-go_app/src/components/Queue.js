@@ -7,10 +7,14 @@ function Queue({ queueState, machineState }) {
   const [selectedMachineId, setSelectedMachineId] = useState("");
 
   useEffect(() => {
-        if (machines.length > 0) {
-            const firstId = machines[0].id;
-            setSelectedMachineId(firstId);
-        }
+    selectedMachineId && fetchQueue(selectedMachineId);
+  }, []);
+
+  useEffect(() => {
+      if (machines.length > 0) {
+        const firstId = machines[0].id;
+        setSelectedMachineId(firstId);
+      }
     }, [machines]);
 
   useEffect(() => {

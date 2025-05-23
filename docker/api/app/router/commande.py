@@ -9,15 +9,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.models.database import Commande, ComShot, Shot, Wallet
 from app.firebase import verify_firebase_token
-from app.db import SessionLocal
+from app.db import get_db
 from sqlalchemy.orm import joinedload
 from app.redis_client import redis
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
-
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
 
 class ShotItem(BaseModel):
     shot_id: int
@@ -31,7 +28,7 @@ class CommandeCreate(BaseModel):
 async def get_commandes_by_state(
     request: Request,
     state: Optional[str] = Query(None, description="Filtrer par état : 'in progress' ou 'done'"),
-    db=Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     user_data: dict = Depends(verify_firebase_token)
 ):
     if user_data["role"] != "admin":
@@ -162,6 +159,8 @@ async def create_commande(
         await redis.delete("commandes:in progress_hash")
         await redis.delete(f"wallet:{user_id}:credit")
         await redis.delete(f"wallet:{user_id}:credit_hash")
+        await redis.delete(f"machine:{commande_data.machine_id}:queue")
+        await redis.delete(f"machine:{commande_data.machine_id}:queue_hash")
 
         return {
             "message": "Commande créée et payée avec succès.",
@@ -203,6 +202,8 @@ async def mark_commande_done(
         await redis.delete("commandes:done_hash")
         await redis.delete("leaderboard:total_shots")
         await redis.delete("leaderboard:total_shots_hash")
+        await redis.delete(f"machine:{commande.machine_id}:queue")
+        await redis.delete(f"machine:{commande.machine_id}:queue_hash")
         
         return {
             "message": "Commande mise à jour avec succès.",

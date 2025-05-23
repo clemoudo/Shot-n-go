@@ -6,15 +6,11 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.database import Commande
 from typing import List
-from app.db import SessionLocal
+from app.db import get_db
 from firebase_admin import auth
 from app.redis_client import redis
 
 router = APIRouter()
-
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
 
 @router.get("/api/machines/{machine_id}/queue")
 async def get_machine_queue(

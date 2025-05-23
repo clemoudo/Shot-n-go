@@ -4,19 +4,20 @@ from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
-from app.db import SessionLocal
+from app.db import get_db
 from app.models.database import Machine, Shot, MachineShot
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
-
 @router.get("/api/machines/{machine_id}/shots")
-async def get_shots_of_machine(machine_id: int, request: Request, db=Depends(get_db)):
+async def get_shots_of_machine(
+    machine_id: int, 
+    request: Request, 
+    db: AsyncSession = Depends(get_db)
+):
     cache_key = f"machine:{machine_id}:shots"
     cache_hash_key = f"{cache_key}_hash"
 
