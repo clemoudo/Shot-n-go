@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, Numeric, String, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from app.db import Base
@@ -10,7 +10,7 @@ class Wallet(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(String(128), unique=True, nullable=False)
     user_email = Column(String(128), unique=True, nullable=False)
-    credit = Column(Float, default=0, nullable=False)
+    credit = Column(Numeric(10, 2), default=0, nullable=False)
 
     commandes = relationship("Commande", back_populates="wallet")
 
@@ -20,7 +20,7 @@ class Shot(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    price = Column(Float)
+    price = Column(Numeric(10, 2))
     image = Column(String(255))
     category = Column(String(50))
 
@@ -48,7 +48,7 @@ class Commande(Base):
     id = Column(Integer, primary_key=True)
     wallet_id = Column(Integer, ForeignKey("Wallet.id"))
     machine_id = Column(Integer, ForeignKey("Machine.id"))
-    user_id = Column(String)
+    user_id = Column(String(128))
     order_date = Column(DateTime)
     state = Column(String(50))
 
