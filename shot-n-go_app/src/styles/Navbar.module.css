@@ -158,9 +158,8 @@
     position: absolute;
     top: 0.5rem;
     right: 1rem;
-    font-size: 1.8rem;
     cursor: pointer;
-    padding: 0;
+    padding: 10px;
   }
 
   .nav_links {
@@ -202,6 +201,3 @@
     margin-bottom: 0.5rem;
   }
 }
-
-.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.fa_bars:before{content:"\f0c9"}

@@ -80,10 +80,7 @@ function Navbar({ user, walletState }) {
           )}
         </ul>
       </div>
-      <a href="#" className={styles.icon} onClick={toggleNavbar} alt="burger button">
-        <i className={`${styles.fa} ${styles.fa_bars}`}></i>
-        {/* <i className="fa fa-bars"></i> */}
-      </a>
+      <img loading="lazy" src="/api/images/burger-bar.png" className={styles.icon} onClick={toggleNavbar} alt="burger button" />
     </nav>
   );
 }
