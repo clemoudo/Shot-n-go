@@ -5,6 +5,7 @@ import { auth } from "../firebase";
 import { getIdTokenResult } from "firebase/auth";
 import styles from "../styles/Navbar.module.css";
 import user_email from "../assets/user_email.webp";
+import burger_bar from "../assets/burger_bar.png";
 
 function Navbar({ user, walletState }) {
   const { wallet, fetchWallet } = walletState;
@@ -80,7 +81,7 @@ function Navbar({ user, walletState }) {
           )}
         </ul>
       </div>
-      <img loading="lazy" src="/api/images/burger-bar.png" className={styles.icon} onClick={toggleNavbar} alt="burger button" />
+      <img loading="lazy" src={burger_bar} className={styles.icon} onClick={toggleNavbar} alt="burger button" />
     </nav>
   );
 }

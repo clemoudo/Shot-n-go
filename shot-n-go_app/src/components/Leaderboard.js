@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 import styles from '../styles/Leaderboard.module.css';
+import podium1 from "../assets/podium1.png";
+import podium2 from "../assets/podium2.png";
+import podium3 from "../assets/podium3.png";
 
 function Leaderboard({ leaderboardState }) {
     const { leaderboard, fetchLeaderboard } = leaderboardState;
@@ -24,7 +27,7 @@ function Leaderboard({ leaderboardState }) {
                         key={user.user_id}
                         className={`${styles["leaderboard_podium_item"]} ${styles[`leaderboard_podium_item_${index + 1}`]}`}
                     >
-                        <img className={styles.leaderboard_medal} src={`/api/images/pudium${index + 1}.png`} loading="lazy" />
+                        <img className={styles.leaderboard_medal} src={index === 0 ? podium1 : index === 1 ? podium2 : podium3} alt={`podium${index + 1}`} loading="lazy" />
                         <p className={styles.leaderboard_name}>{user.user_name}</p>
                         <p className={styles.leaderboard_shots}>{user.total_shots} shots</p>
                     </div>
