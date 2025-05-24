@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import styles from '../styles/ShotItem.module.css';
 
 function ShotItem({ shotElem, addToCart }) {
-    const [imageUrl, setImageUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [addAmount, setAddAmount] = useState(0)
@@ -26,7 +25,7 @@ function ShotItem({ shotElem, addToCart }) {
             setError('Image non disponible');
             setLoading(false);
         }
-    }, [shotElem.cover]);  // Déclenche le hook lorsque shotElem.cover change
+    }, [shotElem.image]);  // Déclenche le hook lorsque shotElem.image change
 
     if (loading) {return <p>Chargement de l'image...</p>} 
     if (error) {return <p>{error}</p>}
@@ -34,7 +33,7 @@ function ShotItem({ shotElem, addToCart }) {
     return (
         <li className={styles.shot_item} key={shotElem.id}>
             <div className={styles.shot_item_container}>
-                <img className={styles.shot_item_cover} loading='lazy' src={`/api/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
+                <img className={styles.shot_item_cover} loading='lazy' src={`/api/images/${shotElem.image}`} alt={`${shotElem.name}`} />
                 <div className={styles.shot_item_details}>
                     <p className={styles.shot_name}>{shotElem.name}</p>
                     <p className={styles.pricecase}>{shotElem.price} €</p>
