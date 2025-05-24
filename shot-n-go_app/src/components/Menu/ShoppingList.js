@@ -3,10 +3,10 @@ import ShotItem from './ShotItem'
 import styles from './ShoppingList.module.css'
 
 function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem, machineState, machineShotsState }) {
-   const { machines, fetchMachines } = machineState;
-   const { machineShots, fetchMachineShots } = machineShotsState;
-   const { selectedMachineId, setSelectedMachineId } = selectedMachineIdState;
-   const { cart, setCart } = cartState;
+	const { machines, fetchMachines } = machineState;
+	const { machineShots, fetchMachineShots } = machineShotsState;
+	const { selectedMachineId, setSelectedMachineId } = selectedMachineIdState;
+	const { cart, setCart } = cartState;
 	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {

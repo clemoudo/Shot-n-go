@@ -172,15 +172,6 @@ function App() {
         }
     }, [user]); // Se déclenche quand user change (connexion, déconnexion, vérification)
 
-    useEffect(() => {
-        // Ce fetch dépend de 'machines' et donc implicitement de 'user' et 'user.emailVerified'
-        if (user && user.emailVerified && machines.length > 0 && machines[0]?.id) {
-            fetchMachineShots(machines[0].id);
-        } else {
-            setMachineShots([]); // Vider si pas de conditions remplies
-        }
-    }, [user, machines]); // Et aussi de machines
-
     if (authLoading) {
         return <div style={{ textAlign: 'center', padding: '50px', fontSize: '1.2em' }}>Chargement de l'authentification...</div>;
     }

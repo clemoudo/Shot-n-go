@@ -13,10 +13,6 @@ function Navbar({ user, walletState }) {
   const [isResponsive, setIsResponsive] = useState(false);
   const toggleNavbar = () => setIsResponsive(prev => !prev);
 
-  useEffect(() => {
-    fetchWallet();
-  }, []);
-
   const location = useLocation(); // Pour détecter les changements de route
 
   // Ferme le menu quand la route change
