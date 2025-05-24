@@ -1,11 +1,11 @@
-.add-user-container {
+.add_user_container {
   margin-top: 20px;
   display: flex;
   gap: 12px;
   justify-content: center;
 }
 
-.user-input {
+.user_input {
   padding: 10px 14px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -15,13 +15,13 @@
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.user-input:focus {
+.user_input:focus {
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
 }
 
-.add-btn {
+.add_btn {
   padding: 10px 16px;
   border: none;
   background-color: #28a745;
@@ -33,19 +33,19 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.add-btn:hover {
+.add_btn:hover {
   background-color: #218838;
   transform: scale(1.03);
 }
 
-.error-message {
+.error_message {
   color: #dc3545;
   margin-top: 10px;
   font-weight: 600;
   text-align: center;
 }
 
-.queue-container {
+.queue_container {
   text-align: center;
   max-width: 420px;
   margin: 40px auto;
@@ -55,13 +55,13 @@
   box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.08);
 }
 
-.queue-container h2 {
+.queue_container h2 {
   margin-bottom: 16px;
   font-size: 24px;
   color: #1f2937;
 }
 
-.queue-list {
+.queue_list {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -69,7 +69,7 @@
   margin-bottom: 20px;
 }
 
-.queue-item {
+.queue_item {
   padding: 12px 18px;
   background-color: #e5e7eb;
   border-radius: 10px;
@@ -79,17 +79,17 @@
   transition: background-color 0.3s;
 }
 
-.queue-item:hover {
+.queue_item:hover {
   background-color: #d1d5db;
 }
 
 /* Retrait du style distinctif pour l'élément actif */
-.queue-item.active {
+.queue_item.active {
   background-color: #e5e7eb;
   color: #1f2937;
 }
 
-.queue-item:first-child {
+.queue_item:first-child {
   background-color: #6366f1;
   color: #ffffff;
   box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
@@ -97,13 +97,13 @@
   transform: scale(1.02);
 }
 
-.queue-message {
+.queue_message {
   margin-top: 20px;
   font-style: italic;
   color: #6b7280;
 }
 
-.next-btn {
+.next_btn {
   padding: 12px 20px;
   border: none;
   background-color: #007bff;
@@ -115,12 +115,12 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.next-btn:hover {
+.next_btn:hover {
   background-color: #0056b3;
   transform: scale(1.03);
 }
 
-.empty-message {
+.empty_message {
   font-style: italic;
   color: #9ca3af;
 }

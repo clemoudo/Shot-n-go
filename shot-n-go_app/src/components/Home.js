@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import "../styles/Home.css";
+import { useEffect } from "react";
+import styles from "../styles/Home.module.css";
 
 function Home({ newsState }) {
    const { news, fetchNews } = newsState;
@@ -9,11 +9,11 @@ function Home({ newsState }) {
    }, []);
 
    return (
-      <div className="home-container">
+      <div className={styles.home_container}>
          <h1>Home</h1>
 
-         <div className="about-us-container">
-            <div className="concept-intro">
+         <div className={styles.about_us_container}>
+            <div className={styles.concept_intro}>
                <h2>Le Concept</h2>
                <p>
                   Bienvenue sur <strong>Shot'N'Go</strong>, le premier service de commande en ligne de shots
@@ -30,11 +30,11 @@ function Home({ newsState }) {
          </div>
 
          <h2>Actualités</h2>
-         <div className="news-scroll">
+         <div className={styles.news_scroll}>
             {[...news, ...news].map((item, idx) => (
-               <div className="news-card" key={idx}>
+               <div className={styles.news_card} key={idx}>
                   <h3>{item.title}</h3>
-                  <p className="news-date">{new Date(item.publish_date).toLocaleString()}</p>
+                  <p className={styles.news_date}>{new Date(item.publish_date).toLocaleString()}</p>
                   <p>{item.content}</p>
                </div>
             ))}

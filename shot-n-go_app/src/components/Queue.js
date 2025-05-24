@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "../styles/Queue.css";
+import { useState, useEffect } from "react";
+import styles from "../styles/Queue.module.css";
 
 function Queue({ queueState, machineState }) {
   const { queue, fetchQueue } = queueState;
@@ -22,12 +22,12 @@ function Queue({ queueState, machineState }) {
   }, [selectedMachineId]);
 
   return (
-    <div className="queue-container">
+    <div className={styles.queue_container}>
       <h1>File d'attente</h1>
       <label htmlFor="machine-select">Choisissez une machine :</label>
       <select
         id="machine-select"
-        className="machine-select"
+        className={styles.machine_select}
         value={selectedMachineId}
         onChange={(e) => {
           setSelectedMachineId(e.target.value)
@@ -39,15 +39,15 @@ function Queue({ queueState, machineState }) {
           </option>
         ))}
       </select>
-      <div className="queue-list">
+      <div className={styles.queue_list}>
         {(queue.length > 0) ? ( 
           queue.map((cmd, index) => (
-            <div key={cmd.id} className={`queue-item ${index === 0 ? "active" : ""}`}>
+            <div key={cmd.id} className={`${styles.queue_item} ${index === 0 ? styles.active : ""}`}>
               #{cmd.commande_id} - {cmd.user_name}
             </div>
           ))
         ) : (
-          <p className="empty-message">La file d'attente est vide.</p>
+          <p className={styles.empty_message}>La file d'attente est vide.</p>
         )}
       </div>
     </div>

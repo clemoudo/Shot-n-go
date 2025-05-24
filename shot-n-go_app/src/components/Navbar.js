@@ -3,7 +3,7 @@ import { Link, useMatch, useResolvedPath, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { getIdTokenResult } from "firebase/auth";
-import "../styles/Navbar.css";
+import styles from "../styles/Navbar.module.css";
 import user_email from "../assets/user_email.png";
 
 function Navbar({ user, walletState }) {
@@ -48,10 +48,10 @@ function Navbar({ user, walletState }) {
   };
 
   return (
-    <nav className={`nav ${isResponsive ? "responsive" : ""}`} id="myNav">
-      <Link to="/" className="site-title">Shot'N'Go</Link>
+    <nav className={`${styles.nav} ${isResponsive ? styles.responsive : ""}`} id="myNav">
+      <Link to="/" className={styles.site_title}>Shot'N'Go</Link>
 
-      <div className="nav-links">
+      <div className={styles.nav_links}>
         <ul>
           <CustomLink to="/menu">Menu</CustomLink>
           <CustomLink to="/games">Mini-jeux</CustomLink>
@@ -60,16 +60,16 @@ function Navbar({ user, walletState }) {
           {isAdmin && <CustomLink to="/admin">Admin Panel</CustomLink>}
 
           {(user ? (
-              <div className="user-menu">
+              <div className={styles.user_menu}>
                 <img
                   src={user.photoURL || user_email}
                   alt="Avatar"
-                  className="user-avatar"
+                  className={styles.user_avatar}
                 />
-                <span className="username">{user.displayName || "Utilisateur"}</span>
-                <span className="wallet">{wallet && wallet.credit.toFixed(2) || 0}€</span>
-                <div className="dropdown-menu">
-                  <button onClick={handleSignOut} className="logout-btn">
+                <span className={styles.username}>{user.displayName || "Utilisateur"}</span>
+                <span className={styles.wallet}>{wallet && wallet.credit.toFixed(2) || 0}€</span>
+                <div className={styles.dropdown_menu}>
+                  <button onClick={handleSignOut} className={styles.logout_btn}>
                     Se déconnecter
                   </button>
                 </div>
@@ -80,8 +80,9 @@ function Navbar({ user, walletState }) {
           )}
         </ul>
       </div>
-      <a href="#" className="icon" onClick={toggleNavbar} alt="burger button">
-        <i className="fa fa-bars"></i>
+      <a href="#" className={styles.icon} onClick={toggleNavbar} alt="burger button">
+        <i className={`${styles.fa} ${styles.fa_bars}`}></i>
+        {/* <i className="fa fa-bars"></i> */}
       </a>
     </nav>
   );

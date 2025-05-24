@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
-import '../styles/ShoppingList.css'
+import styles from '../styles/ShoppingList.module.css'
 
 function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem, machineState, machineShotsState }) {
    const { machines, fetchMachines } = machineState;
@@ -33,12 +33,12 @@ function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem
 		return <div>Chargement des shots...</div>;
 	}
 	return (
-		<div className="machine-selector-container">
-			<div className="machine-selector-header">
+		<div className={styles.machine_selector_container}>
+			<div className={styles.machine_selector_header}>
 				<label htmlFor="machine-select">Choisissez une machine :</label>
 				<select
 					id="machine-select"
-					className="machine-select"
+					className={styles.machine_select}
 					value={selectedMachineId}
 					onChange={(e) => {
 						handleChangeMachine(e.target.value)
@@ -52,7 +52,7 @@ function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem
 				</select>
 			</div>
 
-			<ul className="shot-list">
+			<ul className={styles.shot_list}>
 				{machineShots.shots &&
 					machineShots.shots.map((shotElem) => (
 						<ShotItem

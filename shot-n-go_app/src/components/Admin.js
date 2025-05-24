@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import "../styles/Admin.css";
+import styles from "../styles/Admin.module.css";
 import axios from "axios";
 
 export default function Admin({ shotState, machineState, machineShotsState, walletState, commandeState, newsState }) {
@@ -445,7 +445,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
   if (!isAdmin) return <p>Accès refusé : vous n'avez pas les droits administrateur.</p>;
 
   return (
-    <div className="admin-panel">
+    <div className={styles.admin_panel}>
       <h1>Panneau Admin</h1>
 
       <select onChange={handleWindows}>
@@ -457,10 +457,10 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
         <option value="machineShot">Machine-Shot</option>
       </select>
 
-      <div className="forms-wrapper">
+      <div className={styles.forms_wrapper}>
         {windowForm === "shot" && (<>
           {/* Ajouter un shot */}
-          <section className="form-container new-form">
+          <section className={`${styles.form_container} ${styles.new_form}`}>
             <form onSubmit={handleNewShotSubmit}>
               <fieldset>
                 <legend>Ajouter un Shot</legend>
@@ -473,13 +473,13 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                 <label>Image</label>
                 <input name="file" type="file" ref={fileInputRef} onChange={handleNewImageChange} required />
                 <button type="submit">Ajouter Shot</button>
-                {msg.shotAdd && <p className="msg">{msg.shotAdd}</p>}
+                {msg.shotAdd && <p className={styles.msg}>{msg.shotAdd}</p>}
               </fieldset>
             </form>
           </section>
 
           {/* Supprimer un shot */}
-          <section className="form-container delete-form">
+          <section className={`${styles.form_container} ${styles.delete_form}`}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -499,7 +499,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                   ))}
                 </select>
                 <button type="submit">Supprimer Shot</button>
-                {msg.shotDelete && <p className="msg">{msg.shotDelete}</p>}
+                {msg.shotDelete && <p className={styles.msg}>{msg.shotDelete}</p>}
               </fieldset>
             </form>
           </section>
@@ -507,7 +507,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
 
         {windowForm === "machine" && (<>
           {/* Ajouter une machine */}
-          <section className="form-container new-form">
+          <section className={`${styles.form_container} ${styles.new_form}`}>
             <form onSubmit={handleNewMachineSubmit}>
               <fieldset>
                 <legend>Ajouter une Machine</legend>
@@ -521,13 +521,13 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                   required
                 />
                 <button type="submit">Ajouter Machine</button>
-                {msg.machineAdd && <p className="msg">{msg.machineAdd}</p>}
+                {msg.machineAdd && <p className={styles.msg}>{msg.machineAdd}</p>}
               </fieldset>
             </form>
           </section>
 
           {/* Supprimer une machine */}
-          <section className="form-container delete-form">
+          <section className={`${styles.form_container} ${styles.delete_form}`}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -547,7 +547,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                   ))}
                 </select>
                 <button type="submit">Supprimer Machine</button>
-                {msg.machineDelete && <p className="msg">{msg.machineDelete}</p>}
+                {msg.machineDelete && <p className={styles.msg}>{msg.machineDelete}</p>}
               </fieldset>
             </form>
           </section>
@@ -555,7 +555,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
 
         {windowForm === "machineShot" && (<>
           {/* Ajouter un shot à une machine */}
-          <section className="form-container new-form">
+          <section className={`${styles.form_container} ${styles.new_form}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               const machineId = parseInt(e.target.elements.machineId.value);
@@ -596,13 +596,13 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                 <label>Stock (%)</label>
                 <input name="stock" placeholder="Stock" type="number" min="0" max="1" step="0.01" required />
                 <button type="submit">Ajouter shot</button>
-                {msg.machineShotAdd && <p className="msg">{msg.machineShotAdd}</p>}
+                {msg.machineShotAdd && <p className={styles.msg}>{msg.machineShotAdd}</p>}
               </fieldset>
             </form>
           </section>
 
           {/* Supprimer un shot d'une machine */}
-          <section className="form-container delete-form">
+          <section className={`${styles.form_container} ${styles.delete_form}`}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -648,7 +648,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                   ))}
                 </select>
                 <button type="submit">Supprimer Machine</button>
-                {msg.machineShotDelete && <p className="msg">{msg.machineShotDelete}</p>}
+                {msg.machineShotDelete && <p className={styles.msg}>{msg.machineShotDelete}</p>}
               </fieldset>
             </form>
           </section>
@@ -656,7 +656,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
 
         {windowForm === "wallet" && (<>
           {/* Ajouter un wallet */}
-          <section className="form-container new-form">
+          <section className={`${styles.form_container} ${styles.new_form}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               const userEmail = e.target.elements.userEmail.value;
@@ -685,13 +685,13 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                 />
 
                 <button type="submit">Créditer le wallet</button>
-                {msg.walletAdd && <p className="msg">{msg.walletAdd}</p>}
+                {msg.walletAdd && <p className={styles.msg}>{msg.walletAdd}</p>}
               </fieldset>
             </form>
           </section>
 
           {/* Supprimer un wallet */}
-          <section className="form-container delete-form">
+          <section className={`${styles.form_container} ${styles.delete_form}`}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -709,14 +709,14 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                   required
                 />
                 <button type="submit">Supprimer le wallet</button>
-                {msg.walletDelete && <p className="msg">{msg.walletDelete}</p>}
+                {msg.walletDelete && <p className={styles.msg}>{msg.walletDelete}</p>}
               </fieldset>
             </form>
           </section>
         </>)}
 
         {windowForm === "commande" && (
-          <section className="form-container commande">
+          <section className={`${styles.form_container} ${styles.commande}`}>
             <legend>Commandes "{stateCommande}"</legend>
             <label>Etat des commandes</label>
             <select value={stateCommande} onChange={(e) => setStateCommande(e.target.value)}>
@@ -753,7 +753,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
 
         {windowForm === "news" && (<>
           {/* Ajouter une news */}
-          <section className="form-container new-form">
+          <section className={`${styles.form_container} ${styles.new_form}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               const title = e.target.elements.title.value;
@@ -779,13 +779,13 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                 ></textarea>
 
                 <button type="submit">Publier la news</button>
-                {msg.newsAdd && <p className="msg">{msg.newsAdd}</p>}
+                {msg.newsAdd && <p className={styles.msg}>{msg.newsAdd}</p>}
               </fieldset>
             </form>
           </section>
 
           {/* Supprimer une news */}
-          <section className="form-container delete-form">
+          <section className={`${styles.form_container} ${styles.delete_form}`}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -808,7 +808,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
                   ))}
                 </select>
                 <button type="submit">Supprimer la news</button>
-                {msg.newsDelete && <p className="msg">{msg.newsDelete}</p>}
+                {msg.newsDelete && <p className={styles.msg}>{msg.newsDelete}</p>}
               </fieldset>
             </form>
           </section>

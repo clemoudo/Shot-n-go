@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/ShotItem.css';
+import { useState, useEffect } from 'react';
+import styles from '../styles/ShotItem.module.css';
 
 function ShotItem({ shotElem, addToCart }) {
     const [imageUrl, setImageUrl] = useState(null);
@@ -32,13 +32,13 @@ function ShotItem({ shotElem, addToCart }) {
     if (error) {return <p>{error}</p>}
 
     return (
-        <li className="shot-item" key={shotElem.id}>
-            <div className="shot-item-container">
-                <img className="shot-item-cover" loading='lazy' src={`/api/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
-                <div className="shot-item-details">
-                    <p className="shot-name">{shotElem.name}</p>
-                    <p className="pricecase">{shotElem.price} €</p>
-                    <div className="quantity">
+        <li className={styles.shot_item} key={shotElem.id}>
+            <div className={styles.shot_item_container}>
+                <img className={styles.shot_item_cover} loading='lazy' src={`/api/images/${shotElem.image}`} alt={`${shotElem.name} image`} />
+                <div className={styles.shot_item_details}>
+                    <p className={styles.shot_name}>{shotElem.name}</p>
+                    <p className={styles.pricecase}>{shotElem.price} €</p>
+                    <div className={styles.quantity}>
                         <button onClick={lessOneAddAmout}>-</button>
                             <button onClick={() => { addToCart(shotElem, addAmount); setAddAmount(0); }}>
                                 {addAmount}

@@ -1,4 +1,4 @@
-.verify-email-container {
+.verify_email_container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,7 +10,7 @@
   color: #333; /* Couleur de texte principale */
 }
 
-.verify-email-card {
+.verify_email_card {
   background-color: #ffffff;
   padding: 30px 40px;
   border-radius: 8px;
@@ -19,24 +19,24 @@
   width: 100%;
 }
 
-.verify-email-container h1 {
+.verify_email_container h1 {
   color: #2c3e50; /* Couleur de titre plus foncée */
   margin-bottom: 20px;
   font-size: 2em;
 }
 
-.verify-email-container p {
+.verify_email_container p {
   line-height: 1.6;
   margin-bottom: 15px;
   font-size: 1em;
 }
 
-.verify-email-container .email-address {
+.verify_email_container .email_address {
   font-weight: bold;
   color: #3498db; /* Mettre en évidence l'adresse e-mail */
 }
 
-.verify-email-container .message-info {
+.verify_email_container .message_info {
   color: #27ae60; /* Vert pour les messages de succès/info */
   background-color: #e9f7ef;
   border: 1px solid #a6e7c0;
@@ -45,7 +45,7 @@
   margin-bottom: 20px;
 }
 
-.verify-email-container .message-error {
+.verify_email_container .message_error {
   color: #c0392b; /* Rouge pour les messages d'erreur */
   background-color: #fcede9;
   border: 1px solid #f6c0b8;
@@ -54,12 +54,12 @@
   margin-bottom: 20px;
 }
 
-.verify-email-container .message-loading {
+.verify_email_container .message_loading {
   color: #2980b9; /* Bleu pour les messages de chargement */
   margin-bottom: 20px;
 }
 
-.verify-email-container button {
+.verify_email_container button {
   background-color: #3498db; /* Couleur principale du bouton */
   color: white;
   border: none;
@@ -75,33 +75,33 @@
   transition: background-color 0.3s ease;
 }
 
-.verify-email-container button:hover {
+.verify_email_container button:hover {
   background-color: #2980b9; /* Couleur au survol */
 }
 
-.verify-email-container button:disabled {
+.verify_email_container button:disabled {
   background-color: #bdc3c7; /* Couleur pour bouton désactivé */
   cursor: not-allowed;
 }
 
-.verify-email-container .logout-button {
+.verify_email_container .logout_button {
   background-color: #e74c3c; /* Couleur différente pour le bouton de déconnexion */
 }
 
-.verify-email-container .logout-button:hover {
+.verify_email_container .logout_button:hover {
   background-color: #c0392b;
 }
 
-.verify-email-container .login-link-button {
+.verify_email_container .login_link_button {
   background-color: #95a5a6; /* Couleur pour le lien de retour */
 }
-.verify-email-container .login-link-button:hover {
+.verify_email_container .login_link_button:hover {
   background-color: #7f8c8d;
 }
 
 
 /* Icone (optionnel - exemple avec Font Awesome si vous l'utilisez) */
-/* .verify-email-container .icon {
+/* .verify_email_container .icon {
   font-size: 3em;
   color: #3498db;
   margin-bottom: 20px;
@@ -109,16 +109,16 @@
 
 /* Pour les petits écrans */
 @media (max-width: 600px) {
-  .verify-email-card {
+  .verify_email_card {
     margin: 20px;
     padding: 20px;
   }
 
-  .verify-email-container h1 {
+  .verify_email_container h1 {
     font-size: 1.8em;
   }
 
-  .verify-email-container button {
+  .verify_email_container button {
     width: 100%;
     margin-top: 15px;
     margin-right: 0; /* Pas de marge à droite si les boutons sont empilés */

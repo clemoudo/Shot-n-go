@@ -11,7 +11,7 @@ import {
    sendEmailVerification
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import '../styles/Login.css';
+import styles from '../styles/Login.module.css';
 
 export default function Login() {
    const [email, setEmail] = useState("");
@@ -147,20 +147,20 @@ export default function Login() {
    };
 
    return (
-      <div className="login-container">
+      <div className={styles.login_container}>
          <h1>Bienvenue sur Shot'N'Go !</h1>
          {!isRegistering && <p>Veuillez vous connecter pour accéder au site.</p>}
          {isRegistering && <p>Créez votre compte pour commencer.</p>}
          <br />
          <h2>{isRegistering ? "Créer un compte" : "Se connecter"}</h2>
-         <form onSubmit={handleSubmit} className="form">
+         <form onSubmit={handleSubmit} className={styles.form}>
             <input
                type="email"
                placeholder="Email"
                value={email}
                onChange={(e) => setEmail(e.target.value)}
                required
-               className="input"
+               className={styles.input}
             />
             <input
                type="password"
@@ -168,7 +168,7 @@ export default function Login() {
                value={password}
                onChange={(e) => setPassword(e.target.value)}
                required
-               className="input"
+               className={styles.input}
             />
             {isRegistering && (
                <input
@@ -178,29 +178,29 @@ export default function Login() {
                   onChange={(e) => setPseudo(e.target.value)}
                   maxLength={16} // Correction: maxLength en camelCase
                   required
-                  className="input"
+                  className={styles.input}
                />
             )}
 
-            {error && <p className="error">{error}</p>}
-            {info && <p className="info">{info}</p>} {/* Afficher les messages d'info */}
+            {error && <p className={styles.error}>{error}</p>}
+            {info && <p className={styles.info}>{info}</p>} {/* Afficher les messages d'info */}
 
-            <button type="submit" className="button">
+            <button type="submit" className={styles.button}>
                {isRegistering ? "S'inscrire" : "Se connecter"}
             </button>
 
             {!isRegistering && (
                <>
-                  <button type="button" onClick={handleGoogleLogin} className="button" style={{ backgroundColor: "#DB4437", marginTop: "10px" }}>
+                  <button type="button" onClick={handleGoogleLogin} className={styles.button} style={{ backgroundColor: "#DB4437", marginTop: "10px" }}>
                      Se connecter avec Google
                   </button>
-                  <button type="button" onClick={handlePasswordReset} className="reset-password-link">
+                  <button type="button" onClick={handlePasswordReset} className={styles.reset_password_link}>
                      Mot de passe oublié ?
                   </button>
                </>
             )}
          </form>
-         <p onClick={() => { setIsRegistering(!isRegistering); setError(""); setInfo(""); }} className="toggle">
+         <p onClick={() => { setIsRegistering(!isRegistering); setError(""); setInfo(""); }} className={styles.toggle}>
             {isRegistering ? "Déjà un compte ? Se connecter" : "Pas encore inscrit ? Créer un compte"}
          </p>
       </div>

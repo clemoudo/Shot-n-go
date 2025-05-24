@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; // Ajustez le chemin si nécessaire
 import { sendEmailVerification, onAuthStateChanged, signOut } from 'firebase/auth';
-import '../styles/VerifyEmail.css';
+import styles from '../styles/VerifyEmail.module.css';
 
 export default function VerifyEmail() {
     const navigate = useNavigate();
@@ -91,11 +91,10 @@ export default function VerifyEmail() {
 
     if (user && user.emailVerified) {
         return (
-            <div className="verify-email-container">
-                <div className="verify-email-card">
-                    {/* <i className="icon fas fa-check-circle"></i> Optionnel: icône */}
+            <div className={styles.verify_email_container}>
+                <div className={styles.verify_email_card}>
                     <h1>Email Vérifié !</h1>
-                    <p className="message-info">Votre adresse email a été vérifiée avec succès.</p>
+                    <p className={styles.message_info}>Votre adresse email a été vérifiée avec succès.</p>
                     <p>Vous allez être redirigé vers la page d'accueil.</p>
                     <button onClick={() => navigate('/')}>Aller à l'accueil</button>
                 </div>
@@ -104,13 +103,12 @@ export default function VerifyEmail() {
     }
 
     return (
-        <div className="verify-email-container">
-            <div className="verify-email-card">
-                {/* <i className="icon fas fa-envelope-open-text"></i> Optionnel: icône */}
+        <div className={styles.verify_email_container}>
+            <div className={styles.verify_email_card}>
                 <h1>Vérifiez votre Email</h1>
                 
-                {message && <p className="message-info">{message.includes(user?.email) ? <>Un email de vérification a été envoyé à <span className="email-address">{user.email}</span>. Veuillez cliquer sur le lien dans l'email pour activer votre compte.</> : message}</p>}
-                {error && <p className="message-error">{error}</p>}
+                {message && <p className={styles.message_info}>{message.includes(user?.email) ? <>Un email de vérification a été envoyé à <span className={styles.email_address}>{user.email}</span>. Veuillez cliquer sur le lien dans l'email pour activer votre compte.</> : message}</p>}
+                {error && <p className={styles.message_error}>{error}</p>}
 
                 {!user?.emailVerified && user && ( // Afficher seulement si l'utilisateur est chargé et non vérifié
                     <>
@@ -124,7 +122,7 @@ export default function VerifyEmail() {
                     </>
                 )}
                 
-                <button onClick={handleLogout} className="logout-button">
+                <button onClick={handleLogout} className={styles.logout_button}>
                     Se déconnecter
                 </button>
             </div>

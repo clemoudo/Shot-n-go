@@ -1,4 +1,4 @@
-.admin-panel {
+.admin_panel {
   padding: 2rem;
   max-width: 900px;
   margin: auto;
@@ -9,14 +9,14 @@
   margin-top: 1.5rem;
 }
 
-.forms-wrapper {
+.forms_wrapper {
   display: flex;
   justify-content: center;
   gap: 2rem;
   flex-wrap: wrap;
 }
 
-.form-container {
+.form_container {
   max-width: 600px;
   margin: 2rem auto;
   background-color: #ffffff;
@@ -27,29 +27,29 @@
   flex: 1 1 300px; /* S'adapte jusqu'à 300px de largeur minimale */
 }
 
-.form-container fieldset {
+.form_container fieldset {
   border: none;
   padding: 0;
   margin: 0;
 }
 
-.form-container legend {
+.form_container legend {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
   color: #333;
 }
 
-.form-container label {
+.form_container label {
   display: block;
   margin-top: 1rem;
   font-weight: 500;
   color: #555;
 }
 
-.form-container input,
-.form-container textarea,
-.form-container select {
+.form_container input,
+.form_container textarea,
+.form_container select {
   width: 100%;
   padding: 0.5rem 0.75rem;
   margin-top: 0.25rem;
@@ -59,7 +59,7 @@
   box-sizing: border-box;
 }
 
-.form-container button[type="submit"] {
+.form_container button[type="submit"] {
   margin-top: 1.5rem;
   color: white;
   padding: 0.75rem 1.25rem;
@@ -70,43 +70,43 @@
   transition: background-color 0.3s ease;
 }
 
-.new-form button[type="submit"] {
+.new_form button[type="submit"] {
   background-color: #4caf50;
 }
 
-.new-form button[type="submit"]:hover {
+.new_form button[type="submit"]:hover {
   background-color: #43a047;
 }
 
-.delete-form button[type="submit"] {
+.delete_form button[type="submit"] {
   background-color: #f44336;
 }
 
-.delete-form button[type="submit"]:hover {
+.delete_form button[type="submit"]:hover {
   background-color: #e53935;
 }
 
-.form-container td {
+.form_container td {
   background-color: #dedede;
 }
 
-.form-container tr {
+.form_container tr {
   border-top: 1px rgb(168, 168, 168) solid;
 }
 
-.form-container.commande {
+.form_container.commande {
   max-width: 700px;
 }
 
-.form-container.commande tr {
+.form_container.commande tr {
   height: 50px;
 }
 
-.form-container.commande button {
+.form_container.commande button {
   border-radius: 8px;
 }
 
-.form-container.commande table {
+.form_container.commande table {
   width: 100%;
   border-collapse: collapse;
   background-color: #2a2a2a;
@@ -114,11 +114,11 @@
   overflow: hidden;
 }
 
-.form-container.commande thead {
+.form_container.commande thead {
   background-color: #333333;
 }
 
-.form-container.commande thead th {
+.form_container.commande thead th {
   padding: 15px;
   text-transform: uppercase;
   font-weight: bold;
@@ -127,6 +127,6 @@
   font-size: 16px
 }
 
-.form-container.commande td {
+.form_container.commande td {
   padding: 5px 10px;
 }

@@ -13,7 +13,7 @@
    align-items: center;
 }
 
-.site-title {
+.site_title {
    font-size: 2rem;
 }
 
@@ -47,7 +47,7 @@
 }
 
 /* Style pour le menu utilisateur */
-.user-menu {
+.user_menu {
    position: relative;
    cursor: pointer;
    display: flex;
@@ -58,11 +58,11 @@
    border-radius: 5px;
 }
 
-.user-menu:hover {
+.user_menu:hover {
    background-color: #444;
 }
 
-.user-avatar {
+.user_avatar {
    width: 40px;
    height: 40px;
    border-radius: 50%;
@@ -78,7 +78,7 @@
    overflow: hidden;
 }
 
-.dropdown-menu {
+.dropdown_menu {
    position: absolute;
    top: 45px;
    right: 0;
@@ -96,13 +96,13 @@
    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.user-menu:hover .dropdown-menu {
+.user_menu:hover .dropdown_menu {
    display: block;
    opacity: 1;  /* Rendre visible le menu */
    transform: translateY(0);  /* Animation fluide pour descendre */
 }
 
-.logout-btn {
+.logout_btn {
    background-color: #DB4437;
    color: white;
    border: none;
@@ -115,16 +115,16 @@
    transition: background-color 0.3s ease;
 }
 
-.logout-btn:hover {
+.logout_btn:hover {
    background-color: #c1351d;
 }
 
 /* Effet d'hover du bouton de déconnexion */
-.logout-btn:active {
+.logout_btn:active {
    transform: scale(0.98);
 }
 
-.logout-btn:focus {
+.logout_btn:focus {
    outline: none;
    box-shadow: 0 0 0 3px rgba(219, 68, 55, 0.4); /* Shadow effet au focus */
 }
@@ -163,7 +163,7 @@
     padding: 0;
   }
 
-  .nav-links {
+  .nav_links {
     width: 100%;
     display: none;
     flex-direction: column;
@@ -171,7 +171,7 @@
     margin-top: 1rem;
   }
 
-  .nav.responsive .nav-links {
+  .nav.responsive .nav_links {
     display: flex;
   }
 
@@ -186,19 +186,22 @@
     text-align: left;
   }
 
-  .user-menu {
+  .user_menu {
     width: 100%;
     justify-content: flex-start;
     margin-top: 0;
     gap: 0;
   }
 
-  .nav.responsive .user-menu {
+  .nav.responsive .user_menu {
     display: flex;
   }
 
-  .site-title {
+  .site_title {
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
   }
 }
+
+.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.fa_bars:before{content:"\f0c9"}

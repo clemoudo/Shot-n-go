@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import '../styles/Cart.css'
+import styles from '../styles/Cart.module.css'
 import axios from "axios";
 
 function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem, deleteItem}) {
@@ -68,11 +68,11 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 	
 	return isOpen ? (
 		<>
-		<div className="overlay active" onClick={() => setIsOpen(false)}></div>
+		<div className={`${styles.overlay} ${styles.active}`} onClick={() => setIsOpen(false)}></div>
 		<div className={`cart open${isValid ? " valid" : ""}`}>
 			<div>
 				<button
-					className='cart-button'
+					className={styles.cart_button}
 					onClick={() => setIsOpen(false)}
 				>
 					Fermer
@@ -81,7 +81,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 				<h2>Total : {total.toFixed(2)}€</h2>
 				{cart.length > 0 ? (
 					<div>
-						<table className="cart-table">
+						<table className={styles.cart_table}>
 							<thead>
 								<tr>
 									<th>Nom</th><th>Quantité</th><th>Prix total €</th>
@@ -97,26 +97,26 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 								})
 								.map((shotElem) => (
 									<tr key={`${shotElem.id}`}>
-										<td className="product">
-											<div className="product-info">
+										<td className={styles.product}>
+											<div className={styles.product_info}>
 												<img loading='lazy' src={`/api/images/${shotElem.image}`} alt={shotElem.name} />
-												<span className="product-name">{shotElem.name}</span>
-												<span className="product-unitPrice">{shotElem.price}€</span>
+												<span className={styles.product_name}>{shotElem.name}</span>
+												<span className={styles.product_unitPrice}>{shotElem.price}€</span>
 											</div>
 										</td>
-										<td className="cart-quantity">
+										<td className={styles.cart_quantity}>
 											<button onClick={() => removeItem(shotElem)}>-</button>
 											<span>{shotElem.amount}</span>
 											<button onClick={() => addToCart(shotElem,1)}>+</button>
 										</td>
-										<td className="cart-price">{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
-										{!isValid && <td className='cart-remove'><button onClick={()=> deleteItem(shotElem)}>x</button></td>}
+										<td className={styles.cart_price}>{(shotElem.price * shotElem.amount).toFixed(2)}€</td>
+										{!isValid && <td className={styles.cart_remove}><button onClick={()=> deleteItem(shotElem)}>x</button></td>}
 									</tr>
 								))}
 							</tbody>
 						</table>
-						<button className='cart-setValid' onClick={toggleIsValid}>{isValid ? "Annuler" : "Valider le panier"}</button>
-						{isValid && <button className='cart-purshase' onClick={handlePurchase}>Payer</button>}
+						<button className={styles.cart_setValid} onClick={toggleIsValid}>{isValid ? "Annuler" : "Valider le panier"}</button>
+						{isValid && <button className={styles.cart_purshase} onClick={handlePurchase}>Payer</button>}
 					</div>
 				) : (
 					<div>Votre panier est vide</div>
@@ -126,10 +126,10 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 		</>
 	) : (
 		<>
-		<div className="overlay"></div>
-		<div className='cart'>
+		<div className={styles.overlay}></div>
+		<div className={styles.cart}>
 			<button
-				className='cart-button'
+				className={styles.cart_button}
 				onClick={() => setIsOpen(true)}
 			>
 			{nbr_short_cart > 0 ? ("Ouvrir le panier (" + nbr_short_cart + ")"):('Ouvrir le panier')}

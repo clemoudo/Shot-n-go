@@ -1,5 +1,5 @@
 /* ----- Structure principale ----- */
-.home-container {
+.home_container {
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 100vw;
@@ -10,11 +10,11 @@
 }
 
 /* ----- Section de présentation ----- */
-.about-us-container {
+.about_us_container {
   margin-bottom: 3rem;
 }
 
-.concept-intro {
+.concept_intro {
   background: linear-gradient(to right, #fff7ed, #fffbf0);
   padding: 2rem;
   border-radius: 1.5rem;
@@ -22,40 +22,40 @@
   animation: fadeIn 1.2s ease-in;
 }
 
-.concept-intro h2 {
+.concept_intro h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
   color: #b45309;
 }
 
-.concept-intro p {
+.concept_intro p {
   font-size: 1.1rem;
   line-height: 1.6;
   color: #374151;
 }
 
 /* ----- Titre de section ----- */
-.home-container h1 {
+.home_container h1 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   color: #111827;
 }
 
 /* ----- Section actualités ----- */
-.home-container h2 {
+.home_container h2 {
   font-size: 1.8rem;
   margin-bottom: 1rem;
   color: #1d4ed8;
 }
 
-.news-scroll {
+.news_scroll {
   display: flex;
   gap: 1rem;
   animation: scrollNews 40s linear infinite;
   width: fit-content;
 }
 
-.news-card {
+.news_card {
   flex: 0 0 auto;
   background-color: #ffffff;
   border-radius: 1rem;
@@ -67,17 +67,17 @@
   transition: transform 0.3s ease;
 }
 
-.news-card:hover {
+.news_card:hover {
   transform: translateY(-5px);
 }
 
-.news-card h3 {
+.news_card h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
   color: #111827;
 }
 
-.news-date {
+.news_date {
   font-size: 0.85rem;
   color: #6b7280;
   margin-bottom: 0.5rem;
@@ -105,7 +105,7 @@
 }
 
 @media (max-width: 768px) {
-  .news-scroll {
+  .news_scroll {
     flex-direction: column;
     animation: none;
     align-items: center;
@@ -114,14 +114,14 @@
     width: 100%; 
   }
 
-  .news-card {
+  .news_card {
     max-width: 90%;
     width: 100%;
     margin: 1rem 0;
     box-sizing: border-box;
   }
 
-  .home-container h2 {
+  .home_container h2 {
     text-align: center;
   }
 }
