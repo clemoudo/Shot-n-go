@@ -4,7 +4,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { getIdTokenResult } from "firebase/auth";
 import styles from "../styles/Navbar.module.css";
-import user_email from "../assets/user_email.png";
+import user_email from "../assets/user_email.webp";
 
 function Navbar({ user, walletState }) {
   const { wallet, fetchWallet } = walletState;
