@@ -1,53 +1,28 @@
-import hashlib
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db import get_db
-from app.models.database import Machine
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
-import json
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.database import Machine
+from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
 @router.get("/api/machines")
+@cache_response_with_etag(cache_key_prefix="machines_cache")
 async def get_machines(
-    request: Request, 
+    request: Request,
     db: AsyncSession = Depends(get_db)
 ):
-    cache_key = "machines_cache"
-    cache_hash_key = f"{cache_key}_hash"
-
-    # Lire cache existant
-    cached_data = await redis.get(cache_key)
-    cached_hash = await redis.get(cache_hash_key)
-
-    if isinstance(cached_data, bytes):
-        cached_data = cached_data.decode()
-    if isinstance(cached_hash, bytes):
-        cached_hash = cached_hash.decode()
-
-    client_etag = request.headers.get("if-none-match")
-
-    if cached_data and cached_hash:
-        if client_etag == cached_hash:
-            return Response(status_code=304)
-        return JSONResponse(content={"machines": json.loads(cached_data)}, headers={"ETag": cached_hash})
-
     try:
         result = await db.execute(select(Machine))
         machines = result.scalars().all()
         data = [{"id": m.id, "name": m.name} for m in machines]
 
-        data_json = json.dumps(data)
-        data_hash = hashlib.md5(data_json.encode()).hexdigest()
-
-        await redis.set(cache_key, data_json, ex=300)
-        await redis.set(cache_hash_key, data_hash, ex=300)
-
-        return JSONResponse(content={"machines": data}, headers={"ETag": data_hash})
+        return {"machines": data}
 
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des machines")

@@ -1,49 +1,27 @@
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db import get_db
-from app.models.database import Shot
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
-from fastapi.responses import JSONResponse, Response
-import json, hashlib
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.database import Shot
+from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
 @router.get("/api/shots")
+@cache_response_with_etag(cache_key_prefix="shots_cache")
 async def get_shots(
     request: Request,
     db: AsyncSession = Depends(get_db)
 ):
-    cache_key = "shots_cache"
-
-    cached_data = await redis.get(cache_key)
-    cached_hash = await redis.get(f"{cache_key}_hash")
-
-    if isinstance(cached_data, bytes):
-        cached_data = cached_data.decode()
-    if isinstance(cached_hash, bytes):
-        cached_hash = cached_hash.decode()
-
-    client_etag = request.headers.get("if-none-match")
-
-    if cached_data and cached_hash:
-        if client_etag == cached_hash:
-            return Response(status_code=304)
-        return JSONResponse(content={"shots": json.loads(cached_data)}, headers={"ETag": cached_hash})
-
     result = await db.execute(select(Shot))
     shots = result.scalars().all()
     data = [{"id": s.id, "name": s.name, "price": s.price, "image": s.image, "category": s.category} for s in shots]
 
-    shots_json = json.dumps(data)
-    shots_hash = hashlib.md5(shots_json.encode()).hexdigest()
-
-    await redis.set(cache_key, shots_json, ex=300)
-    await redis.set(f"{cache_key}_hash", shots_hash, ex=300)
-
-    return JSONResponse(content={"shots": data}, headers={"ETag": shots_hash})
+    return {"shots": data}
 
 @router.post("/api/shots")
 async def add_shot(

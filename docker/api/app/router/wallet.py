@@ -1,76 +1,41 @@
-import hashlib
-import json
 import firebase_admin
 from firebase_admin import auth
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db import get_db
-from app.models.database import Wallet
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
+from app.models.database import Wallet
+from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
 @router.get("/api/wallets/credit")
+@cache_response_with_etag(
+    cache_key_prefix="wallet_credit",
+    user_id_from_token_key="uid"
+)
 async def get_wallet_credit(
     request: Request,
     db: AsyncSession = Depends(get_db),
     user_data: dict = Depends(verify_firebase_token)
 ):
-    user_id = user_data.get("uid") # Utiliser .get() pour plus de sécurité
-    # La vérification que l'utilisateur est bien celui concerné ou un admin est implicite
-    # car verify_firebase_token devrait lever une exception si le token n'est pas valide.
-    # Si un admin veut voir le wallet d'un autre, il faudrait une autre route ou un paramètre user_id.
-    # Pour cette route, on assume que c'est l'utilisateur lui-même qui demande son crédit.
-
+    user_id = user_data.get("uid")
     if not user_id: # Si l'UID n'est pas dans le token (ce qui ne devrait pas arriver avec un token valide)
         raise HTTPException(status_code=401, detail="UID utilisateur manquant dans le token.")
 
-    # Clés de cache
-    cache_key = f"wallet:{user_id}:credit"
-    cache_hash_key = f"{cache_key}_hash" # ETag
-
-    # Logique de cache et ETag
-    cached_data = await redis.get(cache_key)
-    cached_hash = await redis.get(cache_hash_key)
-
-    if isinstance(cached_data, bytes):
-        cached_data = cached_data.decode()
-    if isinstance(cached_hash, bytes):
-        cached_hash = cached_hash.decode()
-
-    client_etag = request.headers.get("if-none-match")
-
-    if cached_data and cached_hash:
-        if client_etag == cached_hash:
-            return Response(status_code=304) # Not Modified
-        return JSONResponse(content={"credit": json.loads(cached_data)}, headers={"ETag": cached_hash})
-
-    # Si pas dans le cache ou ETag ne correspond pas, aller chercher en DB
     try:
         result = await db.execute(select(Wallet).where(Wallet.user_id == user_id))
         wallet = result.scalar_one_or_none()
 
         if wallet is None:
-            # Si pas de wallet, on considère un crédit de 0 et on le met en cache
-            credit_json = json.dumps(0.0)
-            credit_hash = hashlib.md5(credit_json.encode()).hexdigest()
-            await redis.set(cache_key, credit_json, ex=300) # Cache pour 5 minutes
-            await redis.set(cache_hash_key, credit_hash, ex=300)
-            return JSONResponse(content={"credit": 0.0}, headers={"ETag": credit_hash})
+            return {"credit": 0.0}
 
         credit = float(wallet.credit)
-        credit_json = json.dumps(credit)
-        credit_hash = hashlib.md5(credit_json.encode()).hexdigest()
-
-        # Mettre en cache la valeur et son ETag
-        await redis.set(cache_key, credit_json, ex=300)
-        await redis.set(cache_hash_key, credit_hash, ex=300)
-
-        return JSONResponse(content={"credit": credit}, headers={"ETag": credit_hash})
+        return {"credit": credit}
 
     except SQLAlchemyError:
         # Logger l'erreur côté serveur
@@ -110,10 +75,6 @@ async def create_or_add_credit_to_wallet(
         result = await db.execute(select(Wallet).where(Wallet.user_id == user_id_cible))
         wallet = result.scalar_one_or_none()
 
-        # Clés de cache à invalider pour l'utilisateur cible
-        cache_key_credit_cible = f"wallet:{user_id_cible}:credit"
-        cache_hash_key_credit_cible = f"{cache_key_credit_cible}_hash"
-
         if wallet:
             wallet.credit += amount
             if wallet.user_email != user_record.email: # Mettre à jour l'email si changé dans Firebase
@@ -127,10 +88,12 @@ async def create_or_add_credit_to_wallet(
         await db.commit()
         await db.refresh(wallet)
 
-        # Invalider le cache pour l'utilisateur cible
-        if redis: # Assurez-vous que redis est disponible
-            await redis.delete(cache_key_credit_cible)
-            await redis.delete(cache_hash_key_credit_cible)
+        # Invalidation du cache pour l'utilisateur cible
+        cache_key_credit_cible = f"wallet_credit:{user_id_cible}" # Doit correspondre à la construction de clé du décorateur
+        cache_hash_key_credit_cible = f"{cache_key_credit_cible}_hash"
+        
+        await redis.delete(cache_key_credit_cible)
+        await redis.delete(cache_hash_key_credit_cible)
 
         return {
             "message": message,
@@ -187,12 +150,12 @@ async def delete_wallet(
         await db.delete(wallet_to_delete)
         await db.commit()
 
-        # Invalider le cache pour l'utilisateur dont le wallet a été supprimé
-        cache_key_credit_cible = f"wallet:{user_id_cible}:credit"
+        # Invalidation du cache pour l'utilisateur dont le wallet a été supprimé
+        cache_key_credit_cible = f"wallet_credit:{user_id_cible}"
         cache_hash_key_credit_cible = f"{cache_key_credit_cible}_hash"
-        if redis:
-            await redis.delete(cache_key_credit_cible)
-            await redis.delete(cache_hash_key_credit_cible)
+
+        await redis.delete(cache_key_credit_cible)
+        await redis.delete(cache_hash_key_credit_cible)
 
         return {"message": f"Wallet pour l'utilisateur '{user_email}' (UID: {user_id_cible}) supprimé avec succès."}
 
