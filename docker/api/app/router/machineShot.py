@@ -1,41 +1,26 @@
-import hashlib
-import json
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db import get_db
-from app.models.database import Machine, Shot, MachineShot
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.database import Machine, Shot, MachineShot
+from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
 @router.get("/api/machines/{machine_id}/shots")
+@cache_response_with_etag(
+    cache_key_prefix="machine_shots",
+    resource_id_param="machine_id"
+)
 async def get_shots_of_machine(
+    request: Request,
     machine_id: int, 
-    request: Request, 
     db: AsyncSession = Depends(get_db)
 ):
-    cache_key = f"machine:{machine_id}:shots"
-    cache_hash_key = f"{cache_key}_hash"
-
-    cached_data = await redis.get(cache_key)
-    cached_hash = await redis.get(cache_hash_key)
-
-    if isinstance(cached_data, bytes):
-        cached_data = cached_data.decode()
-    if isinstance(cached_hash, bytes):
-        cached_hash = cached_hash.decode()
-
-    client_etag = request.headers.get("if-none-match")
-
-    if cached_data and cached_hash:
-        if client_etag == cached_hash:
-            return Response(status_code=304)
-        return JSONResponse(content={"shots": json.loads(cached_data)}, headers={"ETag": cached_hash})
-
     # Vérifie que la machine existe
     machine = (await db.execute(select(Machine).where(Machine.id == machine_id))).scalar_one_or_none()
     if not machine:
@@ -61,14 +46,7 @@ async def get_shots_of_machine(
             }
             for shot, stock in shots
         ]
-
-        # Mise en cache
-        data_json = json.dumps(data)
-        data_hash = hashlib.md5(data_json.encode()).hexdigest()
-        await redis.set(cache_key, data_json, ex=300)
-        await redis.set(cache_hash_key, data_hash, ex=300)
-
-        return JSONResponse(content={"shots": data}, headers={"ETag": data_hash})
+        return {"shots": data}
 
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des shots")
@@ -108,8 +86,8 @@ async def add_shot_to_machine(
         db.add(new_link)
         await db.commit()
 
-        await redis.delete(f"machine:{machine_id}:shots")
-        await redis.delete(f"machine:{machine_id}:shots_hash")
+        await redis.delete(f"machine_shots:{machine_id}")
+        await redis.delete(f"machine_shots:{machine_id}_hash")
         return {"message": f"Shot {shot_id} ajouté à la machine {machine_id} avec un stock de {stock}"}
 
     except SQLAlchemyError:
@@ -140,8 +118,8 @@ async def remove_shot_from_machine(
         await db.delete(link)
         await db.commit()
         
-        await redis.delete(f"machine:{machine_id}:shots")
-        await redis.delete(f"machine:{machine_id}:shots_hash")
+        await redis.delete(f"machine_shots:{machine_id}")
+        await redis.delete(f"machine_shots:{machine_id}_hash")
 
         return {"message": f"Shot {shot_id} retiré de la machine {machine_id}"}
 

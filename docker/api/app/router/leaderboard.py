@@ -1,38 +1,21 @@
-from fastapi import APIRouter, Request, Response, HTTPException, Depends
-from fastapi.responses import JSONResponse
+from firebase_admin import auth
+from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from firebase_admin import auth
-import hashlib
-import json
+
 from app.db import get_db
 from app.redis_client import redis
 from app.models.database import ComShot, Commande
+from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
 @router.get("/api/leaderboard")
+@cache_response_with_etag(cache_key_prefix="leaderboard_shots")
 async def get_leaderboard(
     request: Request,
     db: AsyncSession = Depends(get_db)
 ):
-    cache_key = "leaderboard:total_shots"
-    cache_hash_key = f"{cache_key}_hash"
-
-    cached_data = await redis.get(cache_key)
-    cached_hash = await redis.get(cache_hash_key)
-
-    if isinstance(cached_data, bytes):
-        cached_data = cached_data.decode()
-    if isinstance(cached_hash, bytes):
-        cached_hash = cached_hash.decode()
-
-    client_etag = request.headers.get("if-none-match")
-    if cached_data and cached_hash:
-        if client_etag == cached_hash:
-            return Response(status_code=304)
-        return JSONResponse(content=json.loads(cached_data), headers={"ETag": cached_hash})
-
     try:
         # Somme des quantités de shots par utilisateur
         result = await db.execute(
@@ -60,14 +43,7 @@ async def get_leaderboard(
                 "user_name": user_name,
                 "total_shots": float(total_shots)
             })
-
-        response_json = json.dumps(leaderboard)
-        response_hash = hashlib.md5(response_json.encode()).hexdigest()
-
-        await redis.set(cache_key, response_json, ex=300)
-        await redis.set(cache_hash_key, response_hash, ex=300)
-
-        return JSONResponse(content=leaderboard, headers={"ETag": response_hash})
+        return leaderboard
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur lors de la récupération du leaderboard : {str(e)}")

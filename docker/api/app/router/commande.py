@@ -1,18 +1,17 @@
-import hashlib
-import json
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response
-from fastapi.responses import JSONResponse
+from typing import List, Optional
+from pydantic import BaseModel
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
-from datetime import datetime
-from pydantic import BaseModel
-from typing import List, Optional
-from app.models.database import Commande, ComShot, Shot, Wallet
-from app.firebase import verify_firebase_token
-from app.db import get_db
 from sqlalchemy.orm import joinedload
-from app.redis_client import redis
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db import get_db
+from app.redis_client import redis
+from app.firebase import verify_firebase_token
+from app.models.database import Commande, ComShot, Shot, Wallet
+from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
@@ -25,6 +24,10 @@ class CommandeCreate(BaseModel):
     shots: List[ShotItem]
 
 @router.get("/api/commandes")
+@cache_response_with_etag(
+    cache_key_prefix="commandes", 
+    query_params_to_include=["state"]
+)
 async def get_commandes_by_state(
     request: Request,
     state: Optional[str] = Query(None, description="Filtrer par état : 'in progress' ou 'done'"),
@@ -33,26 +36,6 @@ async def get_commandes_by_state(
 ):
     if user_data["role"] != "admin":
         raise HTTPException(403, detail="Admin seulement")
-
-    # Génère les clés de cache
-    cache_key = f"commandes:{state or 'all'}"
-    cache_hash_key = f"{cache_key}_hash"
-
-    # Lecture depuis Redis
-    cached_data = await redis.get(cache_key)
-    cached_hash = await redis.get(cache_hash_key)
-
-    if isinstance(cached_data, bytes):
-        cached_data = cached_data.decode()
-    if isinstance(cached_hash, bytes):
-        cached_hash = cached_hash.decode()
-
-    client_etag = request.headers.get("if-none-match")
-
-    if cached_data and cached_hash:
-        if client_etag == cached_hash:
-            return Response(status_code=304)
-        return JSONResponse(content=json.loads(cached_data), headers={"ETag": cached_hash})
 
     try:
         query = select(Commande).options(
@@ -83,14 +66,7 @@ async def get_commandes_by_state(
             "count": len(commandes_data),
             "commandes": commandes_data
         }
-
-        # Cache les données + ETag
-        response_json = json.dumps(response)
-        response_hash = hashlib.md5(response_json.encode()).hexdigest()
-        await redis.set(cache_key, response_json, ex=300)
-        await redis.set(cache_hash_key, response_hash, ex=300)
-
-        return JSONResponse(content=response, headers={"ETag": response_hash})
+        return response
 
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des commandes.")
@@ -155,12 +131,12 @@ async def create_commande(
 
         await db.commit()
 
-        await redis.delete("commandes:in progress")
-        await redis.delete("commandes:in progress_hash")
-        await redis.delete(f"wallet:{user_id}:credit")
-        await redis.delete(f"wallet:{user_id}:credit_hash")
-        await redis.delete(f"machine:{commande_data.machine_id}:queue")
-        await redis.delete(f"machine:{commande_data.machine_id}:queue_hash")
+        await redis.delete("commandes:state_in progress")
+        await redis.delete("commandes:state_in progress_hash")
+        await redis.delete(f"wallet_credit:{user_id}")
+        await redis.delete(f"wallet_credit:{user_id}_hash")
+        await redis.delete(f"machine_queue:{commande_data.machine_id}")
+        await redis.delete(f"machine_queue:{commande_data.machine_id}_hash")
 
         return {
             "message": "Commande créée et payée avec succès.",
@@ -196,14 +172,14 @@ async def mark_commande_done(
         commande.state = newState
         await db.commit()
 
-        await redis.delete("commandes:in progress")
-        await redis.delete("commandes:in progress_hash")
-        await redis.delete("commandes:done")
-        await redis.delete("commandes:done_hash")
-        await redis.delete("leaderboard:total_shots")
-        await redis.delete("leaderboard:total_shots_hash")
-        await redis.delete(f"machine:{commande.machine_id}:queue")
-        await redis.delete(f"machine:{commande.machine_id}:queue_hash")
+        await redis.delete("commandes:state_in progress")
+        await redis.delete("commandes:state_in progress_hash")
+        await redis.delete("commandes:state_done")
+        await redis.delete("commandes:state_done_hash")
+        await redis.delete("leaderboard_shots")
+        await redis.delete("leaderboard_shots_hash")
+        await redis.delete(f"machine_queue:{commande.machine_id}")
+        await redis.delete(f"machine_queue:{commande.machine_id}_hash")
         
         return {
             "message": "Commande mise à jour avec succès.",

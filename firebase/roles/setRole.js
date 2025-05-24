@@ -1,13 +1,26 @@
+// Utilisation
+// node setRole.js <UID> <chemin/vers/firebase-key.json> [role]
+// Par défaul, c'est le role admin qui est attribué
+
 const admin = require("firebase-admin");
 const path = require("path");
 const fs = require("fs");
 
-// Chemin vers ta clé Firebase
-const serviceAccountPath = path.join(__dirname, "KEY", "firebase-key.json");
+// Récupération des arguments passés en ligne de commande
+const args = process.argv.slice(2);
+const [uid, keyPathArg, role = "admin"] = args;
+
+if (!uid || !keyPathArg) {
+  console.error("❌ Utilisation : node setUserRole.js <UID> <chemin/firebase-key.json> [role]");
+  process.exit(1);
+}
+
+// Construction du chemin absolu vers le fichier de clé
+const serviceAccountPath = path.resolve(keyPathArg);
 
 // Vérifie si le fichier existe
 if (!fs.existsSync(serviceAccountPath)) {
-  console.error("❌ Le fichier firebase-key.json n'existe pas à l'emplacement spécifié.");
+  console.error(`❌ Le fichier firebase-key.json n'existe pas à l'emplacement : ${serviceAccountPath}`);
   process.exit(1);
 }
 
@@ -18,12 +31,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-// UID de l'utilisateur à modifier
-const uid = "UH3cUW7KV9Svsik4EoAoTnPtPYt1";
-
-// Rôle à attribuer
-const role = "admin";
-
+// Attribution du rôle
 admin.auth().setCustomUserClaims(uid, { role })
   .then(() => {
     console.log(`✅ Rôle "${role}" défini pour l'utilisateur avec l'UID : ${uid}`);

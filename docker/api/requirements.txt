@@ -7,3 +7,4 @@ redis>=4.5.0
 sqlalchemy
 asyncmy
 databases
+werkzeug>=2.0.0

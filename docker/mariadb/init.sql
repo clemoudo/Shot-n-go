@@ -26,8 +26,8 @@ CREATE TABLE Machine_Shot (
     shot_id INT,
     stock FLOAT NOT NULL DEFAULT 0,
     PRIMARY KEY (machine_id, shot_id),
-    FOREIGN KEY (machine_id) REFERENCES Machine(id) ON DELETE CASCADE,
-    FOREIGN KEY (shot_id) REFERENCES Shot(id) ON DELETE CASCADE
+    FOREIGN KEY (machine_id) REFERENCES Machine(id) ON DELETE RESTRICT,
+    FOREIGN KEY (shot_id) REFERENCES Shot(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE Commande (
@@ -37,8 +37,8 @@ CREATE TABLE Commande (
     machine_id INT NOT NULL,
     order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     state VARCHAR(50) NOT NULL,
-    FOREIGN KEY (wallet_id) REFERENCES Wallet(id) ON DELETE CASCADE,
-    FOREIGN KEY (machine_id) REFERENCES Machine(id) ON DELETE CASCADE
+    FOREIGN KEY (wallet_id) REFERENCES Wallet(id) ON DELETE RESTRICT,
+    FOREIGN KEY (machine_id) REFERENCES Machine(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE Com_Shot (
@@ -46,8 +46,8 @@ CREATE TABLE Com_Shot (
     shot_id INT,
     quantity INT NOT NULL,
     PRIMARY KEY (commande_id, shot_id),
-    FOREIGN KEY (commande_id) REFERENCES Commande(id) ON DELETE CASCADE,
-    FOREIGN KEY (shot_id) REFERENCES Shot(id) ON DELETE CASCADE
+    FOREIGN KEY (commande_id) REFERENCES Commande(id) ON DELETE RESTRICT,
+    FOREIGN KEY (shot_id) REFERENCES Shot(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE News (

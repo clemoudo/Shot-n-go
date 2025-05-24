@@ -4,16 +4,16 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import axios from "axios";
 
-import Footer from './Footer';
-import Navbar from './Navbar';
-import Home from './Home';
-import Menu from './Menu';
-import Games from './Games';
-import Queue from './Queue';
-import Admin from './Admin';
-import Login from './Login';
-import Leaderboard from './Leaderboard';
-import VerifyEmail from './VerifyEmail'; // 1. Importer VerifyEmail
+import Footer from './Footer/Footer';
+import Navbar from './Navbar/Navbar';
+import Home from './Home/Home';
+import Menu from './Menu/Menu';
+import Games from './Games/Games';
+import Queue from './Queue/Queue';
+import Admin from './Admin/Admin';
+import Login from './Login/Login';
+import Leaderboard from './Leaderboard/Leaderboard';
+import VerifyEmail from './Login/VerifyEmail';
 
 function App() {
     const [shots, setShots] = useState([]);
@@ -33,7 +33,6 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 2. Modifier onAuthStateChanged
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             setAuthLoading(true); // Mettre à jour l'état de chargement au début
@@ -172,15 +171,6 @@ function App() {
             setLoading(false); // Pas de données à charger
         }
     }, [user]); // Se déclenche quand user change (connexion, déconnexion, vérification)
-
-    useEffect(() => {
-        // Ce fetch dépend de 'machines' et donc implicitement de 'user' et 'user.emailVerified'
-        if (user && user.emailVerified && machines.length > 0 && machines[0]?.id) {
-            fetchMachineShots(machines[0].id);
-        } else {
-            setMachineShots([]); // Vider si pas de conditions remplies
-        }
-    }, [user, machines]); // Et aussi de machines
 
     if (authLoading) {
         return <div style={{ textAlign: 'center', padding: '50px', fontSize: '1.2em' }}>Chargement de l'authentification...</div>;
