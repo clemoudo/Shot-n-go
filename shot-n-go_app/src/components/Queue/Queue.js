@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import styles from "../styles/Queue.module.css";
+import styles from "./Queue.module.css";
 
 function Queue({ queueState, machineState }) {
   const { queue, fetchQueue } = queueState;

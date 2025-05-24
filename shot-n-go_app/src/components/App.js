@@ -4,16 +4,16 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import axios from "axios";
 
-import Footer from './Footer';
-import Navbar from './Navbar';
-import Home from './Home';
-import Menu from './Menu';
-import Games from './Games';
-import Queue from './Queue';
-import Admin from './Admin';
-import Login from './Login';
-import Leaderboard from './Leaderboard';
-import VerifyEmail from './VerifyEmail';
+import Footer from './Footer/Footer';
+import Navbar from './Navbar/Navbar';
+import Home from './Home/Home';
+import Menu from './Menu/Menu';
+import Games from './Games/Games';
+import Queue from './Queue/Queue';
+import Admin from './Admin/Admin';
+import Login from './Login/Login';
+import Leaderboard from './Leaderboard/Leaderboard';
+import VerifyEmail from './Login/VerifyEmail';
 
 function App() {
     const [shots, setShots] = useState([]);

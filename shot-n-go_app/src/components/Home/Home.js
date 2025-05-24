@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import styles from "../styles/Home.module.css";
+import styles from "./Home.module.css";
 
 function Home({ newsState }) {
    const { news, fetchNews } = newsState;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase'; // Ajustez le chemin si nécessaire
+import { auth } from '../../firebase'; // Ajustez le chemin si nécessaire
 import { sendEmailVerification, onAuthStateChanged, signOut } from 'firebase/auth';
-import styles from '../styles/VerifyEmail.module.css';
+import styles from './VerifyEmail.module.css';
 
 export default function VerifyEmail() {
     const navigate = useNavigate();

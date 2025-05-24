@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
-import styles from '../styles/ShoppingList.module.css'
+import styles from './ShoppingList.module.css'
 
 function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem, machineState, machineShotsState }) {
    const { machines, fetchMachines } = machineState;

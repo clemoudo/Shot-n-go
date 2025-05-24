@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import styles from '../styles/Leaderboard.module.css';
-import podium1 from "../assets/podium1.png";
-import podium2 from "../assets/podium2.png";
-import podium3 from "../assets/podium3.png";
+import styles from './Leaderboard.module.css';
+import podium1 from "../../assets/podium1.png";
+import podium2 from "../../assets/podium2.png";
+import podium3 from "../../assets/podium3.png";
 
 function Leaderboard({ leaderboardState }) {
     const { leaderboard, fetchLeaderboard } = leaderboardState;

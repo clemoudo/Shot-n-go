@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from '../styles/ShotItem.module.css';
+import styles from './ShotItem.module.css';
 
 function ShotItem({ shotElem, addToCart }) {
     const [loading, setLoading] = useState(false);

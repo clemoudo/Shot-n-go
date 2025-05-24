@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import styles from "../styles/Admin.module.css";
+import styles from "./Admin.module.css";
 import axios from "axios";
 
 export default function Admin({ shotState, machineState, machineShotsState, walletState, commandeState, newsState }) {

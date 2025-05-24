@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from '../styles/Cart.module.css'
+import styles from './Cart.module.css'
 import axios from "axios";
 
 function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem, deleteItem}) {
