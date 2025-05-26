@@ -9,3 +9,41 @@ KEY/
 
 # Modules
 **/node_modules/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json # Si tu utilises yarn.lock exclusivement
+yarn.lock # Si tu utilises package-lock.json exclusivement (choisis l'un ou l'autre par projet)
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+ENV/
+env/
+pip-freeze.txt
+pip-requirements.txt # Si généré dynamiquement
+
+# Docker
+docker/api/KEY/firebase-key.json # EXTREMEMENT IMPORTANT
+firebase/roles/KEY/firebase-key.json # EXTREMEMENT IMPORTANT
+
+# OS & Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+!.env.example
