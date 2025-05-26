@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import styles from './Cart.module.css'
 import axios from "axios";
-import { calculateTotalPrice, formatCurrency, calculateAmoutShot } from '../../utils/cartUtils';
+import { 
+	calculateTotalPrice,
+	formatCurrency,
+	calculateAmoutShot
+} from '../../utils/cartUtils';
 
 function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem, deleteItem}) {
 	const { wallet, fetchWallet } = walletState;
@@ -9,8 +13,6 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 	const [isOpen, setIsOpen] = useState(false)
 	const [isValid, setIsValid] = useState(false)
 	const toggleIsValid = () => setIsValid(!isValid)
-
-	const total = calculateTotalPrice(cart);
 
 	const handlePurchase = async () => {
 		const token = localStorage.getItem("token");
@@ -59,10 +61,12 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 			const msg = err.response?.data?.detail || "Erreur inconnue lors de la commande.";
 			console.log(msg);
 		}
-		};
+	};
+
+	const total = calculateTotalPrice(cart);
 	
-	return isOpen ? (
-		<>
+	return isOpen ? (<>
+		{/* Panier ouvert */}
 		<div className={`${styles.overlay} ${styles.active}`} onClick={() => setIsOpen(false)}></div>
 		<div className={`${styles.cart} ${styles.open} ${isValid ? styles.valid: ""}`}>
 			<div>
@@ -72,9 +76,11 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 				>
 					Fermer
 				</button>
+				{/* Panier en lui-même */}
 				<h1>Panier</h1>
 				<h2>Total : {formatCurrency(total)}</h2>
 				{cart.length > 0 ? (
+					// Panier rempli
 					<div>
 						<table className={styles.cart_table}>
 							<thead>
@@ -114,24 +120,23 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 						{isValid && <button className={styles.cart_purshase} onClick={handlePurchase}>Payer</button>}
 					</div>
 				) : (
+					// Panier vide
 					<div>Votre panier est vide</div>
 				)}
 			</div>
 		</div>
-		</>
-	) : (
-		<>
+	</>) : (<>
+		{/* Panier fermé */}
 		<div className={styles.overlay}></div>
 		<div className={styles.cart}>
 			<button
 				className={styles.cart_button}
 				onClick={() => setIsOpen(true)}
 			>
-			{calculateAmoutShot(cart) > 0 ? ("Ouvrir le panier (" + calculateAmoutShot(cart) + ")"):('Ouvrir le panier')}
+			{`Ouvrir le panier (" ${calculateAmoutShot(cart)} ")`}
 			</button>
 		</div>
-		</>
-	)
+	</>)
 }
 
 export default Cart
