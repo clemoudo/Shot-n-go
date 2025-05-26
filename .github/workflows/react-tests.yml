@@ -1,0 +1,40 @@
+name: React App Tests (CI)
+
+on:
+  push:
+    branches: [ main ]
+    paths: # Optimisation: ne lance les tests que si des fichiers pertinents ont changé
+      - 'shot-n-go_app/**'
+      - '.github/workflows/react-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'shot-n-go_app/**'
+      - '.github/workflows/react-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./shot-n-go_app
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: shot-n-go_app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        env:
+          CI: true
