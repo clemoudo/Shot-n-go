@@ -47,7 +47,7 @@ function App() {
                     const token = await freshUser.getIdToken();
                     localStorage.setItem("token", token);
                     // Si l'utilisateur est vérifié et sur Login ou VerifyEmail, rediriger vers l'accueil
-                    if (location.pathname === "/Login" || location.pathname === "/verify-email") {
+                    if (location.pathname === "/login" || location.pathname === "/verify-email") {
                         navigate("/");
                     }
                     // Les données seront chargées par les useEffect dépendant de 'user' plus bas
@@ -55,7 +55,7 @@ function App() {
                     // Utilisateur connecté mais email non vérifié
                     setUser(freshUser); // Mettre à jour l'utilisateur pour que VerifyEmail puisse l'utiliser
                     localStorage.removeItem("token"); // Pas de token pour les actions API si non vérifié
-                    if (location.pathname !== "/verify-email" && location.pathname !== "/Login") {
+                    if (location.pathname !== "/verify-email" && location.pathname !== "/login") {
                         navigate("/verify-email");
                     }
                 }
@@ -63,9 +63,9 @@ function App() {
                 // Utilisateur non connecté
                 setUser(null);
                 localStorage.removeItem("token");
-                const allowedPaths = ["/Login", "/verify-email"];
+                const allowedPaths = ["/login", "/verify-email"];
                 if (!allowedPaths.includes(location.pathname)) {
-                    navigate("/Login");
+                    navigate("/login");
                 }
             }
             setAuthLoading(false);
@@ -186,7 +186,7 @@ function App() {
     return (
         <div>
             {/* 4. Navbar et Footer seulement si connecté ET vérifié */}
-            {user && user.emailVerified && location.pathname !== "/Login" && location.pathname !== "/verify-email" &&
+            {user && user.emailVerified && location.pathname !== "/login" && location.pathname !== "/verify-email" &&
                 <Navbar
                     user={user}
                     walletState={{ wallet, fetchWallet }}
@@ -195,23 +195,23 @@ function App() {
             <div className="main-container">
                 <Routes>
                     {/* Routes publiques ou semi-publiques */}
-                    <Route path="/Login" element={user && user.emailVerified ? <Navigate to="/" replace /> : <Login />} />
+                    <Route path="/login" element={user && user.emailVerified ? <Navigate to="/" replace /> : <Login />} />
                     <Route path="/verify-email" element={user && user.emailVerified ? <Navigate to="/" replace /> : <VerifyEmail />} />
 
                     {/* Routes protégées : accessibles seulement si user && user.emailVerified */}
                     {/* La redirection est gérée globalement par le useEffect de onAuthStateChanged */}
-                    <Route path="/" element={user && user.emailVerified ? <Home newsState={{ news, fetchNews }} /> : <Navigate to="/Login" replace />} />
+                    <Route path="/" element={user && user.emailVerified ? <Home newsState={{ news, fetchNews }} /> : <Navigate to="/login" replace />} />
                     <Route path="/menu" element={user && user.emailVerified ? <Menu
                         machineState={{ machines, fetchMachines }}
                         machineShotsState={{ machineShots, fetchMachineShots }}
                         cartState={{ cart, setCart }}
                         walletState={{ wallet, fetchWallet }}
-                    /> : <Navigate to="/Login" replace />} />
-                    <Route path="/games" element={user && user.emailVerified ? <Games /> : <Navigate to="/Login" replace />} />
+                    /> : <Navigate to="/login" replace />} />
+                    <Route path="/games" element={user && user.emailVerified ? <Games /> : <Navigate to="/login" replace />} />
                     <Route path="/queue" element={user && user.emailVerified ? <Queue
                         queueState={{ queue, fetchQueue }}
                         machineState={{ machines, fetchMachines }}
-                    /> : <Navigate to="/Login" replace />} />
+                    /> : <Navigate to="/login" replace />} />
                     <Route path="/admin" element={user && user.emailVerified ? <Admin
                         shotState={{ shots, fetchShots }}
                         machineState={{ machines, fetchMachines }}
@@ -219,16 +219,16 @@ function App() {
                         walletState={{ wallet, fetchWallet }}
                         commandeState={{ commandes, fetchCommandes }}
                         newsState={{ news, fetchNews }}
-                    /> : <Navigate to="/Login" replace />} />
+                    /> : <Navigate to="/login" replace />} />
                     <Route path="/leaderboard" element={user && user.emailVerified ? <Leaderboard
                         leaderboardState={{ leaderboard, fetchLeaderboard }}
-                    /> : <Navigate to="/Login" replace />} />
+                    /> : <Navigate to="/login" replace />} />
                     
                     {/* Fallback pour les routes non trouvées */}
-                    <Route path="*" element={<Navigate to={user && user.emailVerified ? "/" : "/Login"} replace />} />
+                    <Route path="*" element={<Navigate to={user && user.emailVerified ? "/" : "/login"} replace />} />
                 </Routes>
             </div>
-            {user && user.emailVerified && location.pathname !== "/Login" && location.pathname !== "/verify-email" && <Footer />}
+            {user && user.emailVerified && location.pathname !== "/login" && location.pathname !== "/verify-email" && <Footer />}
         </div>
     );
 }

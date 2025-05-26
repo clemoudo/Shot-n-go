@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import styles from './Cart.module.css'
 import axios from "axios";
+import { calculateTotalPrice, formatCurrency, calculateAmoutShot } from '../../utils/cartUtils';
 
 function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem, deleteItem}) {
 	const { wallet, fetchWallet } = walletState;
@@ -9,13 +10,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 	const [isValid, setIsValid] = useState(false)
 	const toggleIsValid = () => setIsValid(!isValid)
 
-	const total = cart.reduce(
-		(acc, shotType) => acc + shotType.amount * shotType.price, 0
-	)
-	let nbr_short_cart = 0
-	cart.forEach(element => {
-		nbr_short_cart += element.amount
-	});
+	const total = calculateTotalPrice(cart);
 
 	const handlePurchase = async () => {
 		const token = localStorage.getItem("token");
@@ -69,7 +64,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 	return isOpen ? (
 		<>
 		<div className={`${styles.overlay} ${styles.active}`} onClick={() => setIsOpen(false)}></div>
-		<div className={`cart open${isValid ? " valid" : ""}`}>
+		<div className={`${styles.cart} ${styles.open} ${isValid ? styles.valid: ""}`}>
 			<div>
 				<button
 					className={styles.cart_button}
@@ -78,7 +73,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 					Fermer
 				</button>
 				<h1>Panier</h1>
-				<h2>Total : {total.toFixed(2)}€</h2>
+				<h2>Total : {formatCurrency(total)}</h2>
 				{cart.length > 0 ? (
 					<div>
 						<table className={styles.cart_table}>
@@ -132,7 +127,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 				className={styles.cart_button}
 				onClick={() => setIsOpen(true)}
 			>
-			{nbr_short_cart > 0 ? ("Ouvrir le panier (" + nbr_short_cart + ")"):('Ouvrir le panier')}
+			{calculateAmoutShot(cart) > 0 ? ("Ouvrir le panier (" + calculateAmoutShot(cart) + ")"):('Ouvrir le panier')}
 			</button>
 		</div>
 		</>
