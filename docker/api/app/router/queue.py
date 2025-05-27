@@ -5,7 +5,6 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_db
-from app.redis_client import redis
 from app.models.database import Commande
 from app.utils.caching import cache_response_with_etag
 

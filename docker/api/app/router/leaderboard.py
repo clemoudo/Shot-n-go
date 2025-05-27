@@ -4,14 +4,13 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_db
-from app.redis_client import redis
 from app.models.database import ComShot, Commande
 from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
 @router.get("/api/leaderboard")
-@cache_response_with_etag(cache_key_prefix="leaderboard_shots")
+@cache_response_with_etag(cache_key_prefix="leaderboard_shots", ttl=3600)
 async def get_leaderboard(
     request: Request,
     db: AsyncSession = Depends(get_db)
