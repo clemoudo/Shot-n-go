@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Leaderboard from './Leaderboard.js';
 
-// Mock des images pour éviter les erreurs lors du test
+
 jest.mock("../../assets/podium1.png", () => "podium1.png");
 jest.mock("../../assets/podium2.png", () => "podium2.png");
 jest.mock("../../assets/podium3.png", () => "podium3.png");
@@ -84,6 +84,53 @@ describe('Leaderboard', () => {
     const leaderboard = [{ user_id: 1, user_name: "Éléonore_ç@!$", total_shots: 20 }];
     render(<Leaderboard leaderboardState={{ leaderboard, fetchLeaderboard: fetchLeaderboardMock }} />);
     expect(screen.getByText("Éléonore_ç@!$")).toBeInTheDocument();
+  });
+
+    it("affiche un nom avec caractères japonais", () => {
+    const leaderboard = [{ user_id: 10, user_name: "サムライ123", total_shots: 16 }];
+    render(<Leaderboard leaderboardState={{ leaderboard, fetchLeaderboard: fetchLeaderboardMock }} />);
+    expect(screen.getByText("サムライ123")).toBeInTheDocument();
+  
+  });
+
+   it("devrait afficher correctement un très grand nombre de shots", () => {
+    const leaderboard = [
+      { user_id: 1, user_name: "GigaPlayer", total_shots: 999999999 }
+    ];
+
+    render(<Leaderboard leaderboardState={{ leaderboard, fetchLeaderboard: fetchLeaderboardMock }} />);
+
+    
+    expect(screen.getByText(/999999999 shots/i)).toBeInTheDocument();
+
+    expect(screen.getByText(/GigaPlayer/i)).toBeInTheDocument();
+  });
+
+    it("devrait gérer un classement avec 1000 joueurs", () => {
+   
+    const leaderboard = Array.from({ length: 1000 }, (_, i) => ({
+      user_id: i + 1,
+      user_name: `Joueur_${i + 1}`,
+      total_shots: 1000 - i,  
+    }));
+
+    render(<Leaderboard leaderboardState={{ leaderboard, fetchLeaderboard: fetchLeaderboardMock }} />);
+
+    
+    expect(screen.getByText("Joueur_1")).toBeInTheDocument();
+    expect(screen.getByText("1000 shots")).toBeInTheDocument();
+
+    expect(screen.getByText("Joueur_2")).toBeInTheDocument();
+    expect(screen.getByText("999 shots")).toBeInTheDocument();
+
+    expect(screen.getByText("Joueur_3")).toBeInTheDocument();
+    expect(screen.getByText("998 shots")).toBeInTheDocument();
+
+    
+    expect(screen.getByText("Joueur_1000")).toBeInTheDocument();
+    expect(screen.getByText("1 shots")).toBeInTheDocument();
+
+    
   });
 
 });
