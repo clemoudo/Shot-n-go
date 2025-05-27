@@ -1,4 +1,4 @@
-import { lessOneAddAmout, plusOneAddAmout } from './amountUtils';
+import { lessOneAddAmout, plusOneAddAmout } from './shotitemUtils.mjs';
 
 describe('lessOneAddAmout', () => {
   it('should decrement addAmount by 1 when addAmount is greater than 0', () => {
