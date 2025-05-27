@@ -98,3 +98,39 @@
     color: #666;
     font-size: 0.875rem;
 }
+
+.leaderboard_podium_item:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+
+.leaderboard_list_item:hover {
+    background-color: #f9f9f9;
+}
+
+.leaderboard_list_item:nth-child(1) .leaderboard_rank {
+    color: gold;
+}
+.leaderboard_list_item:nth-child(2) .leaderboard_rank {
+    color: silver;
+}
+.leaderboard_list_item:nth-child(3) .leaderboard_rank {
+    color: #cd7f32;
+}
+
+.leaderboard_podium_item,
+.leaderboard_list_item {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
