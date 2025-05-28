@@ -1,15 +1,14 @@
+
+// src/components/Games/Games.js
 import React, { useState, useEffect, useRef } from 'react';
+import './Games.css';
 
 ////////////////////////////////////////////////////////////////////////////////
 // 1) Composant : Servir le shot
 ////////////////////////////////////////////////////////////////////////////////
 function ShotGame() {
-  const MIN = 0;
-  const MAX = 100;
-  const TARGET_MIN = 50;
-  const TARGET_MAX = 70;
-  const INTERVAL = 20; // ms
-  const STEP = 1;      // % par interval
+  const MIN = 0, MAX = 100, TARGET_MIN = 50, TARGET_MAX = 70;
+  const INTERVAL = 20, STEP = 1;
 
   const [value, setValue]     = useState(MIN);
   const [running, setRunning] = useState(true);
@@ -27,6 +26,7 @@ function ShotGame() {
 
   const handleClick = () => {
     if (!running) return;
+    clearInterval(intervalRef.current);
     setRunning(false);
     if (value >= TARGET_MIN && value <= TARGET_MAX) {
       setResult("🎉 Parfait ! Ton shot est prêt !");
@@ -45,49 +45,18 @@ function ShotGame() {
   };
 
   return (
-    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+    <div className="game shot-game">
       <h2>🍸 Servir le shot</h2>
-      <div
-        onClick={handleClick}
-        style={{
-          position: 'relative',
-          width: 120,
-          height: 200,
-          margin: '1rem auto',
-          border: '4px solid #555',
-          borderRadius: '0 0 20px 20px',
-          background: '#eee',
-          cursor: running ? 'pointer' : 'default',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            width: '100%',
-            height: `${value}%`,
-            background: '#f1c40f',
-            transition: running ? `height ${INTERVAL}ms linear` : 'height 300ms ease',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            bottom: `${TARGET_MIN}%`,
-            width: '100%',
-            height: `${TARGET_MAX - TARGET_MIN}%`,
-            background: 'rgba(255, 215, 0, 0.4)',
-            pointerEvents: 'none',
-          }}
-        />
+      <div className="shot-glass" onClick={handleClick}>
+        <div className="liquid" style={{ height: `${value}%` }} />
+        <div className="target-zone" />
       </div>
-
       {!result ? (
-        <p>Clique sur le verre pour arrêter le versement dans la zone dorée !</p>
+        <p className="game-instruction">Clique pour arrêter dans la zone dorée !</p>
       ) : (
         <>
-          <p style={{ fontSize: '1.1rem' }}>{result}</p>
-          <button onClick={handleRestart}>Rejouer</button>
+          <p className="game-result">{result}</p>
+          <button className="btn" onClick={handleRestart}>Rejouer</button>
         </>
       )}
     </div>
@@ -98,11 +67,8 @@ function ShotGame() {
 // 2) Composant : Arrête la jauge
 ////////////////////////////////////////////////////////////////////////////////
 function GaugeGame() {
-  const MIN = 0;
-  const MAX = 100;
-  const TARGET_MIN = 40;
-  const TARGET_MAX = 60;
-  const SPEED = 10; // ms
+  const MIN = 0, MAX = 100, TARGET_MIN = 40, TARGET_MAX = 60;
+  const SPEED = 10;
 
   const [value, setValue]     = useState(MIN);
   const [dir, setDir]         = useState(1);
@@ -128,11 +94,7 @@ function GaugeGame() {
     if (!running) return;
     clearInterval(intervalRef.current);
     setRunning(false);
-    if (value >= TARGET_MIN && value <= TARGET_MAX) {
-      setResult('🎉 Gagné !');
-    } else {
-      setResult('😢 Perdu…');
-    }
+    setResult(value >= TARGET_MIN && value <= TARGET_MAX ? '🎉 Gagné !' : '😢 Perdu…');
   };
 
   const handleRestart = () => {
@@ -144,48 +106,18 @@ function GaugeGame() {
   };
 
   return (
-    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+    <div className="game gauge-game">
       <h2>⏱ Arrête la jauge</h2>
-      <div
-        onClick={handleClick}
-        style={{
-          position: 'relative',
-          width: '80%',
-          height: 30,
-          margin: '1rem auto',
-          background: '#ddd',
-          cursor: running ? 'pointer' : 'default',
-        }}
-      >
-        <div
-          style={{
-            width: `${value}%`,
-            height: '100%',
-            background: running
-              ? 'steelblue'
-              : (value >= TARGET_MIN && value <= TARGET_MAX ? 'green' : 'red'),
-            transition: 'width 0ms',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: `${TARGET_MIN}%`,
-            width: `${TARGET_MAX - TARGET_MIN}%`,
-            top: 0,
-            height: '100%',
-            border: '2px dashed gold',
-            pointerEvents: 'none',
-          }}
-        />
+      <div className="gauge-bar" onClick={handleClick}>
+        <div className="gauge-fill" style={{ width: `${value}%` }} />
+        <div className="gauge-target" />
       </div>
-
       {!result ? (
-        <p>Clique sur la barre pour l’arrêter dans la zone dorée !</p>
+        <p className="game-instruction">Clique pour arrêter dans la zone dorée !</p>
       ) : (
         <>
-          <p style={{ fontSize: '1.1rem' }}>{result}</p>
-          <button onClick={handleRestart}>Rejouer</button>
+          <p className="game-result">{result}</p>
+          <button className="btn" onClick={handleRestart}>Rejouer</button>
         </>
       )}
     </div>
@@ -196,16 +128,13 @@ function GaugeGame() {
 // 3) Composant : Attrape le shot (Whack-a-Shot)
 ////////////////////////////////////////////////////////////////////////////////
 function WhackGame() {
-  const GRID_SIZE = 9;
-  const ACTIVE_TIME = 800; // ms
-  const GAME_TIME = 15;    // s
+  const GRID_SIZE = 9, ACTIVE_TIME = 800, GAME_TIME = 15;
 
   const [activeCell, setActiveCell] = useState(null);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(GAME_TIME);
+  const [score, setScore]           = useState(0);
+  const [timeLeft, setTimeLeft]     = useState(GAME_TIME);
   const timeoutRef = useRef(null);
 
-  // Timer de jeu
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(t => t - 1), 1000);
@@ -213,7 +142,6 @@ function WhackGame() {
     }
   }, [timeLeft]);
 
-  // Pop-up des cases
   useEffect(() => {
     if (timeLeft <= 0) {
       clearTimeout(timeoutRef.current);
@@ -221,8 +149,7 @@ function WhackGame() {
       return;
     }
     function pop() {
-      const next = Math.floor(Math.random() * GRID_SIZE);
-      setActiveCell(next);
+      setActiveCell(Math.floor(Math.random() * GRID_SIZE));
       timeoutRef.current = setTimeout(pop, ACTIVE_TIME);
     }
     pop();
@@ -244,35 +171,24 @@ function WhackGame() {
 
   if (timeLeft <= 0) {
     return (
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h2>🎉 Temps écoulé!</h2>
-        <p>Score: {score}</p>
-        <button onClick={handleRestart}>Rejouer</button>
+      <div className="game whack-game">
+        <h2>🔚 Temps écoulé!</h2>
+        <p className="game-result">Score: {score}</p>
+        <button className="btn" onClick={handleRestart}>Rejouer</button>
       </div>
     );
   }
 
   return (
-    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+    <div className="game whack-game">
       <h2>🔫 Attrape le shot!</h2>
-      <p>Temps restant: {timeLeft}s | Score: {score}</p>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 80px)',
-        gap: '8px',
-        justifyContent: 'center'
-      }}>
+      <p className="game-status">Temps restant: {timeLeft}s | Score: {score}</p>
+      <div className="grid">
         {Array.from({ length: GRID_SIZE }).map((_, i) => (
           <div
             key={i}
+            className={`cell ${i === activeCell ? 'active' : ''}`}
             onClick={() => handleClickCell(i)}
-            style={{
-              width: 80,
-              height: 80,
-              backgroundColor: i === activeCell ? '#f1c40f' : '#777',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
           />
         ))}
       </div>
@@ -287,20 +203,18 @@ export default function Games() {
   const [mode, setMode] = useState(null);
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
+    <div className="games-container">
       <h1>🎲 Mini-jeux Shot’n’Go</h1>
 
       {mode === null ? (
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-          <button onClick={() => setMode('shot')}>🍸 Servir le shot</button>
-          <button onClick={() => setMode('gauge')}>⏱ Arrête la jauge</button>
-          <button onClick={() => setMode('whack')}>🔫 Attrape le shot</button>
+        <div className="menu-buttons">
+          <button className="btn" onClick={() => setMode('shot')}>🍸 Servir le shot</button>
+          <button className="btn" onClick={() => setMode('gauge')}>⏱ Arrête la jauge</button>
+          <button className="btn" onClick={() => setMode('whack')}>🔫 Attrape le shot</button>
         </div>
       ) : (
         <div>
-          <button onClick={() => setMode(null)} style={{ marginBottom: '1rem' }}>
-            ← Retour au menu
-          </button>
+          <button className="btn back-btn" onClick={() => setMode(null)}>← Retour au menu</button>
 
           {mode === 'shot' && <ShotGame />}
           {mode === 'gauge' && <GaugeGame />}
