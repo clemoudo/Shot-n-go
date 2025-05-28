@@ -138,25 +138,76 @@ describe('Composant File d\'attente', () => {
     expect(options).toHaveLength(mauvaisMachines.length);
   });
 
-  test('applique la classe CSS queue_container au conteneur principal', () => {
+  test('affiche le message de file vide avec la classe empty_message', () => {
     render(
       <Queue
         machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
         queueState={{ queue: [], fetchQueue: fetchQueueMock }}
       />
     );
-    const container = screen.getByRole('heading', { level: 1 }).closest('div');
-    expect(container).toHaveClass('queue_container');
+    const message = screen.getByText(/La file d'attente est vide/i);
+    expect(message).toHaveClass('empty_message');
   });
 
-  test('applique la classe CSS machine_select au select', () => {
+  test('les options ont les bons attributs value', () => {
     render(
       <Queue
         machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
         queueState={{ queue: [], fetchQueue: fetchQueueMock }}
       />
     );
-    const select = screen.getByLabelText(/Choisissez une machine/i);
-    expect(select).toHaveClass('machine_select');
+    const options = screen.getAllByRole('option');
+    options.forEach((option, idx) => {
+      expect(option).toHaveValue(machinesInit[idx].id);
+    });
+  });
+
+  test('le label est associé au select via htmlFor et id', () => {
+    render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    const label = screen.getByText(/Choisissez une machine/i);
+    const select = screen.getByRole('combobox');
+    expect(label).toHaveAttribute('for', select.getAttribute('id'));
+  });
+
+  test('sélection initiale du select correspond au premier id de machines', async () => {
+    render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    await waitFor(() => {
+      const select = screen.getByLabelText(/Choisissez une machine/i);
+      expect(select.value).toBe(machinesInit[0].id);
+    });
+  });
+
+  test('met à jour selectedMachineId quand machines prop change', async () => {
+    const { rerender } = render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    const nouvellesMachines = [
+      { id: 'm10', name: 'Machine 10' },
+      { id: 'm20', name: 'Machine 20' },
+    ];
+    rerender(
+      <Queue
+        machineState={{ machines: nouvellesMachines, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    await waitFor(() => {
+      const select = screen.getByLabelText(/Choisissez une machine/i);
+      expect(select.value).toBe(nouvellesMachines[0].id);
+      expect(fetchQueueMock).toHaveBeenCalledWith(nouvellesMachines[0].id);
+    });
   });
 });
