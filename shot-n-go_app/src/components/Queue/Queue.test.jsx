@@ -90,4 +90,73 @@ describe('Composant File d\'attente', () => {
     });
     await waitFor(() => expect(fetchQueueMock).toHaveBeenCalledWith('m2'));
   });
+
+  test('chaque élément de queue a la classe queue_item et le premier reçoit active', () => {
+    render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: queueItems, fetchQueue: fetchQueueMock }}
+      />
+    );
+    const items = screen.getAllByText(/#\d+ -/i);
+    items.forEach(item => {
+      expect(item).toHaveClass('queue_item');
+    });
+    expect(items[0]).toHaveClass('active');
+  });
+
+  test('met à jour le rendu quand queueState.queue change', () => {
+    const { rerender } = render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    expect(screen.queryByText('#101 - Alice')).toBeNull();
+    rerender(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: queueItems, fetchQueue: fetchQueueMock }}
+      />
+    );
+    expect(screen.getByText('#101 - Alice')).toBeInTheDocument();
+  });
+
+  test('tolère des machines sans id ou sans name', () => {
+    const mauvaisMachines = [
+      { id: '', name: '' },
+      { name: 'Machine Inconnue' },
+      { id: 'm3' },
+    ];
+    render(
+      <Queue
+        machineState={{ machines: mauvaisMachines, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(mauvaisMachines.length);
+  });
+
+  test('applique la classe CSS queue_container au conteneur principal', () => {
+    render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    const container = screen.getByRole('heading', { level: 1 }).closest('div');
+    expect(container).toHaveClass('queue_container');
+  });
+
+  test('applique la classe CSS machine_select au select', () => {
+    render(
+      <Queue
+        machineState={{ machines: machinesInit, fetchMachines: fetchMachinesMock }}
+        queueState={{ queue: [], fetchQueue: fetchQueueMock }}
+      />
+    );
+    const select = screen.getByLabelText(/Choisissez une machine/i);
+    expect(select).toHaveClass('machine_select');
+  });
 });
