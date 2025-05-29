@@ -17,11 +17,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
-    secrets:
-      - source: ssl_fullchain
-        target: fullchain.pem
-      - source: ssl_privkey
-        target: privkey.pem
+    volumes:
+      - ./letsencrypt/fullchain.pem:/etc/letsencrypt/live/m1-1.ephec-ti.be/fullchain.pem
+      - ./letsencrypt/privkey.pem:/etc/letsencrypt/live/m1-1.ephec-ti.be/privkey.pem
 
   api:
     build: ./api
@@ -50,9 +48,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    # secrets:
-    #   - source: firebase_key
-    #     target: firebase-key.json
 
   react:
     build: ./react
@@ -100,11 +95,3 @@ networks:
 volumes:
   mariadb_data:
   api_images:
-
-secrets:
-  ssl_fullchain:
-    external: true
-  ssl_privkey:
-    external: true
-  # firebase_key:
-  #   external: true
