@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import ShotItem from './ShotItem'
 import styles from './ShoppingList.module.css'
+import {handleChangeMachine} from '../../utils/shoppinglistUtils.mjs';
 
 function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem, machineState, machineShotsState }) {
 	const { machines, fetchMachines } = machineState;
@@ -22,12 +23,6 @@ function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem
 		}
 	}, [machines]);
 
-	const handleChangeMachine = (machineId) => {
-		if (cart.length > 0 && !window.confirm(`Voulez-vous vraiment supprimer votre panier actuel ?`)) return;
-		setCart([]);
-		setSelectedMachineId(machineId);
-		fetchMachineShots(machineId);
-	}
 
 	if (loading) {
 		return <div>Chargement des shots...</div>;
@@ -41,7 +36,13 @@ function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem
 					className={styles.machine_select}
 					value={selectedMachineId}
 					onChange={(e) => {
-						handleChangeMachine(e.target.value)
+						handleChangeMachine(
+      e.target.value,
+      cart,
+      setCart,
+      setSelectedMachineId,
+      fetchMachineShots
+   );
 					}}
 				>
 					{machines.map((machine) => (

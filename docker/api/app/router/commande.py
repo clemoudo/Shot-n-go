@@ -11,7 +11,7 @@ from app.db import get_db
 from app.redis_client import redis
 from app.firebase import verify_firebase_token
 from app.models.database import Commande, ComShot, Shot, Wallet
-from app.utils.caching import cache_response_with_etag
+from app.utils.caching import cache_response_with_etag, calculate_and_cache_leaderboard, calculate_and_cache_machine_queue
 
 router = APIRouter()
 
@@ -138,6 +138,8 @@ async def create_commande(
         await redis.delete(f"machine_queue:{commande_data.machine_id}")
         await redis.delete(f"machine_queue:{commande_data.machine_id}_hash")
 
+        await calculate_and_cache_machine_queue(commande_data.machine_id, db)
+
         return {
             "message": "Commande créée et payée avec succès.",
             "commande_id": new_commande.id,
@@ -180,6 +182,11 @@ async def mark_commande_done(
         await redis.delete("leaderboard_shots_hash")
         await redis.delete(f"machine_queue:{commande.machine_id}")
         await redis.delete(f"machine_queue:{commande.machine_id}_hash")
+
+        # Si la commande passe à "done", recalculer et mettre en cache le leaderboard
+        if newState == "done":
+            await calculate_and_cache_leaderboard(db) # Passe la session db
+            await calculate_and_cache_machine_queue(commande.machine_id, db)
         
         return {
             "message": "Commande mise à jour avec succès.",

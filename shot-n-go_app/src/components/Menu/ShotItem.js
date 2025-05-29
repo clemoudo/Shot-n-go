@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react';
 import styles from './ShotItem.module.css';
+import {lessOneAddAmout,plusOneAddAmout} from '../../utils/shotitemUtils.mjs'
 
 function ShotItem({ shotElem, addToCart }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [addAmount, setAddAmount] = useState(0)
 
-    const lessOneAddAmout = () => {
-        if (addAmount > 0){
-            setAddAmount(addAmount - 1);
-        }
-    };
 
-    const plusOneAddAmout = () => {
-        setAddAmount(addAmount + 1);
-    };
 
     useEffect(() => {
         // Vérifie si 'shotElem.cover' existe et qu'il s'agit d'une chaîne base64
@@ -38,11 +31,11 @@ function ShotItem({ shotElem, addToCart }) {
                     <p className={styles.shot_name}>{shotElem.name}</p>
                     <p className={styles.pricecase}>{shotElem.price} €</p>
                     <div className={styles.quantity}>
-                        <button onClick={lessOneAddAmout}>-</button>
+                        <button onClick={() => lessOneAddAmout(addAmount, setAddAmount)}>-</button>
                             <button onClick={() => { addToCart(shotElem, addAmount); setAddAmount(0); }}>
                                 {addAmount}
                             </button>
-                            <button onClick={plusOneAddAmout}>+</button>
+                            <button onClick={() => plusOneAddAmout(addAmount, setAddAmount)}>+</button>
                     </div>
                 </div>
             </div>

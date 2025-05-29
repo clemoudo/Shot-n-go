@@ -8,6 +8,7 @@ function Queue({ queueState, machineState }) {
 
   useEffect(() => {
     selectedMachineId && fetchQueue(selectedMachineId);
+    fetchMachines();
   }, []);
 
   useEffect(() => {

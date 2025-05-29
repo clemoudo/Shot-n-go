@@ -150,38 +150,9 @@ function App() {
     const fetchLeaderboard = () => fetchWithCache(`leaderboard:total_shot`, `/api/leaderboard`, setLeaderboard);
     const fetchNews = () => fetchWithCache(`news`, `/api/news`, setNews); // Les news pourraient être publiques
 
-    // 5. Conditionner les appels fetch initiaux
-    useEffect(() => {
-        if (user && user.emailVerified) {
-            setLoading(true); // Début du chargement des données
-            Promise.all([ // Exécutez les fetchs initiaux en parallèle
-                fetchMachines(),
-                fetchNews(), // Les news pourraient être chargées même si non loggué, à vous de voir
-                // Ajoutez d'autres fetchs initiaux ici si nécessaire
-            ]).then(() => {
-                setLoading(false); // Fin du chargement des données
-            }).catch(() => {
-                setLoading(false); // Gérer les erreurs de chargement
-            });
-        } else {
-            // Si l'utilisateur n'est pas connecté ou vérifié, vider les données potentiellement sensibles
-            setMachines([]);
-            setShots([]);
-            // ... réinitialiser d'autres états ...
-            setLoading(false); // Pas de données à charger
-        }
-    }, [user]); // Se déclenche quand user change (connexion, déconnexion, vérification)
-
     if (authLoading) {
         return <div style={{ textAlign: 'center', padding: '50px', fontSize: '1.2em' }}>Chargement de l'authentification...</div>;
     }
-
-    // Si les données sont en cours de chargement après l'authentification
-    // mais seulement si l'utilisateur est connecté et vérifié (car sinon pas de données à charger)
-    if (user && user.emailVerified && loading) {
-        return <div style={{ textAlign: 'center', padding: '50px', fontSize: '1.2em' }}>Chargement des données de l'application...</div>;
-    }
-
 
     return (
         <div>

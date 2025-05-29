@@ -33,12 +33,17 @@
     flex: 1;
     max-width: 150px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+    transition: transform 0.3s ease;
 }
 
 .leaderboard_podium_item_1 {
     order: 2;
     height: 290px;
-    background-color: #fef4af;
+    background: linear-gradient(135deg, #fef4af, #ffd700);
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.5);
+    animation: pulse 2s infinite, fadeInUp 0.6s ease forwards;
 }
 .leaderboard_podium_item_2 {
     order: 1;
@@ -51,13 +56,28 @@
     background-color: #efcbaa;
 }
 
+.leaderboard_podium_item:hover {
+    transform: translateY(-5px);
+}
+
 .leaderboard_medal {
     width: 48px;
+    transition: transform 0.3s ease;
+}
+
+.leaderboard_medal:hover {
+    transform: scale(1.1);
 }
 
 .leaderboard_name {
     margin-top: 0.5rem;
     font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.leaderboard_name:hover {
+    color: #ff9900;
+    cursor: pointer;
 }
 
 .leaderboard_shots {
@@ -77,6 +97,13 @@
     justify-content: space-between;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #eee;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+    transition: background-color 0.3s ease;
+}
+
+.leaderboard_list_item:hover {
+    background-color: #f9f9f9;
 }
 
 .leaderboard_list_item:last-child {
@@ -89,12 +116,63 @@
     text-align: right;
 }
 
+.leaderboard_list_item:nth-child(1) .leaderboard_rank {
+    color: gold;
+}
+.leaderboard_list_item:nth-child(2) .leaderboard_rank {
+    color: silver;
+}
+.leaderboard_list_item:nth-child(3) .leaderboard_rank {
+    color: #cd7f32;
+}
+
 .leaderboard_list_name {
     flex: 1;
     margin-left: 1rem;
+    transition: color 0.3s ease;
+}
+
+.leaderboard_list_name:hover {
+    color: #ff9900;
+    cursor: pointer;
 }
 
 .leaderboard_list_shots {
     color: #666;
     font-size: 0.875rem;
+}
+
+/* Badge "You" */
+.leaderboard_you {
+    background-color: #ff9900;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.3rem;
+    margin-left: 0.5rem;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 215, 0, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 1);
+    }
 }

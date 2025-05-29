@@ -133,7 +133,7 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 				className={styles.cart_button}
 				onClick={() => setIsOpen(true)}
 			>
-			{`Ouvrir le panier (" ${calculateAmoutShot(cart)} ")`}
+			{`Ouvrir le panier ( ${calculateAmoutShot(cart)} )`}
 			</button>
 		</div>
 	</>)
