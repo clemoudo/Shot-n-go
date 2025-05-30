@@ -8,7 +8,7 @@ cred_path = os.path.join(BASE_DIR, "..", "KEY", "firebase-key.json")
 cred = credentials.Certificate(cred_path)
 initialize_app(cred)
 
-db = firestore.client()
+db_firestore = firestore.client()
 
 def verify_firebase_token(authorization: str = Header(...)):
     if not authorization.startswith("Bearer "):
