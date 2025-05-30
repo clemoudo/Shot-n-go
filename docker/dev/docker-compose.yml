@@ -3,7 +3,7 @@ services:
     build: ../api
     image: clemoudo/shot-n-go:api-dev-latest
     volumes:
-      - ./KEY/firebase-key.json:/code/KEY/firebase-key.json
+      - ../api/KEY/firebase-key.json:/code/KEY/firebase-key.json
       - ../api/images:/images
     networks:
       - redis_net

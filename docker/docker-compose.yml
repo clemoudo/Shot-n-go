@@ -18,8 +18,8 @@ services:
       retries: 3
       start_period: 5s
     volumes:
-      - ./letsencrypt/fullchain.pem:/etc/letsencrypt/live/m1-1.ephec-ti.be/fullchain.pem
-      - ./letsencrypt/privkey.pem:/etc/letsencrypt/live/m1-1.ephec-ti.be/privkey.pem
+      - ./proxy/letsencrypt/fullchain.pem:/etc/letsencrypt/live/m1-1.ephec-ti.be/fullchain.pem
+      - ./proxy/letsencrypt/privkey.pem:/etc/letsencrypt/live/m1-1.ephec-ti.be/privkey.pem
 
   api:
     build: ./api
