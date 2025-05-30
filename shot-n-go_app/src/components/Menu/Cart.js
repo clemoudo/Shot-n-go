@@ -12,9 +12,13 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 	const { cart, setCart } = cartState;
 	const [isOpen, setIsOpen] = useState(false)
 	const [isValid, setIsValid] = useState(false)
+	const [isProcessing, setIsProcessing] = useState(false);
 	const toggleIsValid = () => setIsValid(!isValid)
 
 	const handlePurchase = async () => {
+		if (isProcessing) return; // Empêche les clics multiples si déjà en cours
+		setIsProcessing(true);
+
 		const token = localStorage.getItem("token");
 		if (!token) {
 			alert("Utilisateur non authentifié.");
@@ -60,6 +64,8 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 			console.error("Erreur lors de la commande :", err);
 			const msg = err.response?.data?.detail || "Erreur inconnue lors de la commande.";
 			console.log(msg);
+		} finally {
+			setIsProcessing(false);
 		}
 	};
 
@@ -117,7 +123,11 @@ function Cart({selectedMachineId, walletState, cartState, addToCart, removeItem,
 							</tbody>
 						</table>
 						<button className={styles.cart_setValid} onClick={toggleIsValid}>{isValid ? "Annuler" : "Valider le panier"}</button>
-						{isValid && <button className={styles.cart_purshase} onClick={handlePurchase}>Payer</button>}
+						{isValid && 
+							<button className={styles.cart_purshase} onClick={handlePurchase} disabled={isProcessing}>
+								{isProcessing ? 'Traitement...' : 'Payer'}
+							</button>
+						}
 					</div>
 				) : (
 					// Panier vide
