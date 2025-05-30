@@ -29,3 +29,16 @@ test("Vide | Pas de news rendues si tableau vide", () => {
    const newsCards = screen.queryAllByText(/Nouvelle/i);
    expect(newsCards.length).toBe(0);
 });
+
+test("Incomplet | Titre sans date", () => {
+   const mockNews = [
+      { title: "Sans Date", content: "Contenu uniquement" }, // publish_date manquant
+   ];
+
+   const mockFetchNews = jest.fn();
+
+   render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
+
+   expect(screen.getByText("Sans Date")).toBeInTheDocument();
+   expect(screen.getByText("Contenu uniquement")).toBeInTheDocument();
+});
