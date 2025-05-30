@@ -95,3 +95,20 @@ test("Types variés | Plusieurs titres différents cohabitent sans bug", () => {
    expect(screen.getAllByText("Offre spéciale").length).toBeGreaterThan(0);
    expect(screen.getAllByText("Nouveau cocktail").length).toBeGreaterThan(0);
 });
+
+test("Avec 1000 news | Le composant ne plante pas", () => {
+   const mockNews = Array.from({ length: 1000 }, (_, i) => ({
+      title: `News ${i}`,
+      content: `Contenu ${i}`,
+      publish_date: new Date().toISOString(),
+   }));
+
+   const mockFetchNews = jest.fn();
+
+   render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
+
+   // Vérifie que quelques titres sont bien rendus
+   expect(screen.getAllByText("News 0").length).toBeGreaterThan(0);
+   expect(screen.getAllByText("News 999").length).toBeGreaterThan(0);
+
+});
