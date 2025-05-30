@@ -42,3 +42,15 @@ test("Incomplet | Titre sans date", () => {
    expect(screen.getByText("Sans Date")).toBeInTheDocument();
    expect(screen.getByText("Contenu uniquement")).toBeInTheDocument();
 });
+
+test("Incomplet | Titre sans contenu", () => {
+   const mockNews = [
+      { title: "Sans Contenu", publish_date: new Date().toISOString() }, // content manquant
+   ];
+
+   const mockFetchNews = jest.fn();
+
+   render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
+
+   expect(screen.getByText("Sans Contenu")).toBeInTheDocument();
+});
