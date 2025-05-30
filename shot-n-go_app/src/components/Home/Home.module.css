@@ -41,18 +41,23 @@
   color: #111827;
 }
 
-/* ----- Section actualités ----- */
 .home_container h2 {
   font-size: 1.8rem;
   margin-bottom: 1rem;
   color: #1d4ed8;
 }
 
+/* ----- Section actualités ----- */
+.news_wrapper {
+  overflow: hidden;
+  width: 100%;
+}
+
 .news_scroll {
   display: flex;
   gap: 1rem;
   animation: scrollNews 40s linear infinite;
-  width: fit-content;
+  width: max-content;
 }
 
 .news_card {
@@ -104,14 +109,19 @@
   }
 }
 
+/* ----- Responsive ----- */
 @media (max-width: 768px) {
+  .news_wrapper {
+    overflow: visible;
+  }
+
   .news_scroll {
     flex-direction: column;
     animation: none;
     align-items: center;
     display: flex;
     justify-content: center;
-    width: 100%; 
+    width: 100%;
   }
 
   .news_card {
