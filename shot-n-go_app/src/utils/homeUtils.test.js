@@ -66,3 +66,17 @@ test("Incomplet | Sans titre", () => {
 
    expect(screen.getByText("Pas de titre ici")).toBeInTheDocument();
 });
+
+test("Très longue news | Contenu >512 caractères s'affiche correctement", () => {
+   const longContent = "a".repeat(600);
+   const mockNews = [
+      { title: "Long News", content: longContent, publish_date: new Date().toISOString() },
+   ];
+
+   const mockFetchNews = jest.fn();
+
+   render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
+
+   expect(screen.getByText("Long News")).toBeInTheDocument();
+   expect(screen.getByText(longContent)).toBeInTheDocument();
+});
