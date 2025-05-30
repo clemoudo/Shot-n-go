@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import Home from "../components/Home/Home";
 
-test("✅ Affiche des news | Les titres sont visibles", () => {
+test("Affiche des news | Les titres sont visibles", () => {
    const mockNews = [
       { title: "Nouvelle 1", content: "Contenu 1", publish_date: new Date().toISOString() },
       { title: "Nouvelle 2", content: "Contenu 2", publish_date: new Date().toISOString() },
@@ -19,3 +19,13 @@ test("✅ Affiche des news | Les titres sont visibles", () => {
    expect(titres2.length).toBeGreaterThanOrEqual(1);
 });
 
+test("Vide | Pas de news rendues si tableau vide", () => {
+   const mockNews = [];
+
+   const mockFetchNews = jest.fn();
+
+   render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
+
+   const newsCards = screen.queryAllByText(/Nouvelle/i);
+   expect(newsCards.length).toBe(0);
+});
