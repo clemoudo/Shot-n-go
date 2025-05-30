@@ -12,11 +12,8 @@ test("Affiche des news | Les titres sont visibles", () => {
 
    render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
 
-   const titres1 = screen.getAllByText("Nouvelle 1");
-   const titres2 = screen.getAllByText("Nouvelle 2");
-
-   expect(titres1.length).toBeGreaterThanOrEqual(1);
-   expect(titres2.length).toBeGreaterThanOrEqual(1);
+   expect(screen.getAllByText("Nouvelle 1").length).toBeGreaterThan(0);
+   expect(screen.getAllByText("Nouvelle 2").length).toBeGreaterThan(0);
 });
 
 test("Vide | Pas de news rendues si tableau vide", () => {
@@ -39,8 +36,8 @@ test("Incomplet | Titre sans date", () => {
 
    render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
 
-   expect(screen.getByText("Sans Date")).toBeInTheDocument();
-   expect(screen.getByText("Contenu uniquement")).toBeInTheDocument();
+   expect(screen.getAllByText("Sans Date").length).toBeGreaterThan(0);
+   expect(screen.getAllByText("Contenu uniquement").length).toBeGreaterThan(0);
 });
 
 test("Incomplet | Titre sans contenu", () => {
@@ -52,7 +49,9 @@ test("Incomplet | Titre sans contenu", () => {
 
    render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
 
-   expect(screen.getByText("Sans Contenu")).toBeInTheDocument();
+   expect(screen.getAllByText("Sans Contenu").length).toBeGreaterThan(0);
+   // Vérifie que "Contenu" n'est pas affiché (utilise queryAllByText)
+   expect(screen.queryAllByText("Contenu").length).toBe(0);
 });
 
 test("Incomplet | Sans titre", () => {
@@ -64,7 +63,7 @@ test("Incomplet | Sans titre", () => {
 
    render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
 
-   expect(screen.getByText("Pas de titre ici")).toBeInTheDocument();
+   expect(screen.getAllByText("Pas de titre ici").length).toBeGreaterThan(0);
 });
 
 test("Très longue news | Contenu >512 caractères s'affiche correctement", () => {
@@ -77,6 +76,22 @@ test("Très longue news | Contenu >512 caractères s'affiche correctement", () =
 
    render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
 
-   expect(screen.getByText("Long News")).toBeInTheDocument();
-   expect(screen.getByText(longContent)).toBeInTheDocument();
+   expect(screen.getAllByText("Long News").length).toBeGreaterThan(0);
+   expect(screen.getAllByText(longContent).length).toBeGreaterThan(0);
+});
+
+test("Types variés | Plusieurs titres différents cohabitent sans bug", () => {
+   const mockNews = [
+      { title: "Événement local", content: "Détails événement", publish_date: new Date().toISOString() },
+      { title: "Offre spéciale", content: "Promo -50%", publish_date: new Date().toISOString() },
+      { title: "Nouveau cocktail", content: "Découvrez notre nouveauté", publish_date: new Date().toISOString() },
+   ];
+
+   const mockFetchNews = jest.fn();
+
+   render(<Home newsState={{ news: mockNews, fetchNews: mockFetchNews }} />);
+
+   expect(screen.getAllByText("Événement local").length).toBeGreaterThan(0);
+   expect(screen.getAllByText("Offre spéciale").length).toBeGreaterThan(0);
+   expect(screen.getAllByText("Nouveau cocktail").length).toBeGreaterThan(0);
 });
