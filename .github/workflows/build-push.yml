@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths: # Optimisation: ne lance le build que si des fichiers pertinents ont changé
+      - 'shot-n-go_app/**'
+      - 'docker/**'
+      - '.github/workflows/build-push.yml'
 
 jobs:
   build-and-push:
