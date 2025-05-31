@@ -115,55 +115,52 @@ async def create_or_add_credit_to_wallet(
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {str(e)}")
 
 
-@router.delete("/api/wallets/{user_email}")
-async def delete_wallet(
-    user_email: str, # Email de l'utilisateur dont le wallet doit être supprimé
+@router.post("/api/wallets/{user_email}/reset-credits")
+async def reset_wallet_credits(
+    user_email: str,
     db: AsyncSession = Depends(get_db),
-    user_data: dict = Depends(verify_firebase_token) # Token de l'admin
+    user_data: dict = Depends(verify_firebase_token)
 ):
     if user_data.get("role") != "admin":
         raise HTTPException(status_code=403, detail="Accès refusé. Seuls les administrateurs peuvent effectuer cette action.")
 
     try:
-        # Option 1: Supprimer par email (comme actuellement)
-        # Inconvénient: si l'email change dans Firebase mais pas dans votre DB, vous ciblez le mauvais user localement.
-        # result = await db.execute(select(Wallet).where(Wallet.user_email == user_email))
-        # wallet_to_delete = result.scalar_one_or_none()
-
-        # Option 2 (plus robuste): Récupérer l'UID Firebase, puis supprimer par UID
+        # Récupérer l'UID Firebase pour la robustesse
         try:
             user_record_cible = auth.get_user_by_email(user_email)
         except firebase_admin.auth.UserNotFoundError:
-            raise HTTPException(status_code=404, detail=f"Utilisateur Firebase introuvable pour l'e-mail : {user_email}, suppression du wallet impossible.")
+            raise HTTPException(status_code=404, detail=f"Utilisateur Firebase introuvable pour l'e-mail : {user_email}, réinitialisation des crédits du wallet impossible.")
         
         user_id_cible = user_record_cible.uid
+        
+        # Rechercher le wallet par UID
         result = await db.execute(select(Wallet).where(Wallet.user_id == user_id_cible))
-        wallet_to_delete = result.scalar_one_or_none()
+        wallet_to_update = result.scalar_one_or_none()
 
+        if not wallet_to_update:
+            raise HTTPException(status_code=404, detail=f"Wallet non trouvé pour l'utilisateur avec l'email '{user_email}' (UID: {user_id_cible}). La réinitialisation des crédits ne peut pas être effectuée.")
 
-        if not wallet_to_delete:
-            raise HTTPException(status_code=404, detail=f"Wallet non trouvé pour l'utilisateur avec l'email '{user_email}' (UID: {user_id_cible}).")
-
-        # Avant de supprimer, récupérer l'UID pour invalider le cache
-        # user_id_of_deleted_wallet = wallet_to_delete.user_id (c'est user_id_cible)
-
-        await db.delete(wallet_to_delete)
+        # Mettre les crédits à zéro
+        wallet_to_update.credits = 0 
+        db.add(wallet_to_update) # Marquer l'objet comme modifié pour SQLAlchemy
         await db.commit()
+        await db.refresh(wallet_to_update) # Optionnel: rafraîchir l'objet depuis la DB
 
-        # Invalidation du cache pour l'utilisateur dont le wallet a été supprimé
+        # Invalidation du cache pour l'utilisateur dont les crédits du wallet ont été modifiés
         cache_key_credit_cible = f"wallet_credit:{user_id_cible}"
         cache_hash_key_credit_cible = f"{cache_key_credit_cible}_hash"
 
         await redis.delete(cache_key_credit_cible)
         await redis.delete(cache_hash_key_credit_cible)
 
-        return {"message": f"Wallet pour l'utilisateur '{user_email}' (UID: {user_id_cible}) supprimé avec succès."}
+        return {"message": f"Crédits du wallet pour l'utilisateur '{user_email}' (UID: {user_id_cible}) mis à zéro avec succès."}
 
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         await db.rollback()
-        # Logger l'erreur
-        raise HTTPException(status_code=500, detail="Erreur interne du serveur lors de la suppression du wallet.")
+        # Logger l'erreur: import logging; logging.exception("SQLAlchemyError in reset_wallet_credits")
+        raise HTTPException(status_code=500, detail="Erreur interne du serveur lors de la mise à zéro des crédits du wallet.")
     except Exception as e:
-        # Logger l'erreur
-        await db.rollback()
+        # Logger l'erreur: import logging; logging.exception("Unexpected error in reset_wallet_credits")
+        if db.in_transaction(): # Vérifier s'il y a une transaction active avant de rollback
+            await db.rollback()
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {str(e)}")

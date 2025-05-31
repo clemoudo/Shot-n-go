@@ -5,7 +5,7 @@ import axios from "axios";
 export default function WalletManagement({ fetchWallet, msg, setMessage }) { // fetchWallet est pour Admin.js, ici on ne l'utilise pas directement pour afficher
   const [userEmailToAdd, setUserEmailToAdd] = useState("");
   const [amountToAdd, setAmountToAdd] = useState("");
-  const [userEmailToDelete, setUserEmailToDelete] = useState("");
+  const [userEmailToReset, setUserEmailToReset] = useState("");
 
 
   const handleNewWalletSubmit = async (e) => {
@@ -34,26 +34,26 @@ export default function WalletManagement({ fetchWallet, msg, setMessage }) { // 
     }
   };
 
-  const handleDeleteWallet = async (e) => {
+  const handleResetWallet = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-     if (!userEmailToDelete.trim()) {
-        setMessage("walletDelete", "Veuillez entrer un email pour la suppression.");
+     if (!userEmailToReset.trim()) {
+        setMessage("walletReset", "Veuillez entrer un email pour la suppression.");
         return;
     }
 
-    if (!window.confirm(`Supprimer le wallet de "${userEmailToDelete}" ? Cette action est irréversible.`)) return;
+    if (!window.confirm(`Reset le wallet de "${userEmailToReset}" ? Cette action est irréversible.`)) return;
 
     try {
-      const response = await axios.delete(`/api/wallets/${userEmailToDelete}`, {
+      const response = await axios.post(`/api/wallets/${userEmailToReset}/reset-credits`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMessage("walletDelete", response.data.message || "Wallet supprimé.");
-      setUserEmailToDelete("");
+      setMessage("walletReset", response.data.message || "Wallet remis à 0.");
+      setUserEmailToReset("");
       if(fetchWallet) fetchWallet();
     } catch (err) {
-      console.error("Erreur suppression wallet:", err);
-      setMessage("walletDelete", `Erreur: ${err.response?.data?.detail || err.message}`);
+      console.error("Erreur reset wallet:", err);
+      setMessage("walletReset", `Erreur: ${err.response?.data?.detail || err.message}`);
     }
   };
 
@@ -92,9 +92,9 @@ export default function WalletManagement({ fetchWallet, msg, setMessage }) { // 
         </form>
       </section>
 
-      {/* Supprimer un wallet */}
+      {/* Reset un wallet */}
       <section className={`${styles.form_container} ${styles.delete_form}`}>
-        <form onSubmit={handleDeleteWallet}>
+        <form onSubmit={handleResetWallet}>
           <fieldset>
             <legend>Supprimer un Wallet</legend>
             <label htmlFor="walletUserEmailDelete">Email utilisateur</label>
@@ -103,12 +103,12 @@ export default function WalletManagement({ fetchWallet, msg, setMessage }) { // 
               name="userEmail"
               type="email"
               placeholder="exemple@domaine.com"
-              value={userEmailToDelete}
-              onChange={(e) => setUserEmailToDelete(e.target.value)}
+              value={userEmailToReset}
+              onChange={(e) => setUserEmailToReset(e.target.value)}
               required
             />
-            <button type="submit">Supprimer le Wallet</button>
-            {msg.walletDelete && <p className={styles.msg}>{msg.walletDelete}</p>}
+            <button type="submit">Reset le Wallet</button>
+            {msg.walletReset && <p className={styles.msg}>{msg.walletReset}</p>}
           </fieldset>
         </form>
       </section>
