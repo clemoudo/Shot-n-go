@@ -33,7 +33,7 @@ function ShotItem({ shotElem, addToCart }) {
                     <div className={styles.quantity}>
                         <button onClick={() => lessOneAddAmout(addAmount, setAddAmount)}>-</button>
                             <button onClick={() => { addToCart(shotElem, addAmount); setAddAmount(0); }}>
-                                {addAmount}
+                                Ajouter {addAmount}
                             </button>
                             <button onClick={() => plusOneAddAmout(addAmount, setAddAmount)}>+</button>
                     </div>

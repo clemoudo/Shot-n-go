@@ -27,7 +27,7 @@ export default function Admin({ shotState, machineState, machineShotsState, wall
     // Optionnel: faire disparaître le message après un délai
     setTimeout(() => {
       setMsg(prevMsg => ({ ...prevMsg, [dest]: null }));
-    }, 5000);
+    }, 25000);
   }
 
   // --- Gestion des users (admin) ---
