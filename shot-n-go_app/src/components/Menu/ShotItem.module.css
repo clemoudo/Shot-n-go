@@ -111,6 +111,14 @@
 	justify-content: center;
 }
 
+@media (max-width: 768px) {
+	.quantity button,
+	.quantity span {
+		font-size: 1rem;
+		padding: 0.35rem 0.55rem;
+	}
+}
+
 .quantity button:hover {
 	background-color: #f0f0f0;
 }
@@ -119,13 +127,4 @@
 	min-width: 2.6rem;
 	font-weight: bold;
 	pointer-events: none;
-}
-
-
-@media (max-width: 385px) {
-	.quantity button,
-	.quantity span {
-		font-size: 16px;
-		padding: 0.35rem 0.55rem;
-	}
 }

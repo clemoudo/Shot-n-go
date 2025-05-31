@@ -45,7 +45,7 @@ export default function WalletManagement({ fetchWallet, msg, setMessage }) { // 
     if (!window.confirm(`Reset le wallet de "${userEmailToReset}" ? Cette action est irréversible.`)) return;
 
     try {
-      const response = await axios.post(`/api/wallets/${userEmailToReset}/reset-credits`, {
+      const response = await axios.patch(`/api/wallets/${userEmailToReset}/reset-credits`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("walletReset", response.data.message || "Wallet remis à 0.");
@@ -96,7 +96,7 @@ export default function WalletManagement({ fetchWallet, msg, setMessage }) { // 
       <section className={`${styles.form_container} ${styles.delete_form}`}>
         <form onSubmit={handleResetWallet}>
           <fieldset>
-            <legend>Supprimer un Wallet</legend>
+            <legend>Reset un Wallet</legend>
             <label htmlFor="walletUserEmailDelete">Email utilisateur</label>
             <input
               id="walletUserEmailDelete"

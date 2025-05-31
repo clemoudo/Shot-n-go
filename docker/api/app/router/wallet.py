@@ -115,7 +115,7 @@ async def create_or_add_credit_to_wallet(
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {str(e)}")
 
 
-@router.post("/api/wallets/{user_email}/reset-credits")
+@router.patch("/api/wallets/{user_email}/reset-credits")
 async def reset_wallet_credits(
     user_email: str,
     db: AsyncSession = Depends(get_db),
@@ -141,7 +141,7 @@ async def reset_wallet_credits(
             raise HTTPException(status_code=404, detail=f"Wallet non trouvé pour l'utilisateur avec l'email '{user_email}' (UID: {user_id_cible}). La réinitialisation des crédits ne peut pas être effectuée.")
 
         # Mettre les crédits à zéro
-        wallet_to_update.credits = 0 
+        wallet_to_update.credit = 0 
         db.add(wallet_to_update) # Marquer l'objet comme modifié pour SQLAlchemy
         await db.commit()
         await db.refresh(wallet_to_update) # Optionnel: rafraîchir l'objet depuis la DB
