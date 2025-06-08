@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 
 # Création de l'app FastAPI
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 origins = [
    "http://localhost:3000",
