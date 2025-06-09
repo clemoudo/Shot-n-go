@@ -11,7 +11,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/machines/{machine_id}/shots")
+@router.get("/machines/{machine_id}/shots")
 @cache_response_with_etag(
     cache_key_prefix="machine_shots",
     resource_id_param="machine_id"
@@ -51,7 +51,7 @@ async def get_shots_of_machine(
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des shots")
     
-@router.post("/api/machines/{machine_id}/shots/{shot_id}")
+@router.post("/machines/{machine_id}/shots/{shot_id}")
 async def add_shot_to_machine(
     machine_id: int,
     shot_id: int,
@@ -94,7 +94,7 @@ async def add_shot_to_machine(
         await db.rollback()
         raise HTTPException(500, detail="Erreur lors de l'association")
 
-@router.delete("/api/machines/{machine_id}/shots/{shot_id}")
+@router.delete("/machines/{machine_id}/shots/{shot_id}")
 async def remove_shot_from_machine(
     machine_id: int,
     shot_id: int,

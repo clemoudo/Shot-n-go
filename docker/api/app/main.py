@@ -43,6 +43,6 @@ app.include_router(queue_router)
 app.include_router(leaderboard_router)
 app.include_router(news_router)
 
-@app.get("/api/")
+@app.get("/")
 def read_root():
    return {"message": "API OK"}

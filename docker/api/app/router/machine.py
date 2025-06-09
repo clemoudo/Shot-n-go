@@ -11,7 +11,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/machines")
+@router.get("/machines")
 @cache_response_with_etag(cache_key_prefix="machines_cache")
 async def get_machines(
     request: Request,
@@ -27,7 +27,7 @@ async def get_machines(
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des machines")
 
-@router.post("/api/machines")
+@router.post("/machines")
 async def add_machine(
     name: str = Form(...),
     db=Depends(get_db),
@@ -57,7 +57,7 @@ async def add_machine(
         }
     }
 
-@router.delete("/api/machines/{machine_id}")
+@router.delete("/machines/{machine_id}")
 async def delete_machine(
     machine_id: int,
     db=Depends(get_db),

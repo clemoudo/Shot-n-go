@@ -25,7 +25,7 @@ class CommandeCreate(BaseModel):
     machine_id: int
     shots: List[ShotItem]
 
-@router.get("/api/commandes")
+@router.get("/commandes")
 @cache_response_with_etag(
     cache_key_prefix="commandes", 
     query_params_to_include=["state"]
@@ -73,7 +73,7 @@ async def get_commandes_by_state(
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des commandes.")
 
-@router.post("/api/commandes")
+@router.post("/commandes")
 async def create_commande(
     commande_data: CommandeCreate,
     db: AsyncSession = Depends(get_db),
@@ -240,7 +240,7 @@ async def create_commande(
         print(f"Erreur globale inattendue: {e_glob}")
         raise HTTPException(status_code=500, detail=f"Erreur inattendue lors de la création de la commande.")
 
-@router.patch("/api/commandes/{commande_id}/{newState}")
+@router.patch("/commandes/{commande_id}/{newState}")
 async def mark_commande_done(
     commande_id: int = Path(..., description="ID de la commande à changer d'état"),
     newState: str = Path(..., description="Nouvel état 'in progress' ou 'done'"),
