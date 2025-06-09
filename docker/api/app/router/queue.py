@@ -10,7 +10,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/machines/{machine_id}/queue")
+@router.get("/machines/{machine_id}/queue")
 @cache_response_with_etag(
     cache_key_prefix="machine_queue",
     resource_id_param="machine_id"
