@@ -15,7 +15,7 @@ ALLOWED_CONTENT_TYPES = {"image/png", "image/jpeg", "image/gif", "image/webp"}
 
 router = APIRouter()
 
-@router.post("/api/images/upload")
+@router.post("/images/upload")
 async def upload_image(
    file: UploadFile = File(...),
    user_data: dict = Depends(verify_firebase_token)
@@ -42,11 +42,11 @@ async def upload_image(
 
    return {"message": "Image uploaded", "filename": filename}
 
-@router.get("/api/images")
+@router.get("/images")
 def list_images():
    return os.listdir(IMAGES_DIR)
 
-@router.get("/api/images/{filename}")
+@router.get("/images/{filename}")
 def get_image(filename: str):
    filename = secure_filename(filename)
    file_path = os.path.join(IMAGES_DIR, filename)
@@ -54,7 +54,7 @@ def get_image(filename: str):
       raise HTTPException(status_code=404, detail="Image not found")
    return FileResponse(file_path)
 
-@router.delete("/api/images/{filename}")
+@router.delete("/images/{filename}")
 def delete_image(
    filename: str,
    user_data: dict = Depends(verify_firebase_token)

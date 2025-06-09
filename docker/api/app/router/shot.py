@@ -11,7 +11,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/shots")
+@router.get("/shots")
 @cache_response_with_etag(cache_key_prefix="shots_cache")
 async def get_shots(
     request: Request,
@@ -23,7 +23,7 @@ async def get_shots(
 
     return {"shots": data}
 
-@router.post("/api/shots")
+@router.post("/shots")
 async def add_shot(
     name: str = Form(...),
     price: float = Form(...),
@@ -61,7 +61,7 @@ async def add_shot(
         }
     }
 
-@router.delete("/api/shots/{shot_id}")
+@router.delete("/shots/{shot_id}")
 async def delete_shot(
     shot_id: int,
     db=Depends(get_db),

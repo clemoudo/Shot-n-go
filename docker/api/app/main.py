@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 
 # Création de l'app FastAPI
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 origins = [
    "http://localhost:3000",
@@ -43,6 +43,6 @@ app.include_router(queue_router)
 app.include_router(leaderboard_router)
 app.include_router(news_router)
 
-@app.get("/api/")
+@app.get("/")
 def read_root():
    return {"message": "API OK"}

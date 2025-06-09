@@ -9,7 +9,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/leaderboard")
+@router.get("/leaderboard")
 @cache_response_with_etag(cache_key_prefix="leaderboard_shots", ttl=3600)
 async def get_leaderboard(
     request: Request,

@@ -13,7 +13,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/news")
+@router.get("/news")
 @cache_response_with_etag(cache_key_prefix="news_cache")
 async def get_all_news(
     request: Request,
@@ -40,7 +40,7 @@ async def get_all_news(
         raise HTTPException(status_code=500, detail="Erreur lors de la récupération des actualités")
 
 
-@router.post("/api/news")
+@router.post("/news")
 async def publish_news(
     title: str = Form(...),
     content: str = Form(...),
@@ -73,7 +73,7 @@ async def publish_news(
         await db.rollback()
         raise HTTPException(status_code=500, detail="Erreur lors de la publication de l'actualité")
     
-@router.delete("/api/news/{news_id}")
+@router.delete("/news/{news_id}")
 async def delete_news(
     news_id: int,
     db: AsyncSession = Depends(get_db),

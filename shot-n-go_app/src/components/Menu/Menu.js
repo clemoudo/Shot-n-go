@@ -1,12 +1,11 @@
 import ShoppingList from './ShoppingList'
 import Cart from './Cart'
-import { useState } from 'react';
 import {deleteItem,addToCart,removeItem} from '../../utils/menuUtils.mjs'
 
 
-function Menu({ machineState, machineShotsState, cartState, walletState }) {
+function Menu({ machineState, machineShotsState, cartState, walletState, selectedMachineIdState }) {
    const { cart, setCart } = cartState;
-   const [selectedMachineId, setSelectedMachineId] = useState("");
+   const { selectedMachineId, setSelectedMachineId } = selectedMachineIdState;
 
    // Wrappers pour injecter setCart
    const addToCartWrapper = (shotElem, addedAmount) => addToCart(shotElem, addedAmount, setCart);
@@ -24,7 +23,7 @@ function Menu({ machineState, machineShotsState, cartState, walletState }) {
             deleteItem={deleteItemWrapper} 
          />
          <ShoppingList 
-            selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }} 
+            selectedMachineIdState={selectedMachineIdState} 
             cartState={cartState} 
             addToCart={addToCartWrapper} 
             removeItem={removeItemWrapper} 

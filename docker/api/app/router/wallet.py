@@ -13,7 +13,7 @@ from app.utils.caching import cache_response_with_etag
 
 router = APIRouter()
 
-@router.get("/api/wallets/credit")
+@router.get("/wallets/credit")
 @cache_response_with_etag(
     cache_key_prefix="wallet_credit",
     user_id_from_token_key="uid"
@@ -45,7 +45,7 @@ async def get_wallet_credit(
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {str(e)}")
 
 
-@router.post("/api/wallets")
+@router.post("/wallets")
 async def create_or_add_credit_to_wallet(
     user_email: str = Form(...),
     amount: float = Form(...),
@@ -115,7 +115,7 @@ async def create_or_add_credit_to_wallet(
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {str(e)}")
 
 
-@router.patch("/api/wallets/{user_email}/reset-credits")
+@router.patch("/wallets/{user_email}/reset-credits")
 async def reset_wallet_credits(
     user_email: str,
     db: AsyncSession = Depends(get_db),
