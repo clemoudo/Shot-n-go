@@ -24,11 +24,12 @@ function App() {
     const [queue, setQueue] = useState([]);
     const [leaderboard, setLeaderboard] = useState([]);
     const [news, setNews] = useState([]);
+    const [cart, setCart] = useState([]);
+    const [selectedMachineId, setSelectedMachineId] = useState("");
 
-    const [loading, setLoading] = useState(true); // Pour le chargement des données
     const [authLoading, setAuthLoading] = useState(true); // Pour le chargement de l'état d'auth
     const [user, setUser] = useState(null);
-    const [cart, setCart] = useState([]);
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -177,6 +178,7 @@ function App() {
                         machineShotsState={{ machineShots, fetchMachineShots }}
                         cartState={{ cart, setCart }}
                         walletState={{ wallet, fetchWallet }}
+                        selectedMachineIdState={{ selectedMachineId, setSelectedMachineId }}
                     /> : <Navigate to="/login" replace />} />
                     <Route path="/games" element={user && user.emailVerified ? <Games /> : <Navigate to="/login" replace />} />
                     <Route path="/queue" element={user && user.emailVerified ? <Queue

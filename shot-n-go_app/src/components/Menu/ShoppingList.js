@@ -15,12 +15,18 @@ function ShoppingList({ selectedMachineIdState, cartState, addToCart, removeItem
 	}, []);
 
 	useEffect(() => {
-		if (machines.length > 0) {
+		if (selectedMachineId) {
+			const machineIds = machines.map((m) => (m.id));
+			if (!selectedMachineId in machineIds){
+				alert("La machine sur laquelle vous étiez a été supprimée du système. Votre panier a été vidé.");
+				setCart([]);
+			}
+		} else if (machines.length > 0) {
 			const firstId = machines[0].id;
 			setSelectedMachineId(firstId);
 			fetchMachineShots(firstId);
-			setLoading(false);
 		}
+		setLoading(false);
 	}, [machines]);
 
 
